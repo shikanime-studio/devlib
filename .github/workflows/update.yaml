@@ -21,12 +21,11 @@ jobs:
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - uses: DeterminateSystems/magic-nix-cache-action@v13
-      - uses: shikanime-studio/setup-direnv-action@v1
       - run: |
           nix flake update
-          sl config \
+          nix develop . -c sl config \
             --local ui.username "github-actions[bot]" \
             --local ui.email "github-actions[bot]@users.noreply.github.com"
-          sl ci \
+          nix develop . -c sl ci \
             -m "Update Flake"
-          sl ghstack
+          nix develop . -c sl ghstack
