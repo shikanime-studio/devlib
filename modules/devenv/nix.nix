@@ -12,7 +12,7 @@ in
       flake-checker.enable = true;
     };
     gitignore.templates = [
-      "repo:github/gitignore/refs/heads/main/Nix.gitignore"
+      "gh:Nix"
       "repo:shikanime/gitignore/refs/heads/main/Devenv.gitignore"
     ];
   };
