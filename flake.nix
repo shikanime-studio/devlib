@@ -29,8 +29,12 @@
       imports = [
         devenv.flakeModule
         treefmt-nix.flakeModule
+        ./modules/flake/default.nix
       ];
-      flake.devenvModule = ./modules/devenv/default.nix;
+      flake = {
+        devenvModule = ./modules/devenv/default.nix;
+        flakeModule = ./modules/flake/default.nix;
+      };
       perSystem =
         { pkgs, ... }:
         {
