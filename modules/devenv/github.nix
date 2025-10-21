@@ -23,6 +23,12 @@ in
   options.github = {
     enable = lib.mkEnableOption "generation of GitHub Actions workflow files";
 
+    package = lib.mkOption {
+      type = lib.types.package;
+      default = pkgs.gh;
+      description = "Package to use for GitHub Actions";
+    };
+
     workflows = lib.mkOption {
       type = lib.types.attrsOf (
         lib.types.submodule {
@@ -80,6 +86,8 @@ in
   };
 
   config = lib.mkIf cfg.enable {
+    packages = [ cfg.package ];
+
     enterShell = ''
       mkdir -p ${config.env.DEVENV_ROOT}/.github/workflows
       ${lib.concatStringsSep "\n      " workflowCommands}
