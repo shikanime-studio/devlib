@@ -11,12 +11,9 @@ in
       deadnix.enable = true;
       flake-checker.enable = true;
     };
-    gitignore = {
-      enable = true;
-      templates = [
-        "repo:github/gitignore/refs/heads/main/Nix.gitignore"
-        "repo:shikanime/gitignore/refs/heads/main/Devenv.gitignore"
-      ];
-    };
+    gitignore.templates = [
+      "repo:github/gitignore/refs/heads/main/Nix.gitignore"
+      "repo:shikanime/gitignore/refs/heads/main/Devenv.gitignore"
+    ];
   };
 }
