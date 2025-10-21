@@ -66,6 +66,7 @@
                 deadnix.enable = true;
                 flake-checker.enable = true;
               };
+              github.enable = true;
               gitignore = {
                 enable = true;
                 templates = [
@@ -80,7 +81,6 @@
                 ];
               };
               packages = [
-                pkgs.gh
                 pkgs.sapling
               ];
             };
