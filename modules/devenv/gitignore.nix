@@ -18,22 +18,6 @@ let
       "tt:windows"
     ])
     ++ cfg.templates;
-
-  header = ''
-    ###-------------------###
-    ###  Devlib: content  ###
-    ###-------------------###
-  '';
-
-  renderGitnr = { package, templates }: lib.optionalString (templates != [ ]) ''
-    gitignoreContent="$gitignoreContent $(${package}/bin/gitnr create ${lib.concatStringsSep " " templates} 2>/dev/null)"
-  '';
-
-  renderContent = { header, content, templates }: lib.optionalString (content != [ ]) ''
-    gitignoreContent="$gitignoreContent${
-      lib.optionalString (templates != [ ]) "\n\n"
-    }${header}\n${lib.concatStringsSep "\n" content}"
-  '';
 in
 {
   options.gitignore = {
@@ -93,8 +77,14 @@ in
 
     enterShell = lib.mkIf (templates != [ ] || cfg.content != [ ]) ''
       gitignoreContent=""
-      ${renderGitnr { package = cfg.package; templates = templates; }}
-      ${renderContent { header = header; content = cfg.content; templates = templates; }}
+      ${lib.optionalString (templates != [ ]) ''
+        gitignoreContent="$gitignoreContent $(${cfg.package}/bin/gitnr create ${lib.concatStringsSep " " templates} 2>/dev/null)"
+      ''}
+      ${lib.optionalString (cfg.content != [ ]) ''
+        gitignoreContent="$gitignoreContent${
+          lib.optionalString (templates != [ ]) "\n\n"
+        }###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n${lib.concatStringsSep "\n" cfg.content}"
+      ''}
       echo -e "$gitignoreContent" > ${config.env.DEVENV_ROOT}/.gitignore
     '';
   };
