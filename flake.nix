@@ -62,7 +62,6 @@
                 push = "shikanime";
               };
               git-hooks.hooks = {
-                actionlint.enable = true;
                 deadnix.enable = true;
                 flake-checker.enable = true;
               };
