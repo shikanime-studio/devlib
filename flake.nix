@@ -64,14 +64,7 @@
               github.enable = true;
               gitignore = {
                 enable = true;
-                templates = [
-                  "tt:jetbrains+all"
-                  "tt:linux"
-                  "tt:macos"
-                  "tt:vim"
-                  "tt:visualstudiocode"
-                  "tt:windows"
-                ];
+                enableDefaultTemplates = true;
               };
               packages = [
                 pkgs.sapling

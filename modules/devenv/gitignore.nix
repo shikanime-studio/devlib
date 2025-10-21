@@ -7,6 +7,15 @@
 
 let
   cfg = config.gitignore;
+
+  templates = (lib.optionals cfg.enableDefaultTemplates [
+    "tt:jetbrains+all"
+    "tt:linux"
+    "tt:macos"
+    "tt:vim"
+    "tt:visualstudiocode"
+    "tt:windows"
+  ]) ++ cfg.templates;
 in
 {
   options.gitignore = {
@@ -29,6 +38,12 @@ in
         Additional gitignore patterns to append to the generated file.
         These patterns will be added after the templates are processed.
       '';
+    };
+
+    enableDefaultTemplates = lib.mkOption {
+      type = lib.types.bool;
+      default = false;
+      description = "Prepend a sensible default set of TopTal templates.";
     };
 
     templates = lib.mkOption {
@@ -58,14 +73,14 @@ in
   config = lib.mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    enterShell = lib.mkIf (cfg.templates != [ ] || cfg.content != [ ]) ''
+    enterShell = lib.mkIf (templates != [ ] || cfg.content != [ ]) ''
       gitignoreContent=""
-      ${lib.optionalString (cfg.templates != [ ]) ''
-        gitignoreContent="$gitignoreContent $(${cfg.package}/bin/gitnr create ${lib.concatStringsSep " " cfg.templates} 2>/dev/null)"
+      ${lib.optionalString (templates != [ ]) ''
+        gitignoreContent="$gitignoreContent $(${cfg.package}/bin/gitnr create ${lib.concatStringsSep " " templates} 2>/dev/null)"
       ''}
       ${lib.optionalString (cfg.content != [ ]) ''
         gitignoreContent="$gitignoreContent${
-          lib.optionalString (cfg.templates != [ ]) "\n\n"
+          lib.optionalString (templates != [ ]) "\n\n"
         }${lib.concatStringsSep "\n" cfg.content}"
       ''}
       echo -e "$gitignoreContent" > ${config.env.DEVENV_ROOT}/.gitignore
