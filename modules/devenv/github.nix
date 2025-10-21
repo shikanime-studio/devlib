@@ -90,7 +90,7 @@ in
 
     enterShell = ''
       mkdir -p ${config.env.DEVENV_ROOT}/.github/workflows
-      ${lib.concatStringsSep "\n      " workflowCommands}
+      ${lib.concatStringsSep "\n" workflowCommands}
     '';
   };
 }
