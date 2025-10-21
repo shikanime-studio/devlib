@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -10,6 +15,13 @@ in
     git-hooks.hooks = {
       deadnix.enable = true;
       flake-checker.enable = true;
+      nix-fmt = {
+        enable = true;
+        name = "nix-fmt";
+        description = "Format Nix files using the formatter specified in your flake.";
+        package = pkgs.nix;
+        entry = "${pkgs.nix}/bin/nix fmt";
+      };
     };
     gitignore.templates = [
       "gh:Nix"
