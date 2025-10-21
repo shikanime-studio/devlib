@@ -2,6 +2,9 @@
 
 with lib;
 
+let
+  cfg = config.sapling;
+in
 {
   options.sapling = {
     enable = mkOption {
@@ -11,7 +14,7 @@ with lib;
     };
   };
 
-  config = mkIf config.sapling.enable {
+  config = mkIf cfg.enable {
     packages = [ pkgs.sapling ];
   };
 }
