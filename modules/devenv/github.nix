@@ -92,5 +92,7 @@ in
       mkdir -p ${config.env.DEVENV_ROOT}/.github/workflows
       ${lib.concatStringsSep "\n" workflowCommands}
     '';
+
+    git-hooks.hooks.actionlint.enable = true;
   };
 }
