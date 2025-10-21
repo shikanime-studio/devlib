@@ -8,14 +8,16 @@
 let
   cfg = config.gitignore;
 
-  templates = (lib.optionals cfg.enableDefaultTemplates [
-    "tt:jetbrains+all"
-    "tt:linux"
-    "tt:macos"
-    "tt:vim"
-    "tt:visualstudiocode"
-    "tt:windows"
-  ]) ++ cfg.templates;
+  templates =
+    (lib.optionals cfg.enableDefaultTemplates [
+      "tt:jetbrains+all"
+      "tt:linux"
+      "tt:macos"
+      "tt:vim"
+      "tt:visualstudiocode"
+      "tt:windows"
+    ])
+    ++ cfg.templates;
 in
 {
   options.gitignore = {

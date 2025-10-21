@@ -56,7 +56,10 @@
             ];
             shells.default = {
               containers = pkgs.lib.mkForce { };
-              languages.nix.enable = true;
+              languages = {
+                nix.enable = true;
+                shell.enable = true;
+              };
               cachix = {
                 enable = true;
                 push = "shikanime";
