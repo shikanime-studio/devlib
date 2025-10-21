@@ -29,12 +29,8 @@
       imports = [
         devenv.flakeModule
         treefmt-nix.flakeModule
-        ./modules/flake/default.nix
       ];
-      flake = {
-        devenvModule = ./modules/devenv/default.nix;
-        flakeModule = ./modules/flake/default.nix;
-      };
+      flake.devenvModule = ./modules/devenv/default.nix;
       perSystem =
         { pkgs, ... }:
         {
@@ -65,17 +61,10 @@
                 enable = true;
                 push = "shikanime";
               };
-              git-hooks.hooks = {
-                actionlint.enable = true;
-                deadnix.enable = true;
-                flake-checker.enable = true;
-              };
               github.enable = true;
               gitignore = {
                 enable = true;
                 templates = [
-                  "repo:github/gitignore/refs/heads/main/Nix.gitignore"
-                  "repo:shikanime/gitignore/refs/heads/main/Devenv.gitignore"
                   "tt:jetbrains+all"
                   "tt:linux"
                   "tt:macos"
