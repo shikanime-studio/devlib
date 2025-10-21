@@ -25,7 +25,7 @@ in
     };
     gitignore.templates = [
       "gh:Nix"
-      "repo:shikanime/gitignore/refs/heads/main/Devenv.gitignore"
+      "repo:shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore"
     ];
   };
 }

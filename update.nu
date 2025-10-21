@@ -35,7 +35,7 @@ def update_skaffold_artifacts []: record -> record {
 (
     gitnr create
         repo:github/gitignore/refs/heads/main/Nix.gitignore
-        repo:shikanime/gitignore/refs/heads/main/Devenv.gitignore
+        repo:shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore
         tt:jetbrains+all
         tt:linux
         tt:macos
