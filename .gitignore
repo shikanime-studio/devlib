@@ -272,3 +272,9 @@ result-*
 .devenv*
 .direnv*
 .pre-commit-config.yaml
+
+###-------------------###
+###  Devlib: content  ###
+###-------------------###
+
+.pre-commit-config.yaml

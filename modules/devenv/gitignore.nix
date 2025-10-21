@@ -83,7 +83,7 @@ in
       ${lib.optionalString (cfg.content != [ ]) ''
         gitignoreContent="$gitignoreContent${
           lib.optionalString (templates != [ ]) "\n\n"
-        }${lib.concatStringsSep "\n" cfg.content}"
+        }###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n${lib.concatStringsSep "\n" cfg.content}"
       ''}
       echo -e "$gitignoreContent" > ${config.env.DEVENV_ROOT}/.gitignore
     '';
