@@ -132,7 +132,7 @@ fabric.properties
 .AppleDouble
 .LSOverride
 
-# Icon must end with two
+# Icon must end with two 
 Icon
 
 # Thumbnails
@@ -264,14 +264,13 @@ result-*
 .direnv
 
 ###--------------------------------------------------------------###
-###  Repo: shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore  ###
+###  Repo: shikanime/gitignore/refs/heads/main/Devenv.gitignore  ###
 ###--------------------------------------------------------------###
 
 .env
 .env.*
 .devenv*
 .direnv*
-.pre-commit-config.yaml
 
 ###-------------------###
 ###  Devlib: content  ###
