@@ -5,6 +5,7 @@
     ./github.nix
     ./gitignore.nix
     ./nix.nix
+    ./opentofu.nix
     ./shell.nix
   ];
 }
