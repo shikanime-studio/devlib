@@ -78,7 +78,7 @@ in
     enterShell = lib.mkIf (templates != [ ] || cfg.content != [ ]) ''
       gitignoreContent=""
       ${lib.optionalString (templates != [ ]) ''
-        gitignoreContent="$gitignoreContent $(${cfg.package}/bin/gitnr create ${lib.concatStringsSep " " templates} 2>/dev/null)"
+        gitignoreContent="$gitignoreContent$(${cfg.package}/bin/gitnr create ${lib.concatStringsSep " " templates} 2>/dev/null)"
       ''}
       ${lib.optionalString (cfg.content != [ ]) ''
         gitignoreContent="$gitignoreContent${
