@@ -263,9 +263,9 @@ result-*
 # Ignore automatically generated direnv output
 .direnv
 
-###--------------------------------------------------------------###
-###  Repo: shikanime/gitignore/refs/heads/main/Devenv.gitignore  ###
-###--------------------------------------------------------------###
+###---------------------------------------------------------------------###
+###  Repo: shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore  ###
+###---------------------------------------------------------------------###
 
 .env
 .env.*
