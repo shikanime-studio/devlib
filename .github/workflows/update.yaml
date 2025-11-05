@@ -1,8 +1,3 @@
-name: Update
-on:
-  schedule:
-    - cron: 0 0 * * 0
-  workflow_dispatch: null
 jobs:
   update:
     runs-on: ubuntu-latest
@@ -11,8 +6,8 @@ jobs:
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
@@ -21,11 +16,13 @@ jobs:
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - uses: DeterminateSystems/magic-nix-cache-action@v13
-      - run: |
-          nix flake update
-          nix run nixpkgs#sapling -- config \
-            --local ui.username "github-actions[bot]" \
-            --local ui.email "github-actions[bot]@users.noreply.github.com"
-          nix run nixpkgs#sapling -- ci \
-            -m "Update Flake"
-          nix run nixpkgs#sapling ghstack
+      - run:
+          "nix flake update\nnix run nixpkgs#sapling -- config \\\n  --local ui.username\
+          \ \"github-actions[bot]\" \\\n  --local ui.email \"github-actions[bot]@users.noreply.github.com\"\
+          \nnix run nixpkgs#sapling -- ci \\\n  -m \"Update Flake\"\nnix run nixpkgs#sapling\
+          \ ghstack\n"
+name: Update
+"on":
+  schedule:
+    - cron: 0 0 * * 0
+  workflow_dispatch: {}

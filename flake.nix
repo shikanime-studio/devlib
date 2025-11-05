@@ -30,7 +30,10 @@
         devenv.flakeModule
         treefmt-nix.flakeModule
       ];
-      flake.devenvModule = ./modules/devenv/default.nix;
+      flake = {
+        devenvModule = ./modules/devenv/default.nix;
+        devenvModules.shikanime-studio = ./modules/devenv/profiles/shikanime-studio.nix;
+      };
       perSystem =
         { pkgs, ... }:
         {
@@ -53,6 +56,7 @@
           devenv = {
             modules = [
               self.devenvModule
+              self.devenvModules.shikanime-studio
             ];
             shells.default = {
               containers = pkgs.lib.mkForce { };
