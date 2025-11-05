@@ -59,7 +59,6 @@
               self.devenvModules.shikanime-studio
             ];
             shells.default = {
-              containers = pkgs.lib.mkForce { };
               languages = {
                 nix.enable = true;
                 shell.enable = true;
