@@ -12,7 +12,7 @@ in
 {
   config = mkIf cfg.enable {
     gitignore.templates = [
-        "tt:node"
+      "tt:node"
       ];
   };
 }
