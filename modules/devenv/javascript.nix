@@ -12,6 +12,7 @@ in
 {
   config = mkIf cfg.enable {
     gitignore.templates = [
+        "tt:deno"
         "tt:node"
       ];
   };
