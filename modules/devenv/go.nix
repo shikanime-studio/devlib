@@ -11,8 +11,13 @@ let
 in
 {
   config = mkIf cfg.enable {
-    gitignore.content = [
-      "__debug_bin*"
-    ];
+    gitignore = {
+      content = [
+        "__debug_bin*"
+      ];
+      templates = [
+        "tt:go"
+      ];
+    };
   };
 }

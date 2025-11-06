@@ -1,0 +1,18 @@
+{
+  config,
+  lib,
+  ...
+}:
+
+with lib;
+
+let
+  cfg = config.languages.javascript;
+in
+{
+  config = mkIf cfg.enable {
+    gitignore.templates = [
+        "tt:javascript"
+      ];
+  };
+}
