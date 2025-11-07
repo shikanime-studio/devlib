@@ -17,15 +17,19 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.createGithubAppToken.outputs.token }}
-      - uses: DeterminateSystems/nix-installer-action@v20
+      - uses: shikanime-studio/setup-nix-action@v1
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
-      - uses: DeterminateSystems/magic-nix-cache-action@v13
-      - run: |
-          nix flake update
-          nix run nixpkgs#sapling -- config \
-            --local ui.username "github-actions[bot]" \
-            --local ui.email "github-actions[bot]@users.noreply.github.com"
-          nix run nixpkgs#sapling -- ci \
-            -m "Update Flake"
-          nix run nixpkgs#sapling ghstack
+      - id: importGPG
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - uses: shikanime-studio/automata-action@v1
+        with:
+          ghstack-username: operator60
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          sign-commits: true
+          username: Operator 6O <operator60@shikanime.studio>
