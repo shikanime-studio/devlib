@@ -182,7 +182,10 @@ in
           name = "Check";
           on = {
             push.branches = [ "main" ];
-            pull_request.branches = [ "main" "gh/*/*/base" ];
+            pull_request.branches = [
+              "main"
+              "gh/*/*/base"
+            ];
           };
           jobs.check = {
             runs-on = "ubuntu-latest";
