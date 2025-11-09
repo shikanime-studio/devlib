@@ -11,10 +11,6 @@ let
   cfg = config.languages.nix;
 in
 {
-  options.languages.nix = {
-    enableGitHubIntegration = lib.mkEnableOption "Nix language support for GitHub Actions";
-  };
-
   config = mkIf cfg.enable {
     git-hooks.hooks = {
       deadnix.enable = true;
