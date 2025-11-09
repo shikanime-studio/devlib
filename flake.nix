@@ -64,7 +64,14 @@
                 enable = true;
                 push = "shikanime";
               };
-              github.enable = true;
+              github = {
+                enable = true;
+                templates = {
+                  automata.enable = true;
+                  check.enable = true;
+                  sapling.enable = true;
+                };
+              };
               gitignore = {
                 enable = true;
                 enableDefaultTemplates = true;
