@@ -58,11 +58,7 @@ in
                   runs-on = "ubuntu-latest";
                   steps = [
                     { uses = "actions/checkout@v5"; }
-                    {
-                      uses = "DeterminateSystems/nix-installer-action@v19";
-
-                    }
-                    { uses = "DeterminateSystems/magic-nix-cache-action@v13"; }
+                    { uses = "shikanime-studio/setup-nix-action@v1"; }
                     {
                       name = "Check Nix Flake";
                       run = "nix flake check --all-systems --no-pure-eval --accept-flake-config";
