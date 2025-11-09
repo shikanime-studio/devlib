@@ -5,6 +5,8 @@
   ...
 }:
 
+with lib;
+
 let
   cfg = config.air;
   settingsFormat = pkgs.formats.toml { };
@@ -12,24 +14,24 @@ let
 in
 {
   options.air = {
-    enable = lib.mkEnableOption "Air live reload for Go applications";
+    enable = mkEnableOption "Air live reload for Go applications";
 
-    package = lib.mkOption {
-      type = lib.types.package;
+    package = mkOption {
+      type = types.package;
       default = pkgs.air;
-      defaultText = lib.literalExpression "pkgs.air";
+      defaultText = literalExpression "pkgs.air";
       description = ''
         The Air package to use.
       '';
     };
 
-    settings = lib.mkOption {
-      type = lib.types.submodule {
+    settings = mkOption {
+      type = types.submodule {
         freeformType = settingsFormat.type;
 
         options = {
-          tmp_dir = lib.mkOption {
-            type = lib.types.str;
+          tmp_dir = mkOption {
+            type = types.str;
             readOnly = true;
             default = config.env.DEVENV_STATE + "/air/tmp";
             description = ''
@@ -45,7 +47,7 @@ in
         Air configuration settings.
       '';
 
-      example = lib.literalExpression ''
+      example = literalExpression ''
         {
           root = ".";
           build = {
@@ -71,7 +73,7 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
     enterShell = ''

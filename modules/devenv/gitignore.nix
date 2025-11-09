@@ -5,11 +5,13 @@
   ...
 }:
 
+with lib;
+
 let
   cfg = config.gitignore;
 
   templates =
-    (lib.optionals cfg.enableDefaultTemplates [
+    (optionals cfg.enableDefaultTemplates [
       "tt:jetbrains+all"
       "tt:linux"
       "tt:macos"
@@ -21,16 +23,16 @@ let
 in
 {
   options.gitignore = {
-    enable = lib.mkEnableOption "gitignore generator";
+    enable = mkEnableOption "gitignore generator";
 
-    package = lib.mkOption {
-      type = lib.types.package;
+    package = mkOption {
+      type = types.package;
       default = pkgs.gitnr;
       description = "The gitnr package to use";
     };
 
-    content = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
+    content = mkOption {
+      type = types.listOf types.str;
       default = [ ];
       example = [
         "*.log"
@@ -42,14 +44,14 @@ in
       '';
     };
 
-    enableDefaultTemplates = lib.mkOption {
-      type = lib.types.bool;
+    enableDefaultTemplates = mkOption {
+      type = types.bool;
       default = false;
       description = "Prepend a sensible default set of TopTal templates.";
     };
 
-    templates = lib.mkOption {
-      type = lib.types.listOf lib.types.str;
+    templates = mkOption {
+      type = types.listOf types.str;
       default = [ ];
       example = [
         "tt:linux"
@@ -72,18 +74,18 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    enterShell = lib.mkIf (templates != [ ] || cfg.content != [ ]) ''
+    enterShell = mkIf (templates != [ ] || cfg.content != [ ]) ''
       gitignoreContent=""
-      ${lib.optionalString (templates != [ ]) ''
-        gitignoreContent="$gitignoreContent$(${cfg.package}/bin/gitnr create ${lib.concatStringsSep " " templates} 2>/dev/null)"
+      ${optionalString (templates != [ ]) ''
+        gitignoreContent="$gitignoreContent$(${cfg.package}/bin/gitnr create ${concatStringsSep " " templates} 2>/dev/null)"
       ''}
-      ${lib.optionalString (cfg.content != [ ]) ''
+      ${optionalString (cfg.content != [ ]) ''
         gitignoreContent="$gitignoreContent${
-          lib.optionalString (templates != [ ]) "\n\n"
-        }###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n${lib.concatStringsSep "\n" cfg.content}"
+          optionalString (templates != [ ]) "\n\n"
+        }###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n${concatStringsSep "\n" cfg.content}"
       ''}
       echo -e "$gitignoreContent" > ${config.env.DEVENV_ROOT}/.gitignore
     '';

@@ -5,36 +5,38 @@
   ...
 }:
 
+with lib;
+
 let
   cfg = config.github;
   settingsFormat = pkgs.formats.yaml { };
 
   # Generate workflow files for each configured workflow
-  workflowFiles = lib.mapAttrs (
+  workflowFiles = mapAttrs (
     name: workflowCfg: settingsFormat.generate "${name}.yaml" workflowCfg.settings
   ) cfg.workflows;
 
   # Create shell commands to copy all workflow files
-  workflowCommands = lib.mapAttrsToList (
+  workflowCommands = mapAttrsToList (
     name: file: "cat ${file} > ${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
   ) workflowFiles;
 in
 {
   options.github = {
-    enable = lib.mkEnableOption "generation of GitHub Actions workflow files";
+    enable = mkEnableOption "generation of GitHub Actions workflow files";
 
-    package = lib.mkOption {
-      type = lib.types.package;
+    package = mkOption {
+      type = types.package;
       default = pkgs.gh;
       description = "Package to use for GitHub Actions";
     };
 
-    workflows = lib.mkOption {
-      type = lib.types.attrsOf (
-        lib.types.submodule {
+    workflows = mkOption {
+      type = types.attrsOf (
+        types.submodule {
           options = {
-            settings = lib.mkOption {
-              type = lib.types.submodule {
+            settings = mkOption {
+              type = types.submodule {
                 freeformType = settingsFormat.type;
               };
 
@@ -52,7 +54,7 @@ in
         GitHub workflows configuration. Each attribute name becomes the workflow filename.
       '';
 
-      example = lib.literalExpression ''
+      example = literalExpression ''
         {
           check = {
             settings = {
@@ -85,12 +87,12 @@ in
     };
   };
 
-  config = lib.mkIf cfg.enable {
+  config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
     enterShell = ''
       mkdir -p ${config.env.DEVENV_ROOT}/.github/workflows
-      ${lib.concatStringsSep "\n" workflowCommands}
+      ${concatStringsSep "\n" workflowCommands}
     '';
 
     git-hooks.hooks.actionlint.enable = true;
