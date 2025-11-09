@@ -61,7 +61,7 @@ in
                     { uses = "shikanime-studio/setup-nix-action@v1"; }
                     {
                       name = "Check Nix Flake";
-                      run = "nix flake check --all-systems --no-pure-eval --accept-flake-config";
+                      run = "nix flake check --accept-flake-config --all-systems --no-pure-eval";
                     }
                   ];
                 };
