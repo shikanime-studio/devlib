@@ -81,11 +81,9 @@ in
     packages = [ cfg.package ];
 
     files = mkMerge [
-      (mapAttrs (
-        name: workflowCfg: {
-          ".github/workflows/${name}.yaml".yaml = workflowCfg.settings;
-        }
-      ) cfg.workflows)
+      (mapAttrs (name: workflowCfg: {
+        ".github/workflows/${name}.yaml".yaml = workflowCfg.settings;
+      }) cfg.workflows)
     ];
 
     git-hooks.hooks.actionlint.enable = true;
