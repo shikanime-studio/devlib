@@ -87,11 +87,9 @@ in
     packages = [ cfg.package ];
 
     files = mkMerge [
-      (mapAttrs (
-        name: workflowCfg: {
-          ".github/workflows/${name}.yaml".yaml = workflowCfg.settings;
-        }
-      ) cfg.workflows)
+      (mapAttrs (name: workflowCfg: {
+        ".github/workflows/${name}.yaml".yaml = workflowCfg.settings;
+      }) cfg.workflows)
 
       (mkIf cfg.templates.automata.enable {
         ".github/workflows/automata.yaml".yaml = {
