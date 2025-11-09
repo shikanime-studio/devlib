@@ -10,16 +10,6 @@ with lib;
 let
   cfg = config.github;
   settingsFormat = pkgs.formats.yaml { };
-
-  # Generate workflow files for each configured workflow
-  workflowFiles = mapAttrs (
-    name: workflowCfg: settingsFormat.generate "${name}.yaml" workflowCfg.settings
-  ) cfg.workflows;
-
-  # Create shell commands to copy all workflow files
-  workflowCommands = mapAttrsToList (
-    name: file: "cat ${file} > ${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
-  ) workflowFiles;
 in
 {
   options.github = {
@@ -68,14 +58,10 @@ in
                   runs-on = "ubuntu-latest";
                   steps = [
                     { uses = "actions/checkout@v5"; }
-                    {
-                      uses = "DeterminateSystems/nix-installer-action@v19";
-                      "with".github-token = "$\{{ secrets.NIX_GITHUB_TOKEN }}";
-                    }
-                    { uses = "DeterminateSystems/magic-nix-cache-action@v13"; }
+                    { uses = "shikanime-studio/setup-nix-action@v1"; }
                     {
                       name = "Check Nix Flake";
-                      run = "nix flake check --all-systems --no-pure-eval --accept-flake-config";
+                      run = "nix flake check --accept-flake-config --all-systems --no-pure-eval";
                     }
                   ];
                 };
@@ -90,10 +76,11 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    enterShell = ''
-      mkdir -p ${config.env.DEVENV_ROOT}/.github/workflows
-      ${concatStringsSep "\n" workflowCommands}
-    '';
+    files = mkMerge [
+      (mapAttrs (name: workflowCfg: {
+        ".github/workflows/${name}.yaml".yaml = workflowCfg.settings;
+      }) cfg.workflows)
+    ];
 
     git-hooks.hooks.actionlint.enable = true;
   };
