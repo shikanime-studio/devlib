@@ -126,14 +126,10 @@ devenv.shells.default = {
         runs-on = "ubuntu-latest";
         steps = [
           { uses = "actions/checkout@v5"; }
-          {
-            uses = "DeterminateSystems/nix-installer-action@v19";
-            with.github-token = "${{ secrets.NIX_GITHUB_TOKEN }}";
-          }
-          { uses = "DeterminateSystems/magic-nix-cache-action@v13"; }
+          { uses = "shikanime-studio/setup-nix@v1"; }
           {
             name = "Check Nix Flake";
-            run = "nix flake check --all-systems --no-pure-eval --accept-flake-config";
+            run = "nix flake check --accept-flake-config --all-systems --no-pure-eval";
           }
         ];
       };
