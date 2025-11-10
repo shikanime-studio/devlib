@@ -77,17 +77,28 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    enterShell = mkIf (templates != [ ] || cfg.content != [ ]) ''
-      gitignoreContent=""
-      ${optionalString (templates != [ ]) ''
-        gitignoreContent="$gitignoreContent$(${cfg.package}/bin/gitnr create ${concatStringsSep " " templates} 2>/dev/null)"
-      ''}
-      ${optionalString (cfg.content != [ ]) ''
-        gitignoreContent="$gitignoreContent${
-          optionalString (templates != [ ]) "\n\n"
-        }###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n${concatStringsSep "\n" cfg.content}"
-      ''}
-      echo -e "$gitignoreContent" > ${config.env.DEVENV_ROOT}/.gitignore
-    '';
+    tasks = mkIf (templates != [ ] || cfg.content != [ ]) {
+      "devlib:gitignore" = {
+        description = "Generate .gitignore from templates and content";
+        before = [ "devenv:enterShell" ];
+        exec = ''
+          set -eu
+
+          gitignoreContent=""
+          ${optionalString (templates != [ ]) ''
+            gitignoreContent="$gitignoreContent$(${cfg.package}/bin/gitnr create ${concatStringsSep " " templates} 2>/dev/null)"
+          ''}
+
+          ${optionalString (cfg.content != [ ]) ''
+            if [ -n "$gitignoreContent" ]; then
+              gitignoreContent="$gitignoreContent"$'\n\n'
+            fi
+            gitignoreContent="$gitignoreContent"###-------------------###$'\n'###  Devlib: content  ###$'\n'###-------------------###$'\n\n'"${concatStringsSep "\n" cfg.content}"
+          ''}
+
+          printf "%b" "$gitignoreContent" > "${config.env.DEVENV_ROOT}/.gitignore"
+        '';
+      };
+    };
   };
 }
