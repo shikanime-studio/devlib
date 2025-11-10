@@ -79,16 +79,13 @@ in
 
     tasks = mkIf (templates != [ ] || cfg.content != [ ]) {
       "devlib:gitignore" = {
-        description = "Generate .gitignore from templates and content";
         before = [ "devenv:enterShell" ];
+        description = "Generate .gitignore from templates and content";
         exec = ''
-          set -eu
-
           gitignoreContent=""
           ${optionalString (templates != [ ]) ''
             gitignoreContent="$gitignoreContent$(${cfg.package}/bin/gitnr create ${concatStringsSep " " templates} 2>/dev/null)"
           ''}
-
           ${optionalString (cfg.content != [ ]) ''
             header=$'###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n'
             extraText="${concatStringsSep "\n" cfg.content}"
@@ -99,7 +96,6 @@ in
 
             gitignoreContent="$gitignoreContent""$header""$extraText"
           ''}
-
           printf "%s" "$gitignoreContent" > "${config.env.DEVENV_ROOT}/.gitignore"
         '';
       };
