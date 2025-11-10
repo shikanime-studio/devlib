@@ -90,13 +90,17 @@ in
           ''}
 
           ${optionalString (cfg.content != [ ]) ''
+            header=$'###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n'
+            extraText="${concatStringsSep "\n" cfg.content}"
+
             if [ -n "$gitignoreContent" ]; then
               gitignoreContent="$gitignoreContent"$'\n\n'
             fi
-            gitignoreContent="$gitignoreContent"###-------------------###$'\n'###  Devlib: content  ###$'\n'###-------------------###$'\n\n'"${concatStringsSep "\n" cfg.content}"
+
+            gitignoreContent="$gitignoreContent""$header""$extraText"
           ''}
 
-          printf "%b" "$gitignoreContent" > "${config.env.DEVENV_ROOT}/.gitignore"
+          printf "%s" "$gitignoreContent" > "${config.env.DEVENV_ROOT}/.gitignore"
         '';
       };
     };
