@@ -30,7 +30,10 @@
         devenv.flakeModule
         treefmt-nix.flakeModule
       ];
-      flake.devenvModule = ./modules/devenv/default.nix;
+      flake = {
+        devenvModule = ./modules/devenv/default.nix;
+        homeModule = ./modules/home/default.nix;
+      };
       perSystem =
         { pkgs, ... }:
         {
