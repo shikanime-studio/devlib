@@ -32,7 +32,7 @@
       ];
       flake = {
         devenvModule = ./modules/devenv/default.nix;
-        homeModule = ./modules/home/default.nix;
+        homeManagerModule = ./modules/home/default.nix;
       };
       perSystem =
         { pkgs, ... }:
