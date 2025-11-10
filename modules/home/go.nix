@@ -7,6 +7,6 @@ let
 in
 {
   config = mkIf cfg.enable {
-    go.env.GOPATH = "${config.xdg.dataHome}/go";
+    programs.go.env.GOPATH = "${config.xdg.dataHome}/go";
   };
 }
