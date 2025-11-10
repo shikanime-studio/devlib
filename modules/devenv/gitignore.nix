@@ -96,7 +96,7 @@ in
 
             gitignoreContent="$gitignoreContent""$header""$extraText"
           ''}
-          printf "%s" "$gitignoreContent" > "${config.env.DEVENV_ROOT}/.gitignore"
+          echo "$gitignoreContent" > "${config.env.DEVENV_ROOT}/.gitignore"
         '';
       };
     };
