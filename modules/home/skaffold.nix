@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -17,7 +22,7 @@ in
 
     settings = mkOption {
       type = types.attrs;
-      default = {};
+      default = { };
       description = "Skaffold configuration settings";
     };
   };
@@ -25,7 +30,7 @@ in
   config = mkIf cfg.enable {
     home.packages = [ cfg.package ];
 
-    xdg.configFile."skaffold/config" = mkIf (cfg.settings != {}) {
+    xdg.configFile."skaffold/config" = mkIf (cfg.settings != { }) {
       text = builtins.toJSON cfg.settings;
     };
 

@@ -9,7 +9,7 @@ in
 
     package = mkOption {
       type = types.listOf types.package;
-      default = [];
+      default = [ ];
       description = "Node.js packages to install";
     };
   };
