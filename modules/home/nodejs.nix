@@ -10,9 +10,9 @@ in
     enable = mkEnableOption "Node.js development environment";
 
     package = mkOption {
-      type = types.listOf types.package;
-      default = [ ];
-      description = "Node.js packages to install";
+      type = types.package;
+      default = pkgs.nodejs;
+      description = "Node.js package to install";
     };
   };
 
