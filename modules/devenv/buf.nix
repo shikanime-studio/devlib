@@ -14,14 +14,21 @@ let
   resolvePlugin =
     pluginCfg:
     if pluginCfg ? package then
-      (removeAttrs pluginCfg [ "package" ])
+      let
+        exe = getExe pluginCfg.package;
+      in
+      (removeAttrs pluginCfg [
+        "package"
+        "plugin"
+        "remote"
+      ])
       // {
-        path = getExe pluginCfg.package;
+        local = exe;
       }
     else
       pluginCfg;
 
-  generate =
+  genResolved =
     if cfg.generate ? plugins then
       cfg.generate // { plugins = map resolvePlugin cfg.generate.plugins; }
     else
@@ -52,12 +59,13 @@ in
           managed = { enabled = true; };
           plugins = [
             {
+              # Remote plugin
               plugin = "buf.build/protocolbuffers/go";
               out = "gen/go";
             }
             {
+              # Local plugin resolved from a Nix package
               package = pkgs.protoc-gen-go;
-              plugin = "go";
               out = "gen/go";
             }
           ];
@@ -69,7 +77,9 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    files."buf.gen.yaml".yaml = generate;
+    files = {
+      "buf.gen.yaml".yaml = genResolved;
+    };
 
     gitignore.content = [
       "buf.gen.yaml"
