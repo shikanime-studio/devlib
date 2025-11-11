@@ -15,16 +15,16 @@ in
       };
     };
 
-    pre-commit = {
+    git-hooks = {
       enable = mkOption {
         type = types.bool;
         default = true;
-        description = "Enable pre-commit git-hooks.";
+        description = "Enable git-hooks git-hooks.";
       };
       shell = mkOption {
         type = types.str;
         default = "default";
-        description = "Shell name to read pre-commit git-hooks configuration from.";
+        description = "Shell name to read git-hooks git-hooks configuration from.";
       };
     };
 
@@ -57,8 +57,8 @@ in
             [ ];
 
         pre-commit.settings =
-          if cfg.pre-commit.enable then
-            (getShell cfg.pre-commit.shell).git-hooks
+          if cfg.git-hooks.enable then
+            (getShell cfg.git-hooks.shell).git-hooks
           else
             { };
 
