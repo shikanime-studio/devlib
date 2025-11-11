@@ -21,16 +21,16 @@
   outputs =
     inputs@{
       devenv,
-      git-hooks,
       flake-parts,
+      git-hooks,
       treefmt-nix,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         devenv.flakeModule
-        treefmt-nix.flakeModule
         git-hooks.flakeModule
+        treefmt-nix.flakeModule
         ./modules/flake/default.nix
       ];
       flake = {
