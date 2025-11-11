@@ -2,6 +2,7 @@
   inputs = {
     devenv.url = "github:cachix/devenv";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    git-hooks.url = "github:cachix/git-hooks.nix";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     treefmt-nix.url = "github:numtide/treefmt-nix";
   };
@@ -19,8 +20,8 @@
 
   outputs =
     inputs@{
-      self,
       devenv,
+      git-hooks,
       flake-parts,
       treefmt-nix,
       ...
@@ -29,52 +30,50 @@
       imports = [
         devenv.flakeModule
         treefmt-nix.flakeModule
+        git-hooks.flakeModule
+        ./modules/flake/default.nix
       ];
       flake = {
         devenvModule = ./modules/devenv/default.nix;
         homeManagerModule = ./modules/home/default.nix;
+        flakeModule = ./modules/flake/default.nix;
       };
       perSystem =
         { pkgs, ... }:
         {
-          treefmt = {
-            projectRootFile = "flake.nix";
-            enableDefaultExcludes = true;
-            programs = {
-              nixfmt.enable = true;
-              prettier.enable = true;
-              shfmt.enable = true;
-              statix.enable = true;
+          devenv.shells.default = {
+            git-hooks.enable = true;
+            containers = pkgs.lib.mkForce { };
+            languages = {
+              nix.enable = true;
+              shell.enable = true;
             };
-            settings.global.excludes = [
-              ".devenv/*"
-              ".direnv/*"
-              ".sl/*"
-              "LICENSE"
+            cachix = {
+              enable = true;
+              push = "shikanime";
+            };
+            github.enable = true;
+            gitignore = {
+              enable = true;
+              enableDefaultTemplates = true;
+            };
+            packages = [
+              pkgs.sapling
             ];
-          };
-          devenv = {
-            modules = [
-              self.devenvModule
-            ];
-            shells.default = {
-              containers = pkgs.lib.mkForce { };
-              languages = {
-                nix.enable = true;
-                shell.enable = true;
+            treefmt = {
+              enable = true;
+              config = {
+                enableDefaultExcludes = true;
+                programs = {
+                  nixfmt.enable = true;
+                  prettier.enable = true;
+                  shfmt.enable = true;
+                  statix.enable = true;
+                };
+                settings.global.excludes = [
+                  "LICENSE"
+                ];
               };
-              cachix = {
-                enable = true;
-                push = "shikanime";
-              };
-              github.enable = true;
-              gitignore = {
-                enable = true;
-                enableDefaultTemplates = true;
-              };
-              packages = [
-                pkgs.sapling
-              ];
             };
           };
         };

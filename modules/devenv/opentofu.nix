@@ -15,5 +15,6 @@ in
     gitignore.templates = [
       "tt:terraform"
     ];
+    treefmt.config.programs.terraform.enable = true;
   };
 }

@@ -14,5 +14,6 @@ in
     gitignore.templates = [
       "tt:deno"
     ];
+    treefmt.config.programs.deno.enable = true;
   };
 }

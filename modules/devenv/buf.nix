@@ -92,5 +92,7 @@ in
         ${getExe cfg.package} generate
       '';
     };
+
+    treefmt.config.programs.yamlfmt.enable = true;
   };
 }
