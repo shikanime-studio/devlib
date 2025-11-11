@@ -33,16 +33,16 @@ in
       example = literalExpression ''
         {
           version = "v2";
-          managed = {
-            enabled = true;
-          };
+          managed = { enabled = true; };
           plugins = [
             {
+              # Remote plugin example
               plugin = "buf.build/protocolbuffers/go";
               out = "gen/go";
             }
             {
-              plugin = "buf.build/grpc/go";
+              package = pkgs.protoc-gen-go;
+              plugin = "go";
               out = "gen/go";
             }
           ];
@@ -54,8 +54,22 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    files = {
-      "buf.gen.yaml".yaml = cfg.generate;
+    files = let
+      resolvePlugin = pluginCfg:
+        if pluginCfg ? package then
+          (lib.removeAttrs pluginCfg [ "package" ]) // {
+            path = getExe pluginCfg.package;
+          }
+        else
+          pluginCfg;
+
+      generateResolved =
+        if cfg.generate ? plugins then
+          cfg.generate // { plugins = map resolvePlugin cfg.generate.plugins; }
+        else
+          cfg.generate;
+    in {
+      "buf.gen.yaml".yaml = generateResolved;
     };
 
     gitignore.content = [

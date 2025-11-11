@@ -78,13 +78,13 @@ in
     packages = [ cfg.package ];
 
     tasks = mkIf (templates != [ ] || cfg.content != [ ]) {
-      "devlib:gitignore" = {
+      "devlib:gitignore:install" = {
         before = [ "devenv:enterShell" ];
         description = "Generate .gitignore from templates and content";
         exec = ''
           gitignoreContent=""
           ${optionalString (templates != [ ]) ''
-            gitignoreContent="$gitignoreContent$(${cfg.package}/bin/gitnr create ${concatStringsSep " " templates} 2>/dev/null)"
+            gitignoreContent="$gitignoreContent$(${getExe cfg.package} create ${concatStringsSep " " templates} 2>/dev/null)"
           ''}
           ${optionalString (cfg.content != [ ]) ''
             header=$'###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n'
