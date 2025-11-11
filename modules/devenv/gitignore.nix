@@ -78,7 +78,7 @@ in
     packages = [ cfg.package ];
 
     tasks = mkIf (templates != [ ] || cfg.content != [ ]) {
-      "devlib:gitignore" = {
+      "devlib:gitignore:install" = {
         before = [ "devenv:enterShell" ];
         description = "Generate .gitignore from templates and content";
         exec = ''
