@@ -50,23 +50,12 @@ in
         getShell = name: if hasAttr name shells then shells.${name} else shells.default;
       in
       {
-        devenv.modules =
-          if cfg.devenv.enable then
-            [ ../devenv/default.nix ]
-          else
-            [ ];
+        devenv.modules = if cfg.devenv.enable then [ ../devenv/default.nix ] else [ ];
 
         pre-commit.settings =
-          if cfg.git-hooks.enable then
-            (getShell cfg.git-hooks.shell).git-hooks
-          else
-            { };
+          if cfg.git-hooks.enable then (getShell cfg.git-hooks.shell).git-hooks else { };
 
-        treefmt =
-          if cfg.treefmt.enable then
-            (getShell cfg.treefmt.shell).treefmt.config
-          else
-            { };
+        treefmt = if cfg.treefmt.enable then (getShell cfg.treefmt.shell).treefmt.config else { };
       };
   };
 }

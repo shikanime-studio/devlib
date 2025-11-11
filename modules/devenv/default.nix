@@ -12,5 +12,6 @@
     ./nix.nix
     ./opentofu.nix
     ./shell.nix
+    ./treefmt.nix
   ];
 }
