@@ -7,16 +7,30 @@ let
 in
 {
   options.devlib = {
-    pre-commit.shell = mkOption {
-      type = types.str;
-      default = "default";
-      description = "Shell name to read pre-commit git-hooks configuration from.";
+    pre-commit = {
+      enable = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Enable pre-commit git-hooks.";
+      };
+      shell = mkOption {
+        type = types.str;
+        default = "default";
+        description = "Shell name to read pre-commit git-hooks configuration from.";
+      };
     };
 
-    treefmt.shell = mkOption {
-      type = types.str;
-      default = "default";
-      description = "Shell name to read treefmt configuration from.";
+    treefmt = {
+      enable = mkOption {
+        type = types.bool;
+        default = false;
+        description = "Enable treefmt.";
+      };
+      shell = mkOption {
+        type = types.str;
+        default = "default";
+        description = "Shell name to read treefmt configuration from.";
+      };
     };
   };
 
@@ -29,8 +43,8 @@ in
       in
       {
         devenv.modules = [ ../devenv/default.nix ];
-        pre-commit.settings = (getShell cfg.pre-commit.shell).git-hooks;
-        treefmt = (getShell cfg.treefmt.shell).treefmt.config;
+        pre-commit.settings = if cfg.pre-commit.enable then (getShell cfg.pre-commit.shell).git-hooks else { };
+        treefmt = if cfg.treefmt.enable then (getShell cfg.treefmt.shell).treefmt.config else { };
       };
   };
 }
