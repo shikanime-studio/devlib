@@ -43,9 +43,18 @@ in
       in
       {
         devenv.modules = [ ../devenv/default.nix ];
+
         pre-commit.settings =
-          if cfg.pre-commit.enable then (getShell cfg.pre-commit.shell).git-hooks else { };
-        treefmt = if cfg.treefmt.enable then (getShell cfg.treefmt.shell).treefmt.config else { };
+          if cfg.pre-commit.enable then
+            (getShell cfg.pre-commit.shell).git-hooks
+          else
+            { };
+
+        treefmt =
+          if cfg.treefmt.enable then
+            (getShell cfg.treefmt.shell).treefmt.config
+          else
+            { };
       };
   };
 }
