@@ -10,7 +10,7 @@ in
     pre-commit = {
       enable = mkOption {
         type = types.bool;
-        default = false;
+        default = true;
         description = "Enable pre-commit git-hooks.";
       };
       shell = mkOption {
@@ -23,7 +23,7 @@ in
     treefmt = {
       enable = mkOption {
         type = types.bool;
-        default = false;
+        default = true;
         description = "Enable treefmt.";
       };
       shell = mkOption {
