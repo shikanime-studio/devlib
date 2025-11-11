@@ -15,6 +15,9 @@ in
     gitignore.templates = [
       "tt:terraform"
     ];
-    treefmt.config.programs.terraform.enable = true;
+    treefmt.config.programs = {
+      hclfmt.enable = true;
+      terraform.enable = true;
+    };
   };
 }
