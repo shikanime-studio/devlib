@@ -36,7 +36,6 @@ in
           managed = { enabled = true; };
           plugins = [
             {
-              # Remote plugin example
               plugin = "buf.build/protocolbuffers/go";
               out = "gen/go";
             }
