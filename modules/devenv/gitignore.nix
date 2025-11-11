@@ -84,7 +84,7 @@ in
         exec = ''
           gitignoreContent=""
           ${optionalString (templates != [ ]) ''
-            gitignoreContent="$gitignoreContent$(${lib.getExe cfg.package} create ${concatStringsSep " " templates} 2>/dev/null)"
+            gitignoreContent="$gitignoreContent$(${getExe cfg.package} create ${concatStringsSep " " templates} 2>/dev/null)"
           ''}
           ${optionalString (cfg.content != [ ]) ''
             header=$'###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n'
