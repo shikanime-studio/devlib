@@ -21,25 +21,7 @@ in
       description = "Buf CLI package to expose in the dev shell.";
     };
 
-    settings = mkOption {
-      type = types.submodule {
-        freeformType = yamlFormat.type;
-      };
-      default = {
-        version = "v2";
-      };
-      description = "Contents of buf.yaml.";
-      example = literalExpression ''
-        {
-          version = "v2";
-          deps = [ "buf.build/googleapis/googleapis" ];
-          breaking = { use = [ "FILE" ]; };
-          lint = { use = [ "DEFAULT" ]; };
-        }
-      '';
-    };
-
-    gen = mkOption {
+    generate = mkOption {
       type = types.submodule {
         freeformType = yamlFormat.type;
       };
@@ -73,12 +55,10 @@ in
     packages = [ cfg.package ];
 
     files = {
-      "buf.yaml".yaml = cfg.settings;
-      "buf.gen.yaml".yaml = cfg.gen;
+      "buf.gen.yaml".yaml = cfg.generate;
     };
 
     gitignore.content = [
-      "buf.yaml"
       "buf.gen.yaml"
     ];
 
