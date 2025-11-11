@@ -7,6 +7,14 @@ let
 in
 {
   options.devlib = {
+    devenv = {
+      enable = mkOption {
+        type = types.bool;
+        default = true;
+        description = "Enable devenv.";
+      };
+    };
+
     pre-commit = {
       enable = mkOption {
         type = types.bool;
@@ -42,7 +50,11 @@ in
         getShell = name: if hasAttr name shells then shells.${name} else shells.default;
       in
       {
-        devenv.modules = [ ../devenv/default.nix ];
+        devenv.modules =
+          if cfg.devenv.enable then
+            [ ../devenv/default.nix ]
+          else
+            [ ];
 
         pre-commit.settings =
           if cfg.pre-commit.enable then
