@@ -3,6 +3,7 @@
     ./air.nix
     ./buf.nix
     ./deno.nix
+    ./docker.nix
     ./git-hooks.nix
     ./github.nix
     ./gitignore.nix

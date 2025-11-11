@@ -93,6 +93,6 @@ in
       '';
     };
 
-    treefmt.config.programs.yamlfmt.enable = true;
+    treefmt.config.programs.buf.enable = true;
   };
 }
