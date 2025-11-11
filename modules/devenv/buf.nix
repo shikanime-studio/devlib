@@ -21,51 +21,48 @@ in
       description = "Buf CLI package to expose in the dev shell.";
     };
 
-    config = mkOption {
+    settings = mkOption {
       type = types.submodule {
-        freeformType = yamlFormat.type;
-      };
-      default = {
-        version = "v2";
-      };
-      description = "Contents of buf.yaml.";
-      example = literalExpression ''
-        {
-          version = "v2";
-          deps = [ "buf.build/googleapis/googleapis" ];
-          breaking = { use = [ "FILE" ]; };
-          lint = { use = [ "DEFAULT" ]; };
-        }
-      '';
-    };
-
-    gen = mkOption {
-      type = types.submodule {
-        freeformType = yamlFormat.type;
-      };
-      default = {
-        version = "v2";
-        plugins = [ ];
-      };
-      description = "Contents of buf.gen.yaml.";
-      example = literalExpression ''
-        {
-          version = "v2";
-          managed = {
-            enabled = true;
+        options = {
+          config = mkOption {
+            type = types.submodule { freeformType = yamlFormat.type; };
+            default = { version = "v2"; };
+            description = "Contents of buf.yaml.";
+            example = literalExpression ''
+              {
+                version = "v2";
+                deps = [ "buf.build/googleapis/googleapis" ];
+                breaking = { use = [ "FILE" ]; };
+                lint = { use = [ "DEFAULT" ]; };
+              }
+            '';
           };
-          plugins = [
-            {
-              plugin = "buf.build/protocolbuffers/go";
-              out = "gen/go";
-            }
-            {
-              plugin = "buf.build/grpc/go";
-              out = "gen/go";
-            }
-          ];
-        }
-      '';
+
+          gen = mkOption {
+            type = types.submodule { freeformType = yamlFormat.type; };
+            default = {
+              version = "v2";
+              plugins = [ ];
+            };
+            description = "Contents of buf.gen.yaml.";
+            example = literalExpression ''
+              {
+                version = "v2";
+                managed = { enabled = true; };
+                plugins = [
+                  { plugin = "buf.build/protocolbuffers/go"; out = "gen/go"; }
+                  { plugin = "buf.build/grpc/go"; out = "gen/go"; }
+                ];
+              }
+            '';
+          };
+        };
+      };
+      default = {
+        config = { version = "v2"; };
+        gen = { version = "v2"; plugins = [ ]; };
+      };
+      description = "Buf settings including buf.yaml and buf.gen.yaml.";
     };
   };
 
@@ -73,21 +70,13 @@ in
     packages = [ cfg.package ];
 
     files = {
-      "buf.yaml".yaml = cfg.config;
-      "buf.gen.yaml".yaml = cfg.gen;
+      "buf.yaml".yaml = cfg.settings.config;
+      "buf.gen.yaml".yaml = cfg.settings.gen;
     };
 
     gitignore.content = [
       "buf.yaml"
       "buf.gen.yaml"
     ];
-
-    tasks."devlib:buf:generate" = {
-      description = "Run buf generate with buf.gen.yaml";
-      before = [ "devenv:enterShell" ];
-      exec = ''
-        ${lib.getExe cfg.package} generate
-      '';
-    };
   };
 }
