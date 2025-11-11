@@ -19,6 +19,9 @@ in
         "tt:go"
       ];
     };
-    treefmt.config.programs.gofmt.enable = true;
+    treefmt.config.programs = {
+      gofmt.enable = true;
+      golines.enable = true;
+    };
   };
 }

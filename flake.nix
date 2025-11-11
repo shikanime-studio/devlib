@@ -64,12 +64,7 @@
               enable = true;
               config = {
                 enableDefaultExcludes = true;
-                programs = {
-                  nixfmt.enable = true;
-                  prettier.enable = true;
-                  shfmt.enable = true;
-                  statix.enable = true;
-                };
+                programs.prettier.enable = true;
                 settings.global.excludes = [
                   "LICENSE"
                 ];
