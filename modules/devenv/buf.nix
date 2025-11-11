@@ -81,5 +81,13 @@ in
       "buf.yaml"
       "buf.gen.yaml"
     ];
+
+    tasks."devlib:buf:generate" = {
+      description = "Run buf generate with buf.gen.yaml";
+      before = [ "devenv:enterShell" ];
+      exec = ''
+        ${lib.getExe cfg.package} generate
+      '';
+    };
   };
 }
