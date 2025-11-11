@@ -1,6 +1,7 @@
 {
   imports = [
     ./air.nix
+    ./buf.nix
     ./deno.nix
     ./git-hooks.nix
     ./github.nix
