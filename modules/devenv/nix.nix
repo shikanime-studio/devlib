@@ -20,7 +20,7 @@ in
         name = "nix-fmt";
         description = "Format Nix files using the formatter specified in your flake.";
         package = pkgs.nix;
-        entry = "${lib.getExe pkgs.nix} fmt";
+        entry = "${getExe pkgs.nix} fmt";
       };
     };
     gitignore.templates = [
