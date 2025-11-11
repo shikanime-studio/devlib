@@ -19,5 +19,6 @@ in
         "tt:go"
       ];
     };
+    treefmt.config.programs.gofmt.enable = true;
   };
 }

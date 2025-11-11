@@ -19,5 +19,9 @@ in
       "gh:Nix"
       "repo:shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore"
     ];
+    treefmt.config.programs = {
+      nixfmt.enable = true;
+      statix.enable = true;
+    };
   };
 }

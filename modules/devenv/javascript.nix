@@ -14,5 +14,6 @@ in
     gitignore.templates = [
       "tt:node"
     ];
+    treefmt.config.programs.prettier.enable = true;
   };
 }
