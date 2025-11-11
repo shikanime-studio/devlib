@@ -10,6 +10,22 @@ with lib;
 let
   cfg = config.buf;
   yamlFormat = pkgs.formats.yaml { };
+
+  resolvePlugin =
+    pluginCfg:
+    if pluginCfg ? package then
+      (removeAttrs pluginCfg [ "package" ])
+      // {
+        path = getExe pluginCfg.package;
+      }
+    else
+      pluginCfg;
+
+  generate =
+    if cfg.generate ? plugins then
+      cfg.generate // { plugins = map resolvePlugin cfg.generate.plugins; }
+    else
+      cfg.generate;
 in
 {
   options.buf = {
@@ -53,23 +69,7 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    files = let
-      resolvePlugin = pluginCfg:
-        if pluginCfg ? package then
-          (lib.removeAttrs pluginCfg [ "package" ]) // {
-            path = getExe pluginCfg.package;
-          }
-        else
-          pluginCfg;
-
-      generateResolved =
-        if cfg.generate ? plugins then
-          cfg.generate // { plugins = map resolvePlugin cfg.generate.plugins; }
-        else
-          cfg.generate;
-    in {
-      "buf.gen.yaml".yaml = generateResolved;
-    };
+    files."buf.gen.yaml".yaml = generate;
 
     gitignore.content = [
       "buf.gen.yaml"
@@ -79,7 +79,7 @@ in
       description = "Run buf generate with buf.gen.yaml";
       before = [ "devenv:enterShell" ];
       exec = ''
-        ${lib.getExe cfg.package} generate
+        ${getExe cfg.package} generate
       '';
     };
   };
