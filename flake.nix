@@ -37,6 +37,10 @@
         devenvModule = ./modules/devenv/default.nix;
         homeManagerModule = ./modules/home/default.nix;
         flakeModule = ./modules/flake/default.nix;
+        templates.default = {
+          path = ./templates/default;
+          description = "A direnv supported Nix flake with devenv integration.";
+        };
       };
       perSystem =
         { pkgs, ... }:
