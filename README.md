@@ -1,24 +1,11 @@
 # Devlib
 
 Devlib is a collection of Nix flake modules that bootstrap a consistent,
-reproducible developer experience using `devenv` and `flake-parts`. It provides
-declarative generators for common development workflows and config files.
+reproducible developer experience using `devenv`, `git-hooks` and `treefmt`. It
+provides declarative generators for common development workflows and config
+files.
 
-- Provides `flake.devenvModule` for plug-and-play integration.
-- Modules:
-  - `air` — Generates `.air.toml` and installs `pkgs.air` for Go hot-reload.
-  - `github` — Declaratively generates GitHub Actions workflows under
-    `.github/workflows/`.
-  - `gitignore` — Builds `.gitignore` from templates and custom content via
-    `gitnr`.
-
-## Prerequisites
-
-- `nix` with flakes enabled and recent version (recommended `nix >= 2.18`).
-- `devenv` (flakes module), `direnv` optional but recommended.
-- Optional: `nu` if you plan to run `update.nu`.
-
-## Quick Start (Consumer)
+## Quick Start
 
 Add devlib to your flake and hook up the provided `devenvModule`.
 
@@ -76,21 +63,21 @@ Example:
 ```nix
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
     devenv.url = "github:cachix/devenv";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
-    git-hooks.url = "github:cachix/git-hooks.nix";
     devlib.url = "github:shikanime-studio/devlib";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    git-hooks.url = "github:cachix/git-hooks.nix";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         inputs.devenv.flakeModule
-        inputs.treefmt-nix.flakeModule
-        inputs.git-hooks.flakeModule
         inputs.devlib.flakeModule
+        inputs.git-hooks.flakeModule
+        inputs.treefmt-nix.flakeModule
       ];
 
       perSystem = { pkgs, ... }: {
