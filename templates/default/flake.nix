@@ -40,9 +40,10 @@
       perSystem =
         { pkgs, ... }:
         {
-          # devenv.shells.default = {
-          #   languages.nix.enable = true;
-          # };
+          devenv.shells.default.languages = {
+            nix.enable = true;
+            shell.enable = true;
+          };
         };
       systems = [
         "x86_64-linux"
