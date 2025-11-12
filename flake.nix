@@ -8,13 +8,15 @@
   };
 
   nixConfig = {
-    extra-public-keys = [
-      "shikanime.cachix.org-1:OrpjVTH6RzYf2R97IqcTWdLRejF6+XbpFNNZJxKG8Ts="
-      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
-    ];
     extra-substituters = [
-      "https://shikanime.cachix.org"
+      "https://cachix.cachix.org"
       "https://devenv.cachix.org"
+      "https://shikanime.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
+      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+      "shikanime.cachix.org-1:OrpjVTH6RzYf2R97IqcTWdLRejF6+XbpFNNZJxKG8Ts="
     ];
   };
 
@@ -37,6 +39,10 @@
         devenvModule = ./modules/devenv/default.nix;
         homeManagerModule = ./modules/home/default.nix;
         flakeModule = ./modules/flake/default.nix;
+        templates.default = {
+          path = ./templates/default;
+          description = "A direnv supported Nix flake with devenv integration.";
+        };
       };
       perSystem =
         { pkgs, ... }:

@@ -53,7 +53,8 @@ Add devlib to your flake and hook up the provided `devenvModule`.
 
 ## Flake Module
 
-Use the flake module to route formatting and Git hooks settings from a chosen `devenv.shell` into top-level `treefmt` and `pre-commit` outputs.
+Use the flake module to route formatting and Git hooks settings from a chosen
+`devenv.shell` into top-level `treefmt` and `pre-commit` outputs.
 
 - Add the module to imports: `inputs.devlib.flakeModule`.
 - Configure `devlib` options to select the source shell and enable features.
