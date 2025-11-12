@@ -1,9 +1,4 @@
-{
-  config,
-  inputs,
-  lib,
-  ...
-}:
+{ config, lib, ... }:
 
 with lib;
 
@@ -15,7 +10,7 @@ in
     devenv = {
       enable = mkOption {
         type = types.bool;
-        default = inputs.devenv != null;
+        default = true;
         description = "Enable devenv.";
       };
     };
@@ -23,7 +18,7 @@ in
     git-hooks = {
       enable = mkOption {
         type = types.bool;
-        default = inputs.git-hooks != null;
+        default = true;
         description = "Enable git-hooks git-hooks.";
       };
       shell = mkOption {
@@ -36,7 +31,7 @@ in
     treefmt = {
       enable = mkOption {
         type = types.bool;
-        default = inputs.treefmt-nix != null;
+        default = true;
         description = "Enable treefmt.";
       };
       shell = mkOption {
@@ -50,20 +45,17 @@ in
   config = {
     perSystem =
       { config, ... }:
+      let
+        inherit (config.devenv) shells;
+        getShell = name: if hasAttr name shells then shells.${name} else shells.default;
+      in
       {
         devenv.modules = if cfg.devenv.enable then [ ../devenv/default.nix ] else [ ];
 
         pre-commit.settings =
-          if cfg.git-hooks.enable && hasAttr cfg.git-hooks.shell config.devenv.shells then
-            config.devenv.shells.${cfg.git-hooks.shell}.git-hooks
-          else
-            { };
+          if cfg.git-hooks.enable then (getShell cfg.git-hooks.shell).git-hooks else { };
 
-        treefmt =
-          if cfg.treefmt.enable && hasAttr cfg.treefmt.shell config.devenv.shells then
-            config.devenv.shells.${cfg.treefmt.shell}.treefmt.config
-          else
-            { };
+        treefmt = if cfg.treefmt.enable then (getShell cfg.treefmt.shell).treefmt.config else { };
       };
   };
 }
