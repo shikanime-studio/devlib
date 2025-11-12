@@ -37,14 +37,12 @@
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem =
-        { pkgs, ... }:
-        {
-          devenv.shells.default.languages = {
-            nix.enable = true;
-            shell.enable = true;
-          };
+      perSystem = _: {
+        devenv.shells.default.languages = {
+          nix.enable = true;
+          shell.enable = true;
         };
+      };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"
