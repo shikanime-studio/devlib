@@ -93,7 +93,7 @@ in
           ${getExe cfg.package} generate
         '';
       };
-      tasks."devenv:treefmt:run".before = [ "devlib:buf:generate" ];
+      "devenv:treefmt:run".before = [ "devlib:buf:generate" ];
     };
 
     treefmt.config.programs.buf.enable = true;
