@@ -93,7 +93,7 @@ in
           ${getExe cfg.package} generate
         '';
         execIfModified = [
-          "**/*.proto"
+          "*.proto"
           "buf.gen.yaml"
           "buf.lock"
           "buf.yaml"

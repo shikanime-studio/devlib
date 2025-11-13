@@ -22,7 +22,7 @@ in
     tasks."go:tidy" = {
       exec = "${getExe cfg.package} mod tidy";
       execIfModified = [
-        "**/*.go"
+        "*.go"
         "go.mod"
         "go.sum"
       ];
