@@ -86,6 +86,7 @@ in
     ];
 
     tasks."devlib:buf:generate" = {
+      after = [ "devenv:treefmt:run" ];
       description = "Run buf generate with buf.gen.yaml";
       before = [ "devenv:enterShell" ];
       exec = ''
