@@ -92,12 +92,6 @@ in
         exec = ''
           ${getExe cfg.package} generate
         '';
-        execIfModified = [
-          "*.proto"
-          "buf.gen.yaml"
-          "buf.lock"
-          "buf.yaml"
-        ];
       };
       "devenv:treefmt:run".after = [ "devlib:buf:generate" ];
     };
