@@ -10,13 +10,6 @@ with lib;
 let
   cfg = config.treefmt;
 
-  inputArgs = {
-    name = "treefmt-nix";
-    url = "github:numtide/treefmt-nix";
-    attribute = "treefmt";
-    follows = [ "nixpkgs" ];
-  };
-
   treeRoot = if config.git.root != null then config.git.root else config.devenv.root;
 
   treefmtWrapper =
