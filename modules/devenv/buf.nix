@@ -85,13 +85,15 @@ in
       "buf.gen.yaml"
     ];
 
-    tasks."devlib:buf:generate" = {
-      after = [ "devenv:treefmt:run" ];
-      description = "Run buf generate with buf.gen.yaml";
-      before = [ "devenv:enterShell" ];
-      exec = ''
-        ${getExe cfg.package} generate
-      '';
+    tasks = {
+      "devlib:buf:generate" = {
+        description = "Run buf generate with buf.gen.yaml";
+        before = [ "devenv:enterShell" ];
+        exec = ''
+          ${getExe cfg.package} generate
+        '';
+      };
+      tasks."devenv:treefmt:run".before = [ "devlib:buf:generate" ];
     };
 
     treefmt.config.programs.buf.enable = true;
