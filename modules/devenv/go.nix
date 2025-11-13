@@ -19,6 +19,11 @@ in
         "tt:go"
       ];
     };
+    tasks."devlib:go:tidy" = {
+      description = "Run go mod tidy";
+      before = [ "devenv:enterShell" ];
+      exec = "${pkgs.lib.getExe pkgs.go} mod tidy";
+    };
     treefmt.config.programs = {
       gofmt.enable = true;
       golines.enable = true;
