@@ -59,22 +59,13 @@
               push = "shikanime";
             };
             github.enable = true;
-            gitignore = {
-              enable = true;
-              enableDefaultTemplates = true;
-            };
+            gitignore.enable = true;
             packages = [
               pkgs.sapling
             ];
             treefmt = {
               enable = true;
-              config = {
-                enableDefaultExcludes = true;
-                programs.prettier.enable = true;
-                settings.global.excludes = [
-                  "LICENSE"
-                ];
-              };
+              config.programs.prettier.enable = true;
             };
           };
         };
