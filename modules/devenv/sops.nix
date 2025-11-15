@@ -30,7 +30,7 @@ in
         before = [ "devenv:enterShell" ];
         exec = ''
           find . -type f -name "*.enc.*" -print0 | while IFS= read -r -d '' f; do
-            ${pkgs.lib.getExe cfg.package} updatekeys "$f"
+            ${getExe cfg.package} updatekeys "$f"
           done
         '';
       };
