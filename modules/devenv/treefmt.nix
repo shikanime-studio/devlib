@@ -26,8 +26,6 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.treefmt.enable = true;
-
     tasks."devenv:treefmt:run".exec = "${treefmtWrapper}/bin/treefmt";
   };
 }
