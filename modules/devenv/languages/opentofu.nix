@@ -11,8 +11,6 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.tflint.enable = true;
-
     gitignore.templates = [
       "tt:terraform"
     ];
