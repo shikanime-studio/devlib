@@ -9,7 +9,6 @@ with lib;
 
 let
   cfg = config.sops;
-  yamlFormat = pkgs.formats.yaml { };
 in
 {
   options.sops = {
