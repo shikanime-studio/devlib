@@ -1,6 +1,7 @@
 {
   inputs = {
     devenv.url = "github:cachix/devenv";
+    devlib.url = "github:shikanime-studio/devlib";
     flake-parts.url = "github:hercules-ci/flake-parts";
     git-hooks.url = "github:cachix/git-hooks.nix";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -23,6 +24,7 @@
   outputs =
     inputs@{
       devenv,
+      devlib,
       flake-parts,
       git-hooks,
       treefmt-nix,
@@ -31,26 +33,13 @@
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         devenv.flakeModule
+        devlib.flakeModule
         git-hooks.flakeModule
         treefmt-nix.flakeModule
-        ./modules/flake/default.nix
       ];
-      flake = {
-        devenvModule = ./modules/devenv/default.nix;
-        devenvModules.shikanime-studio = ./modules/devenv/shikanime-studio.nix;
-
-        homeManagerModule = ./modules/home/default.nix;
-
-        flakeModule = ./modules/flake/default.nix;
-
-        templates.default = {
-          path = ./templates/default;
-          description = "A direnv supported Nix flake with devenv integration.";
-        };
-      };
       perSystem = _: {
         devenv.shells.default.imports = [
-          ./modules/devenv/shikanime-studio.nix
+          devlib.devenvModules.shikanime-studio
         ];
       };
       systems = [

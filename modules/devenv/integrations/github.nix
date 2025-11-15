@@ -77,8 +77,9 @@ in
     packages = [ cfg.package ];
 
     files = mkMerge [
-      (mapAttrs (name: workflowCfg: {
-        ".github/workflows/${name}.yaml".yaml = workflowCfg.settings;
+      (mapAttrs' (name: workflowCfg: {
+        name = ".github/workflows/${name}.yaml";
+        value.yaml = workflowCfg.settings;
       }) cfg.workflows)
     ];
 
