@@ -29,7 +29,7 @@ in
         description = "Run sops updatekeys";
         before = [ "devenv:enterShell" ];
         exec = ''
-          ${getExe findutils} . -type f -name "*.enc.*" -print0 | while IFS= read -r -d ''' f; do
+          ${getExe pkgs.findutils} . -type f -name "*.enc.*" -print0 | while IFS= read -r -d ''' f; do
             ${getExe cfg.package} updatekeys "$f"
           done
         '';
