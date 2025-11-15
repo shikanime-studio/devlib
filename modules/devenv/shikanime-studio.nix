@@ -6,6 +6,8 @@
     push = "shikanime-studio";
   };
 
+  containers = pkgs.lib.mkForce { };
+
   docker.enable = true;
 
   github = {
