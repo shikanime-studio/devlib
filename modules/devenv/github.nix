@@ -84,6 +84,6 @@ in
 
     git-hooks.hooks.actionlint.enable = true;
 
-    treefmt.config.programs.yamlfmt.enable = true;
+    treefmt.config.programs.prettier.enable = true;
   };
 }
