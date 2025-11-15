@@ -22,15 +22,17 @@ in
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ cfg.package ];
+    home = {
+      packages = [ cfg.package ];
 
-    home.sessionPath = [
-      "${config.xdg.configHome}/cargo/bin"
-    ];
+      sessionPath = [
+        "${config.xdg.configHome}/cargo/bin"
+      ];
 
-    home.sessionVariables = {
-      CARGO_HOME = "${config.xdg.configHome}/cargo";
-      RUSTUP_HOME = "${config.xdg.configHome}/rustup";
+      sessionVariables = {
+        CARGO_HOME = "${config.xdg.configHome}/cargo";
+        RUSTUP_HOME = "${config.xdg.configHome}/rustup";
+      };
     };
   };
 }
