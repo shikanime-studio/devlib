@@ -26,6 +26,7 @@ in
     packages = [ cfg.package ];
 
     tasks = {
+      "devenv:treefmt:run".after = [ "devlib:sops:updatekeys" ];
       "devlib:sops:updatekeys" = {
         description = "Run sops updatekeys";
         before = [ "devenv:enterShell" ];
@@ -35,7 +36,6 @@ in
           done
         '';
       };
-      "devenv:treefmt:run".after = [ "devlib:sops:updatekeys" ];
     };
 
     treefmt.config.programs = {
