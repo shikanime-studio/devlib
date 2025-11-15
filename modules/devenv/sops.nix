@@ -29,8 +29,8 @@ in
         description = "Run sops updatekeys";
         before = [ "devenv:enterShell" ];
         exec = ''
-          for f in *.enc.*; do
-            ${getExe cfg.package} updatekeys "$f"
+          find . -type f -name "*.enc.*" -print0 | while IFS= read -r -d '' f; do
+            ${pkgs.lib.getExe cfg.package} updatekeys "$f"
           done
         '';
       };
