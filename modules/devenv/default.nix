@@ -8,7 +8,6 @@
     ./github.nix
     ./gitignore.nix
     ./go.nix
-    ./rust.nix
     ./javascript.nix
     ./nix.nix
     ./opentofu.nix
