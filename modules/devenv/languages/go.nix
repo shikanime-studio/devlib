@@ -12,8 +12,6 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.govet.enable = true;
-
     gitignore = {
       content = [
         "__debug_bin*"
