@@ -38,9 +38,13 @@
         treefmt-nix.flakeModule
       ];
       perSystem = _: {
-        devenv.shells.default.languages = {
-          nix.enable = true;
-          shell.enable = true;
+        devenv.shells.default = {
+          gitignore.enable = true;
+          languages = {
+            nix.enable = true;
+            shell.enable = true;
+          };
+          treefmt.enable = true;
         };
       };
       systems = [
