@@ -46,7 +46,7 @@ in
 
     enableDefaultTemplates = mkOption {
       type = types.bool;
-      default = false;
+      default = true;
       description = "Prepend a sensible default set of TopTal templates.";
     };
 
