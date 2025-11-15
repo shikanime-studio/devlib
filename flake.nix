@@ -48,13 +48,11 @@
           description = "A direnv supported Nix flake with devenv integration.";
         };
       };
-      perSystem =
-        { self', pkgs, ... }:
-        {
-          devenv.shells.default.imports = [
-            ./modules/devenv/shikanime-studio.nix
-          ];
-        };
+      perSystem = _: {
+        devenv.shells.default.imports = [
+          ./modules/devenv/shikanime-studio.nix
+        ];
+      };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"
