@@ -1,19 +1,19 @@
 {
   imports = [
-    ./air.nix
-    ./buf.nix
-    ./deno.nix
-    ./docker.nix
-    ./git-hooks.nix
-    ./github.nix
-    ./gitignore.nix
-    ./go.nix
-    ./rust.nix
-    ./javascript.nix
-    ./nix.nix
-    ./opentofu.nix
-    ./shell.nix
-    ./sops.nix
-    ./treefmt.nix
+    ./integrations/air.nix
+    ./integrations/buf.nix
+    ./integrations/docker.nix
+    ./integrations/git-hooks.nix
+    ./integrations/github.nix
+    ./integrations/gitignore.nix
+    ./integrations/sops.nix
+    ./integrations/treefmt.nix
+    ./languages/deno.nix
+    ./languages/go.nix
+    ./languages/javascript.nix
+    ./languages/nix.nix
+    ./languages/opentofu.nix
+    ./languages/rust.nix
+    ./languages/shell.nix
   ];
 }
