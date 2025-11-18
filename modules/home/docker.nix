@@ -12,13 +12,9 @@ let
 in
 {
   config = mkIf cfg.enable {
-    programs.docker-cli.configDir = "${config.xdg.configHome}/docker";
-
-    xdg.configFile."docker/config.json".source =
-      let
-        format = pkgs.formats.json { };
-      in
-      format.generate "config.json" {
+    programs.docker-cli = {
+      configDir = "${config.xdg.configHome}/docker";
+      settings = {
         auths = {
           "asia.gcr.io" = { };
           "eu.gcr.io" = { };
@@ -28,5 +24,6 @@ in
         };
         credsStore = "secretservice";
       };
+    };
   };
 }
