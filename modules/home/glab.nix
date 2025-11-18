@@ -12,6 +12,6 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git.settings.credential."https://gitlab.com".helper = "${getExe pkgs.glab} auth git-credential";
+    programs.git.settings.credential."https://gitlab.com".helper = "${getExe pkgs.glab} auth git-credential";
   };
 }
