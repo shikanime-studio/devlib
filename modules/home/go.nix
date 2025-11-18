@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -12,5 +17,13 @@ in
     ];
 
     programs.go.env.GOPATH = "${config.xdg.dataHome}/go";
+
+    home.packages = [
+      pkgs.gopls
+      pkgs.gotests
+      pkgs.impl
+      pkgs.delve
+      pkgs.go-tools
+    ];
   };
 }
