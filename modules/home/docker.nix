@@ -8,7 +8,7 @@
 with lib;
 
 let
-  cfg = config.programs.dokcer-cli;
+  cfg = config.programs.docker-cli;
 in
 {
   config = mkIf cfg.enable {
