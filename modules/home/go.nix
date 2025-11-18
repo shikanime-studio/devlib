@@ -16,7 +16,10 @@ in
       "${config.xdg.dataHome}/go/bin"
     ];
 
-    programs.go.env.GOPATH = "${config.xdg.dataHome}/go";
+    programs.go = {
+      env.GOPATH = "${config.xdg.dataHome}/go";
+      telemetry.mode = "off";
+    };
 
     home.packages = [
       pkgs.gopls
