@@ -14,15 +14,12 @@ in
   config = mkIf cfg.enable {
     programs.docker-cli = {
       configDir = "${config.xdg.configHome}/docker";
-      settings = {
-        auths = {
-          "asia.gcr.io" = { };
-          "eu.gcr.io" = { };
-          "gcr.io" = { };
-          "ghcr.io" = { };
-          "us.gcr.io" = { };
-        };
-        credsStore = "secretservice";
+      settings.auths = {
+        "asia.gcr.io" = { };
+        "eu.gcr.io" = { };
+        "gcr.io" = { };
+        "ghcr.io" = { };
+        "us.gcr.io" = { };
       };
     };
   };
