@@ -11,7 +11,7 @@ let
   cfg = config.programs.dokcer-cli;
 in
 {
-  config = mkIf (cfg.enable || cfg.rootless.enable) {
+  config = mkIf cfg.enable {
     programs.docker-cli.configDir = "${config.xdg.configHome}/docker";
 
     xdg.configFile."docker/config.json".source =
