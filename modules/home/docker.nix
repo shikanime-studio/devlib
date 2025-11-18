@@ -20,7 +20,11 @@ in
       in
       format.generate "config.json" {
         auths = {
+          "asia.gcr.io" = { };
+          "eu.gcr.io" = { };
+          "gcr.io" = { };
           "ghcr.io" = { };
+          "us.gcr.io" = { };
         };
         credsStore = "secretservice";
       };
