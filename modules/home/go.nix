@@ -8,7 +8,7 @@ in
 {
   config = mkIf cfg.enable {
     home.sessionPath = [
-      "${config.home.homeDirectory}/.local/share/go/bin"
+      "${config.xdg.dataHome}/go/bin"
     ];
 
     programs.go.env.GOPATH = "${config.xdg.dataHome}/go";
