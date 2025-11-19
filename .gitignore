@@ -1,3 +1,23 @@
+###---------------###
+###  GitHub: Nix  ###
+###---------------###
+
+# Ignore build outputs from performing a nix-build or `nix build` command
+result
+result-*
+
+# Ignore automatically generated direnv output
+.direnv
+
+###---------------------------------------------------------------------###
+###  Repo: shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore  ###
+###---------------------------------------------------------------------###
+
+.env
+.env.*
+.devenv*
+.direnv*
+
 ###-------------------------###
 ###  TopTal: jetbrains+all  ###
 ###-------------------------###
@@ -251,26 +271,6 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/windows
-
-###---------------###
-###  GitHub: Nix  ###
-###---------------###
-
-# Ignore build outputs from performing a nix-build or `nix build` command
-result
-result-*
-
-# Ignore automatically generated direnv output
-.direnv
-
-###---------------------------------------------------------------------###
-###  Repo: shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore  ###
-###---------------------------------------------------------------------###
-
-.env
-.env.*
-.devenv*
-.direnv*
 
 ###-------------------###
 ###  Devlib: content  ###

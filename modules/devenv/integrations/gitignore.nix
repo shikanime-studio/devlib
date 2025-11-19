@@ -11,15 +11,25 @@ let
   cfg = config.gitignore;
 
   templates =
-    (optionals cfg.enableDefaultTemplates [
+    cfg.templates
+    ++ optionals cfg.enableDefaultTemplates [
       "tt:jetbrains+all"
       "tt:linux"
       "tt:macos"
       "tt:vim"
       "tt:visualstudiocode"
       "tt:windows"
-    ])
-    ++ cfg.templates;
+    ];
+
+  contentHeader = ''
+    ###-------------------###
+    ###  Devlib: content  ###
+    ###-------------------###
+  '';
+
+  content = concatStringsSep "\n" (
+    optional (cfg.content != [ ]) ("\n" + contentHeader) ++ cfg.content
+  );
 in
 {
   options.gitignore = {
@@ -77,28 +87,11 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    tasks = mkIf (templates != [ ] || cfg.content != [ ]) {
-      "devlib:gitignore:install" = {
-        before = [ "devenv:enterShell" ];
-        description = "Generate .gitignore from templates and content";
-        exec = ''
-          gitignoreContent=""
-          ${optionalString (templates != [ ]) ''
-            gitignoreContent="$gitignoreContent$(${getExe cfg.package} create ${concatStringsSep " " templates} 2>/dev/null)"
-          ''}
-          ${optionalString (cfg.content != [ ]) ''
-            header=$'###-------------------###\n###  Devlib: content  ###\n###-------------------###\n\n'
-            extraText="${concatStringsSep "\n" cfg.content}"
-
-            if [ -n "$gitignoreContent" ]; then
-              gitignoreContent="$gitignoreContent"$'\n\n'
-            fi
-
-            gitignoreContent="$gitignoreContent""$header""$extraText"
-          ''}
-          echo "$gitignoreContent" > "${config.env.DEVENV_ROOT}/.gitignore"
-        '';
-      };
-    };
+    enterShell = mkIf (templates != [ ] || cfg.content != [ ]) ''
+      temp_file=$(${pkgs.coreutils}/bin/mktemp)
+      ${getExe pkgs.gitnr} create ${concatStringsSep " " templates} -f "$temp_file"
+      ${pkgs.coreutils}/bin/echo "${content}" >> "$temp_file"
+      ${pkgs.coreutils}/bin/mv "$temp_file" "${config.env.DEVENV_ROOT}/.gitignore"
+    '';
   };
 }
