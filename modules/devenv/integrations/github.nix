@@ -76,18 +76,12 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    enterShell = concatStringsSep "\n" (
-      mapAttrsToList (
-        name: workflow:
-        let
-          file = settingsFormat.generate "${name}.yaml" workflow.settings;
-        in
-        ''
-          mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
-          cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
-        ''
-      ) cfg.workflows
-    );
+    files = mkMerge [
+      (mapAttrs' (name: workflowCfg: {
+        name = ".github/workflows/${name}.yaml";
+        value.yaml = workflowCfg.settings;
+      }) cfg.workflows)
+    ];
 
     git-hooks.hooks.actionlint.enable = true;
 
