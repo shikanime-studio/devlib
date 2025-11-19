@@ -15,6 +15,10 @@ in
   options.github = {
     enable = mkEnableOption "generation of GitHub Actions workflow files";
 
+    lib = lib.mkOption {
+      type = lib.types.attrsOf lib.types.anything;
+    };
+
     package = mkOption {
       type = types.package;
       default = pkgs.gh;
@@ -76,20 +80,32 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    enterShell = concatStringsSep "\n" (
-      mapAttrsToList (
-        name: workflow:
-        let
-          file = settingsFormat.generate "${name}.yaml" workflow.settings;
-        in
-        ''
-          mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
-          cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
-        ''
-      ) cfg.workflows
-    );
-
     git-hooks.hooks.actionlint.enable = true;
+
+    github.lib = {
+      mkWorkflowRef = name: "\${{ ${name} }}";
+      mkWorkflowRun = args: concatStringsSep " " args;
+    };
+
+    tasks = {
+      "devlib:github:workflows:generate" = {
+        description = "Generate GitHub Actions workflow files";
+        before = [ "devenv:enterShell" ];
+        exec = concatStringsSep "\n" (
+          mapAttrsToList (
+            name: workflow:
+            let
+              file = settingsFormat.generate "${name}.yaml" workflow.settings;
+            in
+            ''
+              mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
+              cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
+            ''
+          ) cfg.workflows
+        );
+      };
+      "devenv:treefmt:run".after = [ "devlib:github:workflows:generate" ];
+    };
 
     treefmt.config.programs.prettier.enable = true;
   };

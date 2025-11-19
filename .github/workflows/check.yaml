@@ -1,12 +1,3 @@
-name: Check
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-      - gh/*/*/base
 jobs:
   check:
     runs-on: ubuntu-latest
@@ -24,8 +15,13 @@ jobs:
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - name: Check Nix Flake
-        run: |
-          nix flake check \
-            --accept-flake-config \
-            --all-systems \
-            --no-pure-eval
+        run: nix flake check --accept-flake-config --all-systems --no-pure-eval
+name: Check
+"on":
+  pull_request:
+    branches:
+      - main
+      - gh/*/*/base
+  push:
+    branches:
+      - main
