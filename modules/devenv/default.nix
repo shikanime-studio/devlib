@@ -7,7 +7,6 @@
     ./integrations/github.nix
     ./integrations/gitignore.nix
     ./integrations/sops.nix
-    ./integrations/treefmt.nix
     ./languages/deno.nix
     ./languages/go.nix
     ./languages/javascript.nix
