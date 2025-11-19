@@ -20,13 +20,5 @@ in
       env.GOPATH = "${config.xdg.dataHome}/go";
       telemetry.mode = "off";
     };
-
-    home.packages = [
-      pkgs.gopls
-      pkgs.gotests
-      pkgs.impl
-      pkgs.delve
-      pkgs.go-tools
-    ];
   };
 }
