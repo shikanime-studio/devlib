@@ -25,20 +25,33 @@ in
       description = "Package to use for GitHub Actions";
     };
 
+    actions = mkOption {
+      type = types.attrsOf (
+        types.submodule {
+          freeformType = settingsFormat.type;
+        }
+      );
+
+      default = { };
+
+      description = ''
+        GitHub Actions configuration. Each attribute name becomes the action identifier.
+      '';
+
+      example = literalExpression ''
+        {
+          setup-nix = {
+            uses = "shikanime-studio/setup-nix-action@v1";
+            with.github-token = mkWorkflowRef "secrets.GITHUB_TOKEN";
+          };
+        }
+      '';
+    };
+
     workflows = mkOption {
       type = types.attrsOf (
         types.submodule {
-          options = {
-            settings = mkOption {
-              type = types.submodule {
-                freeformType = settingsFormat.type;
-              };
-
-              description = ''
-                GitHub workflow settings.
-              '';
-            };
-          };
+          freeformType = settingsFormat.type;
         }
       );
 
@@ -95,7 +108,7 @@ in
           mapAttrsToList (
             name: workflow:
             let
-              file = settingsFormat.generate "${name}.yaml" workflow.settings;
+              file = settingsFormat.generate "${name}.yaml" workflow;
             in
             ''
               mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
