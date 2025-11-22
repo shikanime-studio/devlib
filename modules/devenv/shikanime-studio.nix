@@ -69,120 +69,135 @@ with lib;
 
     workflows = with config.github.lib; {
       check = {
-        name = "Check";
-        on = {
-          push.branches = [ "main" ];
-          pull_request.branches = [
-            "main"
-            "gh/*/*/base"
-          ];
-        };
-        jobs.check = {
-          runs-on = "ubuntu-latest";
-          steps = with config.github.actions; [
-            create-github-app-token
-            checkout
-            setup-nix
-            {
-              name = "Check Nix Flake";
-              run = mkWorkflowRun [
-                "nix"
-                "flake"
-                "check"
-                "--accept-flake-config"
-                "--all-systems"
-                "--no-pure-eval"
-              ];
-            }
-          ];
+        enable = true;
+        settings = {
+          name = "Check";
+          on = {
+            push.branches = [ "main" ];
+            pull_request.branches = [
+              "main"
+              "gh/*/*/base"
+            ];
+          };
+          jobs.check = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              setup-nix
+              {
+                name = "Check Nix Flake";
+                run = mkWorkflowRun [
+                  "nix"
+                  "flake"
+                  "check"
+                  "--accept-flake-config"
+                  "--all-systems"
+                  "--no-pure-eval"
+                ];
+              }
+            ];
+          };
         };
       };
 
       land = {
-        name = "Land";
-        on.issue_comment.types = [ "created" ];
-        jobs.land = {
-          runs-on = "ubuntu-latest";
-          steps = with config.github.actions; [
-            create-github-app-token
-            checkout
-            setup-nix
-            sapling
-          ];
+        enable = true;
+        settings = {
+          name = "Land";
+          on.issue_comment.types = [ "created" ];
+          jobs.land = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              setup-nix
+              sapling
+            ];
+          };
         };
       };
 
       release = {
-        name = "Release";
-        on.push.tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
-        jobs.release = {
-          runs-on = "ubuntu-latest";
-          steps = with config.github.actions; [
-            create-github-app-token
-            checkout
-            {
-              env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-              run = mkWorkflowRun [
-                "gh"
-                "release"
-                "create"
-                "\${{ github.ref_name }}"
-                "--repo"
-                "\${{ github.repository }}"
-                "--generate-notes"
-              ];
-            }
-          ];
+        enable = true;
+        settings = {
+          name = "Release";
+          on.push.tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
+          jobs.release = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              {
+                env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+                run = mkWorkflowRun [
+                  "gh"
+                  "release"
+                  "create"
+                  "\${{ github.ref_name }}"
+                  "--repo"
+                  "\${{ github.repository }}"
+                  "--generate-notes"
+                ];
+              }
+            ];
+          };
         };
       };
 
       triage = {
-        name = "Triage";
-        on = {
-          pull_request.types = [
-            "opened"
-            "synchronize"
-          ];
-          check_suite.types = [ "completed" ];
-        };
-        jobs.triage = {
-          runs-on = "ubuntu-latest";
-          steps = with config.github.actions; [
-            create-github-app-token
-            checkout
-            {
-              env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-              "if" = concatStringsSep " || " [
-                "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
-                "github.event.pull_request.user.login == 'dependabot[bot]'"
-              ];
-              run = mkWorkflowRun [
-                "gh"
-                "pr"
-                "edit"
-                (mkWorkflowRef "github.event.pull_request.number")
-                "--add-label"
-                "dependencies"
-              ];
-            }
-          ];
+        enable = true;
+        settings = {
+          name = "Triage";
+          on = {
+            pull_request.types = [
+              "opened"
+              "synchronize"
+            ];
+            check_suite.types = [ "completed" ];
+          };
+          jobs.triage = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              {
+                env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+                "if" = concatStringsSep " || " [
+                  "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
+                  "github.event.pull_request.user.login == 'dependabot[bot]'"
+                ];
+                run = mkWorkflowRun [
+                  "gh"
+                  "pr"
+                  "edit"
+                  (mkWorkflowRef "github.event.pull_request.number")
+                  "--add-label"
+                  "dependencies"
+                ];
+              }
+            ];
+          };
         };
       };
 
       update = {
-        name = "Update";
-        on = {
-          schedule = [ { cron = "0 0 * * 0"; } ];
-          workflow_dispatch = null;
-        };
-        jobs.update = {
-          runs-on = "ubuntu-latest";
-          steps = with config.github.actions; [
-            create-github-app-token
-            checkout
-            setup-nix
-            automata
-          ];
+        enable = true;
+        settings = {
+          name = "Update";
+          on = {
+            schedule = [ { cron = "0 0 * * 0"; } ];
+            workflow_dispatch = null;
+          };
+          jobs.update = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              setup-nix
+              automata
+            ];
+          };
         };
       };
     };
