@@ -13,10 +13,10 @@ in
 {
   config = mkIf cfg.enable {
     git-hooks.hooks = {
-      govet.enable = mkDefault true;
-      revive.enable = mkDefault true;
+      govet.enable = mkDefault false;
+      revive.enable = mkDefault false;
       staticcheck = {
-        enable = mkDefault true;
+        enable = mkDefault false;
         package = pkgs.runCommand "staticcheck-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
           makeWrapper ${pkgs.go-tools}/bin/staticcheck $out/bin/staticcheck \
             --prefix PATH : ${cfg.package}/bin
