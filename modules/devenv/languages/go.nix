@@ -34,15 +34,15 @@ in
     };
 
     tasks = {
-      "devlib:go:install" = {
+      "devlib:go:download" = {
+        after = [ "devlib:go:download" ];
         before = [ "devenv:enterShell" ];
-        description = "Install go dependencies";
-        exec = "${getExe pkgs.go} mod install";
+        description = "Download go dependencies";
+        exec = "${getExe pkgs.go} mod download";
       };
 
       "devlib:go:tidy" = {
         before = [ "devenv:enterShell" ];
-        after = [ "devlib:go:install" ];
         description = "Run go mod tidy";
         exec = "${getExe pkgs.go} mod tidy";
       };
