@@ -50,6 +50,8 @@ with lib;
         };
       };
 
+      direnv.uses = "shikanime-studio/direnv-action@v2";
+
       sapling = {
         uses = "shikanime-studio/sapling-action@v5";
         "with" = {
@@ -85,8 +87,8 @@ with lib;
               create-github-app-token
               checkout
               setup-nix
+              direnv
               {
-                name = "Check Nix Flake";
                 run = mkWorkflowRun [
                   "nix"
                   "flake"

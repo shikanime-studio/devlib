@@ -33,10 +33,19 @@ in
       ];
     };
 
-    tasks."devlib:go:tidy" = {
-      description = "Run go mod tidy";
-      before = [ "devenv:enterShell" ];
-      exec = "${getExe pkgs.go} mod tidy";
+    tasks = {
+      "devlib:go:install" = {
+        before = [ "devenv:enterShell" ];
+        description = "Install go dependencies";
+        exec = "${getExe pkgs.go} mod install";
+      };
+
+      "devlib:go:tidy" = {
+        before = [ "devenv:enterShell" ];
+        after = [ "devlib:go:install" ];
+        description = "Run go mod tidy";
+        exec = "${getExe pkgs.go} mod tidy";
+      };
     };
 
     treefmt.config.programs = {
