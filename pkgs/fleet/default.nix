@@ -14,10 +14,16 @@ pkgs.buildGoModule rec {
   passthru.update = ./update.nu;
 
   postInstall = ''
-    mv $out/bin/remote $out/bin/fleet
+    mv $out/bin/fleetagent $out/bin/fleet-agent
+    mv $out/bin/fleetcli $out/bin/fleet
+    mv $out/bin/fleetcontroller $out/bin/fleet-controller
   '';
 
-  subPackages = [ "cmd/fleetcli" ];
+  subPackages = [
+    "cmd/fleetagent"
+    "cmd/fleetcli"
+    "cmd/fleetcontroller"
+  ];
 
   vendorHash = "sha256-iDy266is92puTHkCkkSh9gFXN9UdwYq+buVhFLTl+Y0=";
 
