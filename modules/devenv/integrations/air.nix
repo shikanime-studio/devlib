@@ -80,5 +80,9 @@ in
       mkdir -p "${cfg.settings.tmp_dir}"
       cat ${configFile} > ${config.env.DEVENV_ROOT}/.air.toml
     '';
+
+    gitignore.content = [
+      ".air.toml"
+    ];
   };
 }
