@@ -22,10 +22,14 @@ pkgs.buildGoModule rec {
   passthru.update = ./update.nu;
 
   postInstall = ''
+    mv $out/bin/local $out/bin/longhornctl-local
     mv $out/bin/remote $out/bin/longhornctl
   '';
 
-  subPackages = [ "cmd/remote" ];
+  subPackages = [
+    "cmd/local"
+    "cmd/remote"
+  ];
 
   vendorHash = null;
 
