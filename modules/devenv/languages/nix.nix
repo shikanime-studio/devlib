@@ -12,9 +12,9 @@ in
 {
   config = mkIf cfg.enable {
     git-hooks.hooks = {
-      deadnix.enable = true;
-      flake-checker.enable = true;
-      statix.enable = true;
+      deadnix.enable = mkDefault true;
+      flake-checker.enable = mkDefault true;
+      statix.enable = mkDefault true;
     };
 
     gitignore.templates = [
@@ -22,6 +22,6 @@ in
       "repo:shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore"
     ];
 
-    treefmt.config.programs.nixfmt.enable = true;
+    treefmt.config.programs.nixfmt.enable = mkDefault true;
   };
 }

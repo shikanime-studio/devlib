@@ -9,16 +9,16 @@ with lib;
 
 {
   cachix = {
-    enable = true;
+    enable = mkDefault true;
     push = "shikanime-studio";
   };
 
   containers = pkgs.lib.mkForce { };
 
-  docker.enable = true;
+  docker.enable = mkDefault true;
 
   github = {
-    enable = true;
+    enable = mkDefault true;
 
     actions = with config.github.lib; {
       automata = {
@@ -69,7 +69,7 @@ with lib;
 
     workflows = with config.github.lib; {
       check = {
-        enable = true;
+        enable = mkDefault true;
         settings = {
           name = "Check";
           on = {
@@ -102,7 +102,7 @@ with lib;
       };
 
       land = {
-        enable = true;
+        enable = mkDefault true;
         settings = {
           name = "Land";
           on.issue_comment.types = [ "created" ];
@@ -119,7 +119,7 @@ with lib;
       };
 
       release = {
-        enable = true;
+        enable = mkDefault true;
         settings = {
           name = "Release";
           on.push.tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
@@ -146,7 +146,7 @@ with lib;
       };
 
       triage = {
-        enable = true;
+        enable = mkDefault true;
         settings = {
           name = "Triage";
           on = {
@@ -182,7 +182,7 @@ with lib;
       };
 
       update = {
-        enable = true;
+        enable = mkDefault true;
         settings = {
           name = "Update";
           on = {
@@ -203,11 +203,11 @@ with lib;
     };
   };
 
-  gitignore.enable = true;
+  gitignore.enable = mkDefault true;
 
   languages = {
-    nix.enable = true;
-    shell.enable = true;
+    nix.enable = mkDefault true;
+    shell.enable = mkDefault true;
   };
 
   packages = [
@@ -217,7 +217,7 @@ with lib;
   ];
 
   treefmt = {
-    enable = true;
+    enable = mkDefault true;
     config.programs.prettier.enable = true;
   };
 }

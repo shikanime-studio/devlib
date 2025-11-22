@@ -74,7 +74,7 @@ in
       example = literalExpression ''
         {
           check = {
-            enable = true;
+            enable = mkDefault true;
             settings = {
               name = "Check";
               on = {
@@ -104,7 +104,7 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    git-hooks.hooks.actionlint.enable = true;
+    git-hooks.hooks.actionlint.enable = mkDefault true;
 
     github.lib = {
       mkWorkflowRef = name: "\${{ ${name} }}";
@@ -135,6 +135,6 @@ in
       "devenv:treefmt:run".after = [ "devlib:github:workflows:generate" ];
     };
 
-    treefmt.config.programs.prettier.enable = true;
+    treefmt.config.programs.prettier.enable = mkDefault true;
   };
 }

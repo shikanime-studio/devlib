@@ -96,6 +96,6 @@ in
       "devenv:treefmt:run".after = [ "devlib:buf:generate" ];
     };
 
-    treefmt.config.programs.buf.enable = true;
+    treefmt.config.programs.buf.enable = mkDefault true;
   };
 }

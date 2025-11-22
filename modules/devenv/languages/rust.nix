@@ -11,12 +11,12 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.clippy.enable = true;
+    git-hooks.hooks.clippy.enable = mkDefault true;
 
     gitignore.templates = [
       "gh:Rust"
     ];
 
-    treefmt.config.programs.rustfmt.enable = true;
+    treefmt.config.programs.rustfmt.enable = mkDefault true;
   };
 }

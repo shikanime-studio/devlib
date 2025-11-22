@@ -38,8 +38,8 @@ in
     };
 
     treefmt.config.programs = {
-      prettier.enable = true;
-      taplo.enable = true;
+      prettier.enable = mkDefault true;
+      taplo.enable = mkDefault true;
     };
   };
 }
