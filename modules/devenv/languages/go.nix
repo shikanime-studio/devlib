@@ -39,6 +39,10 @@ in
         before = [ "devenv:enterShell" ];
         description = "Download go dependencies";
         exec = "${getExe pkgs.go} mod download";
+        execIfModified = [
+          "go.mod"
+          "go.sum"
+        ];
       };
 
       "devlib:go:tidy" = {
