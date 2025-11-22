@@ -116,6 +116,9 @@ in
             ''
           ) cfg.workflows
         );
+        execIfModified = [
+          ".github/workflows/**/*.yaml"
+        ];
       };
       "devenv:treefmt:run".after = [ "devlib:github:workflows:generate" ];
     };
