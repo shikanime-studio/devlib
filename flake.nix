@@ -56,11 +56,14 @@
           };
         };
       };
-      perSystem = _: {
-        devenv.shells.default.imports = [
-          ./modules/devenv/shikanime-studio.nix
-        ];
-      };
+      perSystem =
+        { pkgs, ... }:
+        {
+          devenv.shells.default.imports = [
+            ./modules/devenv/shikanime-studio.nix
+          ];
+          packages.longhornctl = pkgs.callPackage ./pkgs/longhornctl { };
+        };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"
