@@ -51,7 +51,17 @@ in
     workflows = mkOption {
       type = types.attrsOf (
         types.submodule {
-          freeformType = settingsFormat.type;
+          options = {
+            enable = mkEnableOption "enable this workflow";
+
+            settings = mkOption {
+              type = types.submodule {
+                freeformType = settingsFormat.type;
+              };
+              default = { };
+              description = "Workflow YAML settings";
+            };
+          };
         }
       );
 
@@ -64,6 +74,7 @@ in
       example = literalExpression ''
         {
           check = {
+            enable = true;
             settings = {
               name = "Check";
               on = {
@@ -104,18 +115,22 @@ in
       "devlib:github:workflows:generate" = {
         description = "Generate GitHub Actions workflow files";
         before = [ "devenv:enterShell" ];
-        exec = concatStringsSep "\n" (
-          mapAttrsToList (
-            name: workflow:
-            let
-              file = settingsFormat.generate "${name}.yaml" workflow;
-            in
-            ''
-              mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
-              cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
-            ''
-          ) cfg.workflows
-        );
+        exec =
+          let
+            enabled = filterAttrs (_: w: w.enable) cfg.workflows;
+          in
+          concatStringsSep "\n" (
+            mapAttrsToList (
+              name: workflow:
+              let
+                file = settingsFormat.generate "${name}.yaml" workflow.settings;
+              in
+              ''
+                mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
+                cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
+              ''
+            ) enabled
+          );
       };
       "devenv:treefmt:run".after = [ "devlib:github:workflows:generate" ];
     };
