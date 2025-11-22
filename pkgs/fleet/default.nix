@@ -1,39 +1,31 @@
 { pkgs, ... }:
 
 pkgs.buildGoModule rec {
-  pname = "longhornctl";
+  pname = "fleet";
   version = "0.14.0";
 
   src = pkgs.fetchFromGitHub {
-    owner = "longhornctl";
-    repo = "cli";
+    owner = "rancher";
+    repo = "fleet";
     rev = "v${version}";
     hash = "sha256-D6kFOY8jCjsFHftjdhocDGAowGTy5IwVxfZdiFY4QvI=";
   };
 
-  ldflags = [
-    "-s"
-    "-w"
-    "-X github.com/longhornctl/cli/meta.Version=v${version}"
-    "-X github.com/longhornctl/cli/meta.GitCommit=${src.rev}"
-    "-X github.com/longhornctl/cli/meta.BuildDate=1970-01-01T00:00:00+00:00"
-  ];
-
   passthru.update = ./update.nu;
 
   postInstall = ''
-    mv $out/bin/remote $out/bin/longhornctl
+    mv $out/bin/remote $out/bin/fleet
   '';
 
-  subPackages = [ "cmd/remote" ];
+  subPackages = [ "cmd/fleetcli" ];
 
-  vendorHash = null;
+  vendorHash = "sha256-iDy266is92puTHkCkkSh9gFXN9UdwYq+buVhFLTl+Y0=";
 
   meta = with pkgs.lib; {
-    description = "Longhorn command line tool";
-    homepage = "https://github.com/longhornctl/cli";
+    description = "Fleet command line tool";
+    homepage = "https://github.com/rancher/fleet";
     license = licenses.asl20;
     maintainers = with maintainers; [ shikanime ];
-    mainProgram = "longhornctl";
+    mainProgram = "fleet";
   };
 }
