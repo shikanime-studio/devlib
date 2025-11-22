@@ -62,7 +62,10 @@
           devenv.shells.default.imports = [
             ./modules/devenv/shikanime-studio.nix
           ];
-          packages.longhornctl = pkgs.callPackage ./pkgs/longhornctl { };
+          packages = {
+            fleet = pkgs.callPackage ./pkgs/fleet { };
+            longhornctl = pkgs.callPackage ./pkgs/longhornctl { };
+          };
         };
       systems = [
         "x86_64-linux"
