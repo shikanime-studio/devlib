@@ -35,12 +35,11 @@ in
 
     tasks = {
       "devlib:go:download" = {
-        after = [ "devlib:go:download" ];
+        after = [ "devlib:go:tidy" ];
         before = [ "devenv:enterShell" ];
         description = "Download go dependencies";
         exec = "${getExe pkgs.go} mod download";
         execIfModified = [
-          "go.mod"
           "go.sum"
         ];
       };
@@ -49,6 +48,9 @@ in
         before = [ "devenv:enterShell" ];
         description = "Run go mod tidy";
         exec = "${getExe pkgs.go} mod tidy";
+        execIfModified = [
+          "go.mod"
+        ];
       };
     };
 
