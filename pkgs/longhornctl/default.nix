@@ -1,6 +1,6 @@
 { pkgs, ... }:
 
-pkgs.buildGoModule {
+pkgs.buildGoModule rec {
   pname = "longhornctl";
   version = "1.10.1";
 
