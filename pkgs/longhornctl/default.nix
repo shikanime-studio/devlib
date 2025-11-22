@@ -11,25 +11,31 @@ pkgs.buildGoModule rec {
     hash = "sha256-ETbUOnR+beIDL8T3JR9kzmzp+WejmslooqyLwIPX1rI=";
   };
 
-  vendorHash = null;
-
-  subPackages = [ "cmd/remote" ];
-
   ldflags = [
     "-s"
     "-w"
-    "-X github.com/longhornctl/cli/meta.Version=v${version}"
-    "-X github.com/longhornctl/cli/meta.GitCommit=${src.rev}"
-    "-X github.com/longhornctl/cli/meta.BuildDate=1970-01-01T00:00:00+00:00"
+    "-X github.com/longhorn/cli/meta.Version=v${version}"
+    "-X github.com/longhorn/cli/meta.GitCommit=${src.rev}"
+    "-X github.com/longhorn/cli/meta.BuildDate=1970-01-01T00:00:00+00:00"
   ];
 
+  passthru.update = ./update.nu;
+
   postInstall = ''
+    mv $out/bin/local $out/bin/longhornctl-local
     mv $out/bin/remote $out/bin/longhornctl
   '';
 
+  subPackages = [
+    "cmd/local"
+    "cmd/remote"
+  ];
+
+  vendorHash = null;
+
   meta = with pkgs.lib; {
     description = "Longhorn command line tool";
-    homepage = "https://github.com/longhornctl/cli";
+    homepage = "https://github.com/longhorn/cli";
     license = licenses.asl20;
     maintainers = with maintainers; [ shikanime ];
     mainProgram = "longhornctl";
