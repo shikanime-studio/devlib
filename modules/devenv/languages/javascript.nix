@@ -11,12 +11,12 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.eslint.enable = true;
+    git-hooks.hooks.eslint.enable = mkDefault true;
 
     gitignore.templates = [
       "tt:node"
     ];
 
-    treefmt.config.programs.prettier.enable = true;
+    treefmt.config.programs.prettier.enable = mkDefault true;
   };
 }

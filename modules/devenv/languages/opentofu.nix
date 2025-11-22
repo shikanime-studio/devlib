@@ -16,8 +16,8 @@ in
     ];
 
     treefmt.config.programs = {
-      hclfmt.enable = true;
-      terraform.enable = true;
+      hclfmt.enable = mkDefault true;
+      terraform.enable = mkDefault true;
     };
   };
 }

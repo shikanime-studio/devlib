@@ -11,12 +11,12 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.denolint.enable = true;
+    git-hooks.hooks.denolint.enable = mkDefault true;
 
     gitignore.templates = [
       "tt:deno"
     ];
 
-    treefmt.config.programs.deno.enable = true;
+    treefmt.config.programs.deno.enable = mkDefault true;
   };
 }
