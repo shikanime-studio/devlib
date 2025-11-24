@@ -17,7 +17,7 @@ in
       "tt:python"
     ];
 
-    tasks = mkIf cfg.python.uv.enable {
+    tasks = mkIf cfg.uv.enable {
       "devlib:python:uv:sync" = {
         after = [ "devlib:python:uv:tidy" ];
         before = [ "devenv:enterShell" ];
