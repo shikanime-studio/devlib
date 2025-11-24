@@ -170,10 +170,11 @@ with lib;
               {
                 uses = "actions/stale@v10";
                 "with" = {
-                  days-before-stale = 30;
                   days-before-close = 14;
-                  stale-label = "stale";
+                  days-before-stale = 30;
                   repo-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+                  stale-issue-label = "stale";
+                  stale-pr-label = "stale";
                 };
               }
             ];
