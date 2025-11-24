@@ -147,6 +147,31 @@ with lib;
         };
       };
 
+      stale = {
+        enable = mkDefault true;
+        settings = {
+          name = "Stale";
+          on = {
+            schedule = [ { cron = "30 1 * * *"; } ];
+          };
+          jobs.stale = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              {
+                uses = "actions/stale@v10";
+                "with" = {
+                  days-before-stale = 30;
+                  days-before-close = 14;
+                  stale-label = "stale";
+                  repo-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+                };
+              }
+            ];
+          };
+        };
+      };
+
       triage = {
         enable = mkDefault true;
         settings = {
