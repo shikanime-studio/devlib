@@ -52,6 +52,15 @@ with lib;
 
       direnv.uses = "shikanime-studio/direnv-action@v2";
 
+      docker-login = {
+        uses = "docker/login-action@v3";
+        "with" = {
+          registry = "ghcr.io";
+          username = mkWorkflowRef "github.actor";
+          password = mkWorkflowRef "secrets.GITHUB_TOKEN";
+        };
+      };
+
       sapling = {
         uses = "shikanime-studio/sapling-action@v5";
         "with" = {
