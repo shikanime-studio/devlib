@@ -148,9 +148,9 @@ with lib;
                   "gh"
                   "release"
                   "create"
-                  "\${{ github.ref_name }}"
+                  (mkWorkflowRef "github.ref_name")
                   "--repo"
-                  "\${{ github.repository }}"
+                  (mkWorkflowRef "github.repository")
                   "--generate-notes"
                 ];
               }
