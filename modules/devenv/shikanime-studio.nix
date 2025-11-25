@@ -152,7 +152,7 @@ with lib;
             publish = {
               needs = [ "check" ];
               runs-on = "ubuntu-latest";
-              steps = [
+              steps = with config.github.actions; [
                 create-github-app-token
                 checkout
                 {
