@@ -84,7 +84,10 @@ with lib;
         settings = {
           name = "Check";
           on = {
-            push.branches = [ "main" ];
+            push.branches = [
+              "main"
+              "release-*"
+            ];
             pull_request.branches = [
               "main"
               "gh/*/*/base"
