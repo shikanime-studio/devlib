@@ -61,6 +61,15 @@ with lib;
         };
       };
 
+      nix-flake-check.run = mkWorkflowRun [
+        "nix"
+        "flake"
+        "check"
+        "--accept-flake-config"
+        "--all-systems"
+        "--no-pure-eval"
+      ];
+
       sapling = {
         uses = "shikanime-studio/sapling-action@v5";
         "with" = {
@@ -79,10 +88,10 @@ with lib;
     };
 
     workflows = with config.github.lib; {
-      check = {
+      main = {
         enable = mkDefault true;
         settings = {
-          name = "Check";
+          name = "Main";
           on = {
             push.branches = [
               "main"
@@ -100,16 +109,7 @@ with lib;
               checkout
               setup-nix
               direnv
-              {
-                run = mkWorkflowRun [
-                  "nix"
-                  "flake"
-                  "check"
-                  "--accept-flake-config"
-                  "--all-systems"
-                  "--no-pure-eval"
-                ];
-              }
+              nix-flake-check
             ];
           };
         };
@@ -137,24 +137,38 @@ with lib;
         settings = {
           name = "Release";
           on.push.tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
-          jobs.release = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              {
-                env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-                run = mkWorkflowRun [
-                  "gh"
-                  "release"
-                  "create"
-                  (mkWorkflowRef "github.ref_name")
-                  "--repo"
-                  (mkWorkflowRef "github.repository")
-                  "--generate-notes"
-                ];
-              }
-            ];
+          jobs = {
+            check = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                direnv
+                nix-flake-check
+              ];
+            };
+
+            publish = {
+              needs = [ "check" ];
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                {
+                  env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+                  run = mkWorkflowRun [
+                    "gh"
+                    "release"
+                    "create"
+                    (mkWorkflowRef "github.ref_name")
+                    "--repo"
+                    (mkWorkflowRef "github.repository")
+                    "--generate-notes"
+                  ];
+                }
+              ];
+            };
           };
         };
       };
