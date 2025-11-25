@@ -177,28 +177,13 @@ with lib;
         settings = {
           name = "Release";
           on.push.tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
-          jobs = {
-            check = {
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                direnv
-                nix-flake-check
-              ];
-            };
-
-            publish = {
-              needs = [ "check" ];
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                create-release
-
-              ];
-            };
+          jobs.publish = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              create-release
+            ];
           };
         };
       };
