@@ -88,6 +88,23 @@ with lib;
     };
 
     workflows = with config.github.lib; {
+      land = {
+        enable = mkDefault true;
+        settings = {
+          name = "Land";
+          on.issue_comment.types = [ "created" ];
+          jobs.land = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              setup-nix
+              sapling
+            ];
+          };
+        };
+      };
+
       main = {
         enable = mkDefault true;
         settings = {
@@ -110,23 +127,6 @@ with lib;
               setup-nix
               direnv
               nix-flake-check
-            ];
-          };
-        };
-      };
-
-      land = {
-        enable = mkDefault true;
-        settings = {
-          name = "Land";
-          on.issue_comment.types = [ "created" ];
-          jobs.land = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              setup-nix
-              sapling
             ];
           };
         };
