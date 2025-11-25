@@ -21,6 +21,22 @@ with lib;
     enable = mkDefault true;
 
     actions = with config.github.lib; {
+      add-dependencies-labels = {
+        env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+        "if" = concatStringsSep " || " [
+          "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
+          "github.event.pull_request.user.login == 'dependabot[bot]'"
+        ];
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "edit"
+          (mkWorkflowRef "github.event.pull_request.number")
+          "--add-label"
+          "dependencies"
+        ];
+      };
+
       automata = {
         uses = "shikanime-studio/automata-action@v1";
         "with" = {
@@ -40,6 +56,19 @@ with lib;
           app-id = mkWorkflowRef "vars.OPERATOR_APP_ID";
           private-key = mkWorkflowRef "secrets.OPERATOR_PRIVATE_KEY";
         };
+      };
+
+      create-release = {
+        env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+        run = mkWorkflowRun [
+          "gh"
+          "release"
+          "create"
+          (mkWorkflowRef "github.ref_name")
+          "--repo"
+          (mkWorkflowRef "github.repository")
+          "--generate-notes"
+        ];
       };
 
       checkout = {
@@ -84,6 +113,17 @@ with lib;
       setup-nix = {
         uses = "shikanime-studio/setup-nix-action@v1";
         "with".github-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+      };
+
+      stale = {
+        uses = "actions/stale@v10";
+        "with" = {
+          days-before-close = 14;
+          days-before-stale = 30;
+          repo-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          stale-issue-label = "stale";
+          stale-pr-label = "stale";
+        };
       };
     };
 
@@ -155,18 +195,8 @@ with lib;
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
-                {
-                  env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-                  run = mkWorkflowRun [
-                    "gh"
-                    "release"
-                    "create"
-                    (mkWorkflowRef "github.ref_name")
-                    "--repo"
-                    (mkWorkflowRef "github.repository")
-                    "--generate-notes"
-                  ];
-                }
+                create-release
+
               ];
             };
           };
@@ -184,16 +214,7 @@ with lib;
             runs-on = "ubuntu-latest";
             steps = with config.github.actions; [
               create-github-app-token
-              {
-                uses = "actions/stale@v10";
-                "with" = {
-                  days-before-close = 14;
-                  days-before-stale = 30;
-                  repo-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-                  stale-issue-label = "stale";
-                  stale-pr-label = "stale";
-                };
-              }
+              stale
             ];
           };
         };
@@ -215,21 +236,7 @@ with lib;
             steps = with config.github.actions; [
               create-github-app-token
               checkout
-              {
-                env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-                "if" = concatStringsSep " || " [
-                  "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
-                  "github.event.pull_request.user.login == 'dependabot[bot]'"
-                ];
-                run = mkWorkflowRun [
-                  "gh"
-                  "pr"
-                  "edit"
-                  (mkWorkflowRef "github.event.pull_request.number")
-                  "--add-label"
-                  "dependencies"
-                ];
-              }
+              add-dependencies-labels
             ];
           };
         };
