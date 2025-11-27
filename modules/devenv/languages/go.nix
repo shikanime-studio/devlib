@@ -61,11 +61,11 @@ in
     };
 
     treefmt.config = {
-      global.excludes = [ "vendor/*" ];
       programs = {
         gofmt.enable = mkDefault true;
         golines.enable = mkDefault true;
       };
+      settings.global.excludes = [ "vendor/*" ];
     };
   };
 }
