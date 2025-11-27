@@ -52,14 +52,6 @@ in
       programs = {
         gofmt.enable = mkDefault true;
         golines.enable = mkDefault true;
-        golangci-lint = {
-          enable = mkDefault true;
-          enableLinters = [
-            "govet"
-            "revive"
-            "staticcheck"
-          ];
-        };
       };
       settings.global.excludes = [ "vendor/*" ];
     };
