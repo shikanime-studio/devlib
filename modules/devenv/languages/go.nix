@@ -50,6 +50,15 @@ in
         description = "Run go mod tidy";
         exec = "${getExe pkgs.go} mod tidy";
       };
+
+      "devlib:go:vendor" = {
+        before = [ "devenv:enterShell" ];
+        description = "Run go mod vendor";
+        exec = "${getExe pkgs.go} mod vendor";
+        execIfModified = [
+          "go.sum"
+        ];
+      };
     };
 
     treefmt.config.programs = {
