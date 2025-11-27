@@ -40,7 +40,16 @@
       ];
       flake = {
         devenvModule = ./modules/devenv/default.nix;
-        devenvModules.shikanime-studio = ./modules/devenv/shikanime-studio.nix;
+        devenvModules = {
+          go = ./modules/devenv/languages/go.nix;
+          javascript = ./modules/devenv/languages/javascript.nix;
+          nix = ./modules/devenv/languages/nix.nix;
+          opentofu = ./modules/devenv/languages/opentofu.nix;
+          python = ./modules/devenv/languages/python.nix;
+          rust = ./modules/devenv/languages/rust.nix;
+          shell = ./modules/devenv/languages/shell.nix;
+          shikanime-studio = ./modules/devenv/shikanime-studio.nix;
+        };
 
         homeManagerModule = ./modules/home/default.nix;
 

@@ -51,7 +51,20 @@ in
     perSystem =
       { config, ... }:
       {
-        devenv.modules = if cfg.devenv.enable then [ ../devenv/default.nix ] else [ ];
+        devenv.modules =
+          if cfg.devenv.enable then
+            [
+              ../devenv/default.nix
+              ../devenv/languages/go.nix
+              ../devenv/languages/javascript.nix
+              ../devenv/languages/nix.nix
+              ../devenv/languages/opentofu.nix
+              ../devenv/languages/python.nix
+              ../devenv/languages/rust.nix
+              ../devenv/languages/shell.nix
+            ]
+          else
+            [ ];
 
         pre-commit.settings =
           if cfg.git-hooks.enable && hasAttr cfg.git-hooks.shell config.devenv.shells then

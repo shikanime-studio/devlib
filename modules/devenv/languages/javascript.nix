@@ -1,22 +1,9 @@
+{ config, ... }:
+
 {
-  config,
-  lib,
-  ...
-}:
+  git-hooks.hooks.eslint.enable = true;
 
-with lib;
+  gitignore.templates = [ "tt:node" ];
 
-let
-  cfg = config.languages.javascript;
-in
-{
-  config = mkIf cfg.enable {
-    git-hooks.hooks.eslint.enable = mkDefault true;
-
-    gitignore.templates = [
-      "tt:node"
-    ];
-
-    treefmt.config.programs.prettier.enable = mkDefault true;
-  };
+  treefmt.config.programs.prettier.enable = true;
 }
