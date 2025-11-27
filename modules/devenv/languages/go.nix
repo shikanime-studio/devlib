@@ -9,25 +9,93 @@ with lib;
 
 let
   cfg = config.languages.go;
+
+  yamlFormat = pkgs.formats.yaml { };
+
+  settings = {
+    version = 2;
+    linters = {
+      enable = [
+        "bodyclose"
+        "dogsled"
+        "dupl"
+        "durationcheck"
+        "exhaustive"
+        "gocritic"
+        "godot"
+        "gomoddirectives"
+        "goprintffuncname"
+        "govet"
+        "importas"
+        "ineffassign"
+        "makezero"
+        "misspell"
+        "nakedret"
+        "nilerr"
+        "noctx"
+        "nolintlint"
+        "prealloc"
+        "predeclared"
+        "revive"
+        "rowserrcheck"
+        "sqlclosecheck"
+        "staticcheck"
+        "tparallel"
+        "unconvert"
+        "unparam"
+        "unused"
+        "wastedassign"
+        "whitespace"
+      ];
+      settings = {
+        misspell.locale = "US";
+        gocritic = {
+          enabled-tags = [
+            "diagnostic"
+            "experimental"
+            "opinionated"
+            "style"
+          ];
+          disabled-checks = [
+            "importShadow"
+            "unnamedResult"
+          ];
+        };
+      };
+    };
+    formatters = {
+      enable = [
+        "gci"
+        "gofmt"
+        "gofumpt"
+        "goimports"
+      ];
+      settings.gci.sections = [
+        "standard"
+        "default"
+        "localmodule"
+      ];
+    };
+  };
+
+  golangci-lint = pkgs.runCommand "golangci-lint-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
+    makeWrapper ${pkgs.golangci-lint}/bin/golangci-lint $out/bin/golangci-lint \
+      --prefix PATH : ${config.devenv.shells.default.languages.go.package}/bin \
+      --append-flag --config \
+      --append-flag "${yamlFormat.generate "golangci-lint.yaml" settings}"
+  '';
 in
 {
   config = mkIf cfg.enable {
     git-hooks.hooks = {
-      govet.enable = mkDefault true;
+      golangci-lint = {
+        enable = true;
+        package = golangci-lint;
+      };
 
       hadolint.excludes = [ "^vendor/" ];
 
-      revive.enable = mkDefault true;
-
       shellcheck.excludes = [ "^vendor/" ];
-
-      staticcheck = {
-        enable = mkDefault true;
-        package = pkgs.runCommand "staticcheck-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-          makeWrapper ${pkgs.go-tools}/bin/staticcheck $out/bin/staticcheck \
-            --prefix PATH : ${cfg.package}/bin
-        '';
-      };
     };
 
     gitignore = {
@@ -66,12 +134,6 @@ in
       };
     };
 
-    treefmt.config = {
-      programs = {
-        gofmt.enable = mkDefault true;
-        golines.enable = mkDefault true;
-      };
-      settings.global.excludes = [ "vendor/*" ];
-    };
+    treefmt.config.settings.global.excludes = [ "vendor/*" ];
   };
 }
