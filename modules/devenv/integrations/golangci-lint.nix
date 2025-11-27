@@ -20,6 +20,7 @@ in
 {
   options.golangci-lint = {
     enable = mkEnableOption "Enable golangci-lint integration";
+
     settings = lib.mkOption {
       type = lib.types.submodule {
         freeformType = yamlFormat.type;
