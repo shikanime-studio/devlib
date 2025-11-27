@@ -36,7 +36,7 @@ let
       cfg.generate;
 
   package = pkgs.runCommand "buf-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-    makeWrapper ${pkgs.buf}/bin/buf $out/bin/buf \
+    makeWrapper ${cfg.package}/bin/buf $out/bin/buf \
       --append-flag --template \
       --append-flag "${yamlFormat.generate "buf.gen.yaml" template}"
   '';
