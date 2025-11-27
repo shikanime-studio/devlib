@@ -29,7 +29,7 @@ in
       "devlib:automata:update" = {
         description = "Run automata update";
         exec = ''
-          ${getExe cfg.package} update all
+          ${getExe cfg.package} update all ${config.devenv.root}
         '';
       };
       "devenv:treefmt:run".after = [ "devlib:automata:update" ];
