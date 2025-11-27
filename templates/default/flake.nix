@@ -3,6 +3,7 @@
     devenv.url = "github:cachix/devenv";
     devlib.url = "github:shikanime-studio/devlib";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    git-hooks.url = "github:cachix/git-hooks.nix";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     treefmt-nix.url = "github:numtide/treefmt-nix";
   };
@@ -27,6 +28,7 @@
       devenv,
       devlib,
       flake-parts,
+      git-hooks,
       treefmt-nix,
       ...
     }:
@@ -34,6 +36,7 @@
       imports = [
         devenv.flakeModule
         devlib.flakeModule
+        git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
       perSystem = _: {

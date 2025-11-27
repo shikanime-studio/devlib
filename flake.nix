@@ -3,6 +3,7 @@
     automata.url = "github:shikanime-studio/automata";
     devenv.url = "github:cachix/devenv";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    git-hooks.url = "github:cachix/git-hooks.nix";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     treefmt-nix.url = "github:numtide/treefmt-nix";
   };
@@ -26,12 +27,14 @@
     inputs@{
       devenv,
       flake-parts,
+      git-hooks,
       treefmt-nix,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         devenv.flakeModule
+        git-hooks.flakeModule
         treefmt-nix.flakeModule
         ./modules/flake/default.nix
       ];
