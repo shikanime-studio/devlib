@@ -13,21 +13,15 @@ in
 {
   config = mkIf cfg.enable {
     git-hooks.hooks = {
-      govet.enable = mkDefault false;
+      govet.enable = mkDefault true;
 
       hadolint.excludes = [ "^vendor/" ];
 
-      revive.enable = mkDefault false;
+      revive.enable = mkDefault true;
 
       shellcheck.excludes = [ "^vendor/" ];
 
-      staticcheck = {
-        enable = mkDefault false;
-        package = pkgs.runCommand "staticcheck-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-          makeWrapper ${pkgs.go-tools}/bin/staticcheck $out/bin/staticcheck \
-            --prefix PATH : ${cfg.package}/bin
-        '';
-      };
+      staticcheck.enable = mkDefault true;
     };
 
     gitignore = {
