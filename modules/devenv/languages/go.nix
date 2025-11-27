@@ -65,7 +65,6 @@ in
         gofmt.enable = mkDefault true;
         golines.enable = mkDefault true;
         prettier.excludes = [ "vendor/*" ];
-        shfmt.excludes = [ "vendor/*" ];
       };
     };
   };
