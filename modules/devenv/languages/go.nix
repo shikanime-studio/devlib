@@ -80,7 +80,7 @@ let
 
   package = pkgs.runCommand "golangci-lint-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
     makeWrapper ${pkgs.golangci-lint}/bin/golangci-lint $out/bin/golangci-lint \
-      --prefix PATH : ${config.devenv.shells.default.languages.go.package}/bin \
+      --prefix PATH : ${cfg.package}/bin \
       --append-flag --config \
       --append-flag "${yamlFormat.generate "golangci-lint.yaml" settings}"
   '';
