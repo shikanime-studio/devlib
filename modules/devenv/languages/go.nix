@@ -16,6 +16,8 @@ in
       hadolint.excludes = [ "^vendor/" ];
 
       shellcheck.excludes = [ "^vendor/" ];
+
+      golangci-lint.excludes = [ "^vendor/" ];
     };
 
     gitignore = {
