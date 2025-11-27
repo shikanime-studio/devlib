@@ -1,35 +1,22 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 
 with lib;
 
-let
-  cfg = config.languages.python;
-in
 {
-  config = mkIf cfg.enable {
-    git-hooks.hooks.ruff.enable = mkDefault true;
+  git-hooks.hooks.ruff.enable = true;
 
-    gitignore.templates = [
-      "tt:python"
-    ];
+  gitignore.templates = [
+    "tt:python"
+  ];
 
-    tasks = mkIf cfg.uv.enable {
-      "devlib:python:uv:sync" = {
-        before = [ "devenv:enterShell" ];
-        description = "Sync python dependencies";
-        exec = "${getExe pkgs.uv} sync";
-        execIfModified = [
-          "pyproject.toml"
-          "uv.lock"
-        ];
-      };
+  tasks = {
+    "devlib:python:uv:sync" = {
+      before = [ "devenv:enterShell" ];
+      description = "Sync python dependencies";
+      exec = "${getExe pkgs.uv} sync";
+      execIfModified = [ "uv.lock" ];
     };
-
-    treefmt.config.programs.ruff-format.enable = mkDefault true;
   };
+
+  treefmt.config.programs.ruff-format.enable = true;
 }
