@@ -7,8 +7,10 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.shellcheck.enable = mkDefault true;
 
-    treefmt.config.programs.shfmt.enable = mkDefault true;
+    treefmt.config.programs = {
+      shellcheck.enable = mkDefault true;
+      shfmt.enable = mkDefault true;
+    };
   };
 }

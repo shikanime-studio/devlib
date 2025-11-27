@@ -11,8 +11,6 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.clippy.enable = mkDefault true;
-
     gitignore.templates = [
       "gh:Rust"
     ];

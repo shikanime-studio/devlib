@@ -11,8 +11,6 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.eslint.enable = mkDefault true;
-
     gitignore.templates = [
       "tt:node"
     ];

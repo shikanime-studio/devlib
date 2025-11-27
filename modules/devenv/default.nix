@@ -4,11 +4,9 @@
     ./integrations/automata.nix
     ./integrations/buf.nix
     ./integrations/docker.nix
-    ./integrations/git-hooks.nix
     ./integrations/github.nix
     ./integrations/gitignore.nix
     ./integrations/sops.nix
-    ./languages/deno.nix
     ./languages/go.nix
     ./languages/javascript.nix
     ./languages/nix.nix

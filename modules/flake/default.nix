@@ -20,19 +20,6 @@ in
       };
     };
 
-    git-hooks = {
-      enable = mkOption {
-        type = types.bool;
-        default = inputs.git-hooks != null;
-        description = "Enable git-hooks git-hooks.";
-      };
-      shell = mkOption {
-        type = types.str;
-        default = "default";
-        description = "Shell name to read git-hooks git-hooks configuration from.";
-      };
-    };
-
     treefmt = {
       enable = mkOption {
         type = types.bool;
@@ -52,12 +39,6 @@ in
       { config, ... }:
       {
         devenv.modules = if cfg.devenv.enable then [ ../devenv/default.nix ] else [ ];
-
-        pre-commit.settings =
-          if cfg.git-hooks.enable && hasAttr cfg.git-hooks.shell config.devenv.shells then
-            config.devenv.shells.${cfg.git-hooks.shell}.git-hooks
-          else
-            { };
 
         treefmt =
           if cfg.treefmt.enable && hasAttr cfg.treefmt.shell config.devenv.shells then
