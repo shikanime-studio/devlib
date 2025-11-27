@@ -25,14 +25,11 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    tasks = {
-      "devlib:automata:update" = {
-        description = "Run automata update";
-        exec = ''
-          ${getExe cfg.package} update all ${config.devenv.root}
-        '';
-      };
-      "devenv:treefmt:run".after = [ "devlib:automata:update" ];
+    tasks."devlib:automata:update" = {
+      description = "Run automata update";
+      exec = ''
+        ${getExe cfg.package} update all ${config.devenv.root}
+      '';
     };
   };
 }
