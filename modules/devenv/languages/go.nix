@@ -49,16 +49,18 @@ in
     };
 
     treefmt.config = {
-      programs.golangci-lint = {
-        enable = mkDefault true;
-        enableLinters = [
-          "gofmt"
-          "goimports"
-          "golines"
-          "govet"
-          "revive"
-          "staticcheck"
-        ];
+      programs = {
+        gofmt.enable = mkDefault true;
+        golangci-lint = {
+          enable = mkDefault true;
+          enableLinters = [
+            "goimports"
+            "golines"
+            "govet"
+            "revive"
+            "staticcheck"
+          ];
+        };
       };
       settings.global.excludes = [ "vendor/*" ];
     };
