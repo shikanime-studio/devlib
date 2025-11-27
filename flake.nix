@@ -40,6 +40,7 @@
       ];
       flake = {
         devenvModule = ./modules/devenv/default.nix;
+
         devenvModules = {
           go = ./modules/devenv/languages/go.nix;
           javascript = ./modules/devenv/languages/javascript.nix;
