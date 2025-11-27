@@ -77,9 +77,7 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    files = {
-      "buf.gen.yaml".yaml = genResolved;
-    };
+    files."buf.gen.yaml".yaml = genResolved;
 
     gitignore.content = [
       "buf.gen.yaml"

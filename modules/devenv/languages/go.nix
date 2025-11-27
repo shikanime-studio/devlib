@@ -21,7 +21,13 @@ in
 
       shellcheck.excludes = [ "^vendor/" ];
 
-      staticcheck.enable = mkDefault true;
+      staticcheck = {
+        enable = mkDefault true;
+        package = pkgs.runCommand "staticcheck-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
+          makeWrapper ${pkgs.go-tools}/bin/staticcheck $out/bin/staticcheck \
+            --prefix PATH : ${cfg.package}/bin
+        '';
+      };
     };
 
     gitignore = {
