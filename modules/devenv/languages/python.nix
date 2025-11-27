@@ -28,7 +28,7 @@ in
       };
     };
 
-    treefmt.config.programs= {
+    treefmt.config.programs = {
       ruff-check.enable = true;
       ruff-format.enable = mkDefault true;
     };

@@ -12,21 +12,7 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks = {
-      govet.enable = mkDefault false;
-
-      hadolint.excludes = [ "vendor/*" ];
-
-      revive.enable = mkDefault false;
-
-      staticcheck = {
-        enable = mkDefault false;
-        package = pkgs.runCommand "staticcheck-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-          makeWrapper ${pkgs.go-tools}/bin/staticcheck $out/bin/staticcheck \
-            --prefix PATH : ${cfg.package}/bin
-        '';
-      };
-    };
+    git-hooks.hooks.hadolint.excludes = [ "vendor/*" ];
 
     gitignore = {
       content = [
@@ -65,9 +51,16 @@ in
     };
 
     treefmt.config = {
-      programs = {
-        gofmt.enable = mkDefault true;
-        golines.enable = mkDefault true;
+      programs.golangci-lint = {
+        enable = mkDefault true;
+        enableLinters = [
+          "gofmt"
+          "goimports"
+          "golines"
+          "govet"
+          "revive"
+          "staticcheck"
+        ];
       };
       settings.global.excludes = [ "vendor/*" ];
     };
