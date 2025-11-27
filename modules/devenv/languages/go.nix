@@ -19,8 +19,6 @@ in
 
       revive.enable = mkDefault false;
 
-      shellcheck.excludes = [ "vendor/*" ];
-
       staticcheck = {
         enable = mkDefault false;
         package = pkgs.runCommand "staticcheck-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
@@ -68,12 +66,10 @@ in
 
     treefmt.config = {
       programs = {
-        dockerfmt.excludes = [ "vendor/*" ];
         gofmt.enable = mkDefault true;
         golines.enable = mkDefault true;
-        prettier.excludes = [ "vendor/*" ];
-        shfmt.excludes = [ "vendor/*" ];
       };
+      settings.global.excludes = [ "vendor/*" ];
     };
   };
 }
