@@ -1,23 +1,16 @@
+{ config, ... }:
+
 {
-  config,
-  lib,
-  ...
-}:
+  git-hooks.hooks = {
+    deadnix.enable = true;
+    flake-checker.enable = true;
+    statix.enable = true;
+  };
 
-with lib;
+  gitignore.templates = [ "tt:terraform" ];
 
-let
-  cfg = config.languages.opentofu;
-in
-{
-  config = mkIf cfg.enable {
-    gitignore.templates = [
-      "tt:terraform"
-    ];
-
-    treefmt.config.programs = {
-      hclfmt.enable = mkDefault true;
-      terraform.enable = mkDefault true;
-    };
+  treefmt.config.programs = {
+    hclfmt.enable = true;
+    terraform.enable = true;
   };
 }

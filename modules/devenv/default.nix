@@ -9,12 +9,5 @@
     ./integrations/github.nix
     ./integrations/gitignore.nix
     ./integrations/sops.nix
-    ./languages/go.nix
-    ./languages/javascript.nix
-    ./languages/nix.nix
-    ./languages/opentofu.nix
-    ./languages/python.nix
-    ./languages/rust.nix
-    ./languages/shell.nix
   ];
 }
