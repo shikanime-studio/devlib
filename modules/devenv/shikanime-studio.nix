@@ -19,6 +19,72 @@ with lib;
 
   docker.enable = mkDefault true;
 
+  golangci-lint.settings = {
+    version = 2;
+    linters = {
+      enable = [
+        "bodyclose"
+        "dogsled"
+        "dupl"
+        "durationcheck"
+        "exhaustive"
+        "gocritic"
+        "godot"
+        "gomoddirectives"
+        "goprintffuncname"
+        "govet"
+        "importas"
+        "ineffassign"
+        "makezero"
+        "misspell"
+        "nakedret"
+        "nilerr"
+        "noctx"
+        "nolintlint"
+        "prealloc"
+        "predeclared"
+        "revive"
+        "rowserrcheck"
+        "sqlclosecheck"
+        "staticcheck"
+        "tparallel"
+        "unconvert"
+        "unparam"
+        "unused"
+        "wastedassign"
+        "whitespace"
+      ];
+      settings = {
+        misspell.locale = "US";
+        gocritic = {
+          enabled-tags = [
+            "diagnostic"
+            "experimental"
+            "opinionated"
+            "style"
+          ];
+          disabled-checks = [
+            "importShadow"
+            "unnamedResult"
+          ];
+        };
+      };
+    };
+    formatters = {
+      enable = [
+        "gci"
+        "gofmt"
+        "gofumpt"
+        "goimports"
+      ];
+      settings.gci.sections = [
+        "standard"
+        "default"
+        "localmodule"
+      ];
+    };
+  };
+
   github = {
     enable = mkDefault true;
 
