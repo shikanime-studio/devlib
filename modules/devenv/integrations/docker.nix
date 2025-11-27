@@ -15,8 +15,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    git-hooks.hooks.hadolint.enable = mkDefault true;
-
     treefmt.config.programs.dockerfmt.enable = mkDefault true;
   };
 }

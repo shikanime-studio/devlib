@@ -12,8 +12,6 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks.hadolint.excludes = [ "vendor/*" ];
-
     gitignore = {
       content = [
         "__debug_bin*"
