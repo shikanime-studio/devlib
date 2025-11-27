@@ -17,7 +17,7 @@ in
 
     package = mkOption {
       type = types.package;
-      default = inputs.automata.packages.${pkgs.system}.default;
+      default = inputs.automata.packages.${pkgs.stdenv.hostPlatform.system}.default;
       description = "Automata CLI package to expose in the dev shell.";
     };
   };
