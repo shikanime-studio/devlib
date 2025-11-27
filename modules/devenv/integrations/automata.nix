@@ -16,8 +16,8 @@ in
     enable = mkEnableOption "Automata configuration generator";
 
     package = mkOption {
+      inherit (inputs.automata.packages.${pkgs.stdenv.hostPlatform.system}) default;
       type = types.package;
-      default = inputs.automata.packages.${pkgs.stdenv.hostPlatform.system}.default;
       description = "Automata CLI package to expose in the dev shell.";
     };
   };
