@@ -48,9 +48,6 @@ in
         before = [ "devenv:enterShell" ];
         description = "Run go mod tidy";
         exec = "${getExe pkgs.go} mod tidy";
-        execIfModified = [
-          "go.mod"
-        ];
       };
     };
 
