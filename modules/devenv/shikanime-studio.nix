@@ -8,6 +8,8 @@
 with lib;
 
 {
+  automata.enable = mkDefault true;
+
   cachix = {
     enable = mkDefault true;
     push = "shikanime-studio";

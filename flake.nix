@@ -1,5 +1,6 @@
 {
   inputs = {
+    automata.url = "github:shikanime-studio/automata";
     devenv.url = "github:cachix/devenv";
     flake-parts.url = "github:hercules-ci/flake-parts";
     git-hooks.url = "github:cachix/git-hooks.nix";

@@ -1,6 +1,7 @@
 {
   imports = [
     ./integrations/air.nix
+    ./integrations/automata.nix
     ./integrations/buf.nix
     ./integrations/docker.nix
     ./integrations/git-hooks.nix
