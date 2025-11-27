@@ -68,6 +68,7 @@ in
 
     treefmt.config = {
       programs = {
+        dockerfmt.excludes = [ "vendor/*" ];
         gofmt.enable = mkDefault true;
         golines.enable = mkDefault true;
         prettier.excludes = [ "vendor/*" ];
