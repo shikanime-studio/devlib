@@ -29,7 +29,10 @@ in
       ];
     };
 
-    golangci-lint.enable = mkDefault true;
+    golangci-lint = {
+      enable = mkDefault true;
+      packageOverrides.go = cfg.package;
+    };
 
     tasks = {
       "devlib:go:download" = {

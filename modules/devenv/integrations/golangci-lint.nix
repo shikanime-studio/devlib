@@ -12,7 +12,8 @@ let
   yamlFormat = pkgs.formats.yaml { };
 
   wrapped = pkgs.runCommand "golangci-lint-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-    makeWrapper ${pkgs.golangci-lint}/bin/golangci-lint $out/bin/golangci-lint \
+    makeWrapper ${cfg.package}/bin/golangci-lint $out/bin/golangci-lint \
+      ${lib.optionalString (cfg.packageOverrides.go != null) "--prefix PATH : ${cfg.packageOverrides.go}/bin \\"}
       --append-flag --config \
       --append-flag "${yamlFormat.generate "golangci-lint.yaml" cfg.settings}"
   '';
@@ -27,6 +28,18 @@ in
       };
       default = { };
       description = "golangci-lint YAML settings";
+    };
+
+    package = mkOption {
+      type = types.package;
+      default = pkgs.golangci-lint;
+      description = "Base golangci-lint package to wrap";
+    };
+
+    packageOverrides.go = lib.mkOption {
+      type = lib.types.nullOr lib.types.package;
+      default = null;
+      description = "Override Go toolchain PATH for golangci-lint wrapper";
     };
   };
 
