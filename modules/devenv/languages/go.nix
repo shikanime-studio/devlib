@@ -15,11 +15,11 @@ in
     git-hooks.hooks = {
       govet.enable = mkDefault false;
 
-      hadolint.excludes = [ "vendor/*" ];
+      hadolint.excludes = [ "^vendor/" ];
 
       revive.enable = mkDefault false;
 
-      shellcheck.excludes = [ "vendor/*" ];
+      shellcheck.excludes = [ "^vendor/" ];
 
       staticcheck = {
         enable = mkDefault false;
