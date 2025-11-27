@@ -9,90 +9,10 @@ with lib;
 
 let
   cfg = config.languages.go;
-
-  yamlFormat = pkgs.formats.yaml { };
-
-  settings = {
-    version = 2;
-    linters = {
-      enable = [
-        "bodyclose"
-        "dogsled"
-        "dupl"
-        "durationcheck"
-        "exhaustive"
-        "gocritic"
-        "godot"
-        "gomoddirectives"
-        "goprintffuncname"
-        "govet"
-        "importas"
-        "ineffassign"
-        "makezero"
-        "misspell"
-        "nakedret"
-        "nilerr"
-        "noctx"
-        "nolintlint"
-        "prealloc"
-        "predeclared"
-        "revive"
-        "rowserrcheck"
-        "sqlclosecheck"
-        "staticcheck"
-        "tparallel"
-        "unconvert"
-        "unparam"
-        "unused"
-        "wastedassign"
-        "whitespace"
-      ];
-      settings = {
-        misspell.locale = "US";
-        gocritic = {
-          enabled-tags = [
-            "diagnostic"
-            "experimental"
-            "opinionated"
-            "style"
-          ];
-          disabled-checks = [
-            "importShadow"
-            "unnamedResult"
-          ];
-        };
-      };
-    };
-    formatters = {
-      enable = [
-        "gci"
-        "gofmt"
-        "gofumpt"
-        "goimports"
-      ];
-      settings.gci.sections = [
-        "standard"
-        "default"
-        "localmodule"
-      ];
-    };
-  };
-
-  package = pkgs.runCommand "golangci-lint-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-    makeWrapper ${pkgs.golangci-lint}/bin/golangci-lint $out/bin/golangci-lint \
-      --prefix PATH : ${cfg.package}/bin \
-      --append-flag --config \
-      --append-flag "${yamlFormat.generate "golangci-lint.yaml" settings}"
-  '';
 in
 {
   config = mkIf cfg.enable {
     git-hooks.hooks = {
-      golangci-lint = {
-        inherit package;
-        enable = true;
-      };
-
       hadolint.excludes = [ "^vendor/" ];
 
       shellcheck.excludes = [ "^vendor/" ];
@@ -106,6 +26,8 @@ in
         "tt:go"
       ];
     };
+
+    golangci-lint.enable = mkDefault true;
 
     tasks = {
       "devlib:go:download" = {
