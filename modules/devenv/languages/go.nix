@@ -27,7 +27,6 @@ in
     gitignore = {
       content = [
         "__debug_bin*"
-        "vendor/"
       ];
       templates = [
         "tt:go"
