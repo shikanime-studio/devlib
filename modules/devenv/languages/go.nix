@@ -78,7 +78,7 @@ let
     };
   };
 
-  golangci-lint = pkgs.runCommand "golangci-lint-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
+  package = pkgs.runCommand "golangci-lint-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
     makeWrapper ${pkgs.golangci-lint}/bin/golangci-lint $out/bin/golangci-lint \
       --prefix PATH : ${config.devenv.shells.default.languages.go.package}/bin \
       --append-flag --config \
@@ -89,8 +89,8 @@ in
   config = mkIf cfg.enable {
     git-hooks.hooks = {
       golangci-lint = {
+        inherit package;
         enable = true;
-        package = golangci-lint;
       };
 
       hadolint.excludes = [ "^vendor/" ];

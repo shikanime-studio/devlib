@@ -9,6 +9,7 @@ with lib;
 
 let
   cfg = config.buf;
+
   yamlFormat = pkgs.formats.yaml { };
 
   resolvePlugin =
@@ -28,11 +29,17 @@ let
     else
       pluginCfg;
 
-  genResolved =
+  template =
     if cfg.generate ? plugins then
       cfg.generate // { plugins = map resolvePlugin cfg.generate.plugins; }
     else
       cfg.generate;
+
+  package = pkgs.runCommand "buf-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
+    makeWrapper ${pkgs.buf}/bin/buf $out/bin/buf \
+      --append-flag --template \
+      --append-flag "${yamlFormat.generate "buf.gen.yaml" template}"
+  '';
 in
 {
   options.buf = {
@@ -44,7 +51,7 @@ in
       description = "Buf CLI package to expose in the dev shell.";
     };
 
-    generate = mkOption {
+    template = mkOption {
       type = types.submodule {
         freeformType = yamlFormat.type;
       };
@@ -77,18 +84,12 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    files."buf.gen.yaml".yaml = genResolved;
-
-    gitignore.content = [
-      "buf.gen.yaml"
-    ];
-
     tasks = {
       "devlib:buf:generate" = {
         description = "Run buf generate with buf.gen.yaml";
         before = [ "devenv:enterShell" ];
         exec = ''
-          ${getExe cfg.package} generate
+          ${getExe package} generate
         '';
       };
       "devenv:treefmt:run".after = [ "devlib:buf:generate" ];
