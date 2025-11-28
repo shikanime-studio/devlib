@@ -19,7 +19,6 @@ jobs:
       - uses: shikanime-studio/direnv-action@v2
       - run: nix flake check --accept-flake-config --all-systems --no-pure-eval
   labels:
-    if: github.event.action == 'opened'
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken

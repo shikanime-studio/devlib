@@ -318,10 +318,6 @@ with lib;
               "main"
               "release-*"
             ];
-            pull_request.branches = [
-              "main"
-              "gh/*/*/base"
-            ];
           };
           jobs.check = {
             runs-on = "ubuntu-latest";
@@ -346,7 +342,6 @@ with lib;
           ];
           jobs = {
             labels = {
-              "if" = "github.event.action == 'opened'";
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
                 create-github-app-token

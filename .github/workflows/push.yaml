@@ -18,10 +18,6 @@ jobs:
       - run: nix flake check --accept-flake-config --all-systems --no-pure-eval
 name: Push
 "on":
-  pull_request:
-    branches:
-      - main
-      - gh/*/*/base
   push:
     branches:
       - main
