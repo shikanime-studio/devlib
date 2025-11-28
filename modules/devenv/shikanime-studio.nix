@@ -134,7 +134,7 @@ with lib;
         };
         "if" = concatStringsSep " && " [
           "startsWith(github.head_ref, 'gh/')"
-          "!endsWith(github.head_ref, '/head')"
+          "endsWith(github.head_ref, '/head')"
         ];
         run = mkWorkflowRun [
           "gh"

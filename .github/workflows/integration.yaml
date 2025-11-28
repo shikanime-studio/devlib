@@ -78,7 +78,7 @@ jobs:
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        if: startsWith(github.head_ref, 'gh/') && !endsWith(github.head_ref, '/head')
+        if: startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref, '/head')
         run: gh pr edit "$PR_NUMBER" --add-label ghstack
 name: Integration
 "on":
