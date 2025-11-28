@@ -108,6 +108,26 @@ with lib;
         ];
       };
 
+      cleanup = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          REPO = mkWorkflowRef "github.repository";
+          BASE_REF = mkWorkflowRef "github.event.pull_request.base.ref";
+          HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
+        };
+        "if" = "github.event.action == 'closed'";
+        run = ''
+          if [[ "$HEAD_REF" =~ ^gh/[^/]+/[^/]+/head$ && "$BASE_REF" =~ ^gh/[^/]+/[^/]+/base$ && "''${HEAD_REF%/head}" == "''${BASE_REF%/base}" ]]; then
+            prefix="''${HEAD_REF%/head}"
+            for role in base head orig; do
+              git push origin --delete "$prefix/$role" || true
+            done
+          else
+            git push origin --delete "$HEAD_REF" || true
+          fi
+        '';
+      };
+
       automata = {
         uses = "shikanime-studio/automata-action@v1";
         "with" = {
@@ -285,16 +305,27 @@ with lib;
             pull_request.types = [
               "opened"
               "synchronize"
+              "closed"
             ];
             check_suite.types = [ "completed" ];
           };
-          jobs.triage = {
+          jobs= {
+            triage = {
             runs-on = "ubuntu-latest";
             steps = with config.github.actions; [
               create-github-app-token
               checkout
               add-dependencies-labels
             ];
+          cleanup = {
+            runs-on = "ubuntu-latest";
+            "if" = "github.event.action == 'closed'";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              cleanup-ghstack
+            ];
+          };
           };
         };
       };
