@@ -1,5 +1,5 @@
 jobs:
-  labels:
+  triage:
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken
