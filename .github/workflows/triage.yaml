@@ -50,5 +50,5 @@ name: Triage
       - completed
   pull_request:
     types:
-      - opened
       - closed
+      - opened

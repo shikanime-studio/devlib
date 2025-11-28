@@ -89,7 +89,7 @@ with lib;
     enable = mkDefault true;
 
     actions = with config.github.lib; {
-      add-dependencies-labels = {
+      add-labels = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
@@ -301,8 +301,8 @@ with lib;
           name = "Triage";
           on = {
             pull_request.types = [
-              "opened"
               "closed"
+              "opened"
             ];
             check_suite.types = [ "completed" ];
           };
@@ -313,7 +313,7 @@ with lib;
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
-                add-dependencies-labels
+                add-labels
               ];
             };
 
