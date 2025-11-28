@@ -89,7 +89,26 @@ with lib;
     enable = mkDefault true;
 
     actions = with config.github.lib; {
-      add-labels = {
+      assign-pr = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
+        };
+        "if" = concatStringsSep " || " [
+          "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
+          "github.event.pull_request.user.login == 'dependabot[bot]'"
+        ];
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "edit"
+          ''"$PR_NUMBER"''
+          "--assignee"
+          "@yorha-operator-6o"
+        ];
+      };
+
+      add-dependencies-labels = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
@@ -108,21 +127,54 @@ with lib;
         ];
       };
 
-      cleanup = {
+      add-ghstack-labels = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-          PR_BASE_REF = mkWorkflowRef "github.event.pull_request.base.ref";
-          PR_HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
+          PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
+        };
+        "if" = concatStringsSep " && " [
+          "startsWith(github.head_ref, 'gh/')"
+          "endsWith(github.head_ref, '/head')"
+        ];
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "edit"
+          ''"$PR_NUMBER"''
+          "--add-label"
+          "ghstack"
+        ];
+      };
+
+      cleanup-pr = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          BASE_REF = mkWorkflowRef "github.base_ref";
+          HEAD_REF = mkWorkflowRef "github.head_ref";
           REPO = mkWorkflowRef "github.repository";
         };
+        "if" = "!contains(github.event.pull_request.labels.*.name, 'ghstack')";
+        run = mkWorkflowRun [
+          "git"
+          "push"
+          "origin"
+          "--delete"
+          ''"$HEAD_REF"''
+        ];
+      };
+
+      cleanup-ghstack = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          BASE_REF = mkWorkflowRef "github.base_ref";
+          HEAD_REF = mkWorkflowRef "github.head_ref";
+          REPO = mkWorkflowRef "github.repository";
+        };
+        "if" = "contains(github.event.pull_request.labels.*.name, 'ghstack')";
         run = ''
-          if [[ "$PR_HEAD_REF" =~ ^gh/[^/]+/[^/]+/head$ && "$PR_BASE_REF" =~ ^gh/[^/]+/[^/]+/base$ && "''${PR_HEAD_REF%/head}" == "''${PR_BASE_REF%/base}" ]]; then
-            for role in base head orig; do
-              git push origin --delete "''${PR_HEAD_REF%/head}/$role" || true
-            done
-          else
-            git push origin --delete "$PR_HEAD_REF" || true
-          fi
+          for role in base head orig; do
+            git push origin --delete "''${HEAD_REF%/head}/$role" || true
+          done
         '';
       };
 
@@ -183,6 +235,44 @@ with lib;
         };
       };
 
+      ghstack-merge = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
+        };
+        "if" = concatStringsSep " && " [
+          "contains(github.event.pull_request.labels.*.name, 'dependencies')"
+          "contains(github.event.issue.labels.*.name, 'ghstack')"
+        ];
+        run = mkWorkflowRun [
+          "nix"
+          "run"
+          "nixpkgs#sapling"
+          "--"
+          "ghstack"
+          "land"
+          ''"$PR_HTML_URL"''
+        ];
+      };
+
+      pr-merge = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
+        };
+        "if" = concatStringsSep " && " [
+          "contains(github.event.pull_request.labels.*.name, 'dependencies')"
+          "!contains(github.event.issue.labels.*.name, 'ghstack')"
+        ];
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "merge"
+          "--auto"
+          ''"$PR_HTML_URL"''
+        ];
+      };
+
       nix-flake-check.run = mkWorkflowRun [
         "nix"
         "flake"
@@ -238,18 +328,14 @@ with lib;
         };
       };
 
-      main = {
+      push = {
         enable = mkDefault true;
         settings = {
-          name = "Main";
+          name = "Push";
           on = {
             push.branches = [
               "main"
               "release-*"
-            ];
-            pull_request.branches = [
-              "main"
-              "gh/*/*/base"
             ];
           };
           jobs.check = {
@@ -261,6 +347,51 @@ with lib;
               direnv
               nix-flake-check
             ];
+          };
+        };
+      };
+
+      integration = {
+        enable = mkDefault true;
+        settings = {
+          name = "Integration";
+          on.pull_request.branches = [
+            "main"
+            "gh/*/*/base"
+          ];
+          jobs = {
+            triage = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                assign-pr
+                add-dependencies-labels
+                add-ghstack-labels
+              ];
+            };
+            check = {
+              needs = [ "triage" ];
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                direnv
+                nix-flake-check
+              ];
+            };
+            merge = {
+              needs = [ "check" ];
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                ghstack-merge
+                pr-merge
+              ];
+            };
           };
         };
       };
@@ -295,37 +426,24 @@ with lib;
         };
       };
 
-      triage = {
+      cleanup = {
         enable = mkDefault true;
         settings = {
-          name = "Triage";
+          name = "Cleanup";
           on = {
             pull_request.types = [
               "closed"
-              "opened"
             ];
             check_suite.types = [ "completed" ];
           };
-          jobs = {
-            labels = {
-              "if" = "github.event.action == 'opened'";
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                add-labels
-              ];
-            };
-
-            cleanup = {
-              "if" = "github.event.action == 'closed'";
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                cleanup
-              ];
-            };
+          jobs.cleanup = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              cleanup-pr
+              cleanup-ghstack
+            ];
           };
         };
       };
