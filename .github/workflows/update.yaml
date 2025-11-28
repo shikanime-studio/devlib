@@ -1,5 +1,5 @@
 jobs:
-  dependencies:
+  update:
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken
@@ -22,44 +22,6 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           sign-commits: true
           username: Operator 6O <operator6o@shikanime.studio>
-  ghstack:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    steps:
-      - id: createGithubAppToken
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ steps.createGithubAppToken.outputs.token }}
-      - env:
-          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
-          PR_USERNAME: ${{ github.event.pull_request.user.login }}
-          REPOSITORY: ${{ github.repository }}
-        run:
-          "if echo \"$PR_HEAD_REF\" | grep -qE \"^gh/$PR_USERNAME/[0-9]+/head$\"\
-          ; then\n  PREFIX_DIR=\"$(dirname \"$PR_HEAD_REF\")\"\n  for ref in \"$PREFIX_DIR/head\"\
-          \ \"$PREFIX_DIR/orig\" \"$PREFIX_DIR/base\"; do\n    gh api -X DELETE \"repos/$REPOSITORY/git/refs/heads/$ref\"\
-          \ || true\n  done\nfi\n"
-  stale:
-    runs-on: ubuntu-latest
-    steps:
-      - id: createGithubAppToken
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: actions/stale@v10
-        with:
-          days-before-close: 14
-          days-before-stale: 30
-          repo-token: ${{ steps.createGithubAppToken.outputs.token }}
-          stale-issue-label: stale
-          stale-pr-label: stale
 name: Update
 "on":
   schedule:
