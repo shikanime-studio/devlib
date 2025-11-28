@@ -216,26 +216,6 @@ with lib;
         };
       };
 
-      nix-flake-check.run = mkWorkflowRun [
-        "nix"
-        "flake"
-        "check"
-        "--accept-flake-config"
-        "--all-systems"
-        "--no-pure-eval"
-      ];
-
-      sapling = {
-        uses = "shikanime-studio/sapling-action@v5";
-        "with" = {
-          github-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-          gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
-          gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
-          sign-commits = true;
-          username = "Operator 6O <operator6o@shikanime.studio>";
-        };
-      };
-
       ghstack-merge = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
@@ -254,6 +234,44 @@ with lib;
           "land"
           ''"$PR_HTML_URL"''
         ];
+      };
+
+      pr-merge = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
+        };
+        "if" = concatStringsSep " && " [
+          "contains(github.event.pull_request.labels.*.name, 'dependencies')"
+          "!contains(github.event.issue.labels.*.name, 'ghstack')"
+        ];
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "merge"
+          "--auto"
+          ''"$PR_HTML_URL"''
+        ];
+      };
+
+      nix-flake-check.run = mkWorkflowRun [
+        "nix"
+        "flake"
+        "check"
+        "--accept-flake-config"
+        "--all-systems"
+        "--no-pure-eval"
+      ];
+
+      sapling = {
+        uses = "shikanime-studio/sapling-action@v5";
+        "with" = {
+          github-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
+          gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
+          sign-commits = true;
+          username = "Operator 6O <operator6o@shikanime.studio>";
+        };
       };
 
       setup-nix = {
@@ -337,7 +355,7 @@ with lib;
                 add-ghstack-labels
               ];
             };
-            integration = {
+            check = {
               needs = [ "labels" ];
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
@@ -346,7 +364,17 @@ with lib;
                 setup-nix
                 direnv
                 nix-flake-check
+              ];
+            };
+            merge = {
+              needs = [ "check" ];
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
                 ghstack-merge
+                pr-merge
               ];
             };
           };
