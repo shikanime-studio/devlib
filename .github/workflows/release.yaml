@@ -32,9 +32,9 @@ jobs:
           token: ${{ steps.createGithubAppToken.outputs.token }}
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-        run:
-          gh release create ${{ github.ref_name }} --repo ${{ github.repository }}
-          --generate-notes
+          REF_NAME: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: gh release create "$REF_NAME" --repo "$REPO" --generate-notes
 name: Release
 "on":
   push:

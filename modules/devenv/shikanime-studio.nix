@@ -90,7 +90,10 @@ with lib;
 
     actions = with config.github.lib; {
       add-dependencies-labels = {
-        env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
+        };
         "if" = concatStringsSep " || " [
           "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
           "github.event.pull_request.user.login == 'dependabot[bot]'"
@@ -99,7 +102,7 @@ with lib;
           "gh"
           "pr"
           "edit"
-          (mkWorkflowRef "github.event.pull_request.number")
+          ''"$PR_NUMBER"''
           "--add-label"
           "dependencies"
         ];
@@ -127,14 +130,18 @@ with lib;
       };
 
       create-release = {
-        env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          REF_NAME = mkWorkflowRef "github.ref_name";
+          REPO = mkWorkflowRef "github.repository";
+        };
         run = mkWorkflowRun [
           "gh"
           "release"
           "create"
-          (mkWorkflowRef "github.ref_name")
+          ''"$REF_NAME"''
           "--repo"
-          (mkWorkflowRef "github.repository")
+          ''"$REPO"''
           "--generate-notes"
         ];
       };
