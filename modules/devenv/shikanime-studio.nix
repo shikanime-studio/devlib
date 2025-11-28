@@ -115,7 +115,6 @@ with lib;
           BASE_REF = mkWorkflowRef "github.event.pull_request.base.ref";
           HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
         };
-        "if" = "github.event.action == 'closed'";
         run = ''
           if [[ "$HEAD_REF" =~ ^gh/[^/]+/[^/]+/head$ && "$BASE_REF" =~ ^gh/[^/]+/[^/]+/base$ && "''${HEAD_REF%/head}" == "''${BASE_REF%/base}" ]]; then
             prefix="''${HEAD_REF%/head}"
@@ -304,28 +303,30 @@ with lib;
           on = {
             pull_request.types = [
               "opened"
-              "synchronize"
               "closed"
             ];
             check_suite.types = [ "completed" ];
           };
-          jobs= {
-            triage = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              add-dependencies-labels
-            ];
-          cleanup = {
-            runs-on = "ubuntu-latest";
-            "if" = "github.event.action == 'closed'";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              cleanup-ghstack
-            ];
-          };
+          jobs = {
+            labels = {
+              "if" = "github.event.action == 'opened'";
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                add-dependencies-labels
+              ];
+            };
+
+            cleanup = {
+              "if" = "github.event.action == 'closed'";
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                cleanup
+              ];
+            };
           };
         };
       };
