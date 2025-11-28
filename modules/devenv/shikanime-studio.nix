@@ -102,7 +102,7 @@ with lib;
           "gh"
           "pr"
           "edit"
-          "$PR_NUMBER"
+          ''"$PR_NUMBER"''
           "--add-label"
           "dependencies"
         ];
@@ -139,9 +139,9 @@ with lib;
           "gh"
           "release"
           "create"
-          "$REF_NAME"
+          ''"$REF_NAME"''
           "--repo"
-          "$REPO"
+          ''"$REPO"''
           "--generate-notes"
         ];
       };
