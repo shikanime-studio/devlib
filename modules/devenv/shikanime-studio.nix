@@ -140,7 +140,7 @@ with lib;
       };
 
       checkout = {
-        uses = "actions/checkout@v5";
+        uses = "actions/checkout@v6";
         "with" = {
           fetch-depth = 0;
           token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
