@@ -37,14 +37,38 @@ jobs:
           token: ${{ steps.createGithubAppToken.outputs.token }}
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
-          PR_USERNAME: ${{ github.event.pull_request.user.login }}
           REPOSITORY: ${{ github.repository }}
         run:
-          "if echo \"$PR_HEAD_REF\" | grep -qE \"^gh/$PR_USERNAME/[0-9]+/head$\"\
-          ; then\n  PREFIX_DIR=\"$(dirname \"$PR_HEAD_REF\")\"\n  for ref in \"$PREFIX_DIR/head\"\
-          \ \"$PREFIX_DIR/orig\" \"$PREFIX_DIR/base\"; do\n    gh api -X DELETE \"repos/$REPOSITORY/git/refs/heads/$ref\"\
-          \ || true\n  done\nfi\n"
+          "for NAME in $(gh api --paginate \"repos/$REPOSITORY/branches\" -q '.[]\
+          \ | .name' | grep '^gh/' || true); do\n  PREFIX_DIR=\"$(dirname \"$NAME\"\
+          )\"\n  NUMBER=\"$(echo \"$NAME\" | awk -F/ '{print $3}')\"\n  STATE=\"$(gh\
+          \ api -X GET \"repos/$REPOSITORY/pulls/$NUMBER\" -q '.state' || echo \"\"\
+          )\"\n  if [ \"$STATE\" = \"closed\" ] || [ \"$STATE\" = \"merged\" ]; then\n\
+          \    for t in head orig base; do\n      gh api -X DELETE \"repos/$REPOSITORY/git/refs/heads/$PREFIX_DIR/$t\"\
+          \ || true\n    done\n  fi\ndone\n"
+  ghstack-sweep:
+    runs-on: ubuntu-latest
+    steps:
+      - id: createGithubAppToken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token }}
+      - env:
+          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+          REPOSITORY: ${{ github.repository }}
+        run:
+          "set -euo pipefail\nfor NAME in $(gh api --paginate \"repos/$REPOSITORY/branches\"\
+          \ -q '.[] | .name' | grep '^gh/' || true); do\n  PREFIX_DIR=\"$(dirname \"\
+          $NAME\")\"\n  NUMBER=\"$(echo \"$NAME\" | awk -F/ '{print $3}')\"\n  STATE=\"\
+          $(gh api -X GET \"repos/$REPOSITORY/pulls/$NUMBER\" -q '.state' || echo \"\
+          \")\"\n  if [ \"$STATE\" = \"closed\" ] || [ \"$STATE\" = \"merged\" ]; then\n\
+          \    for t in head orig base; do\n      gh api -X DELETE \"repos/$REPOSITORY/git/refs/heads/$PREFIX_DIR/$t\"\
+          \ || true\n    done\n  fi\ndone\n"
   stale:
     runs-on: ubuntu-latest
     steps:

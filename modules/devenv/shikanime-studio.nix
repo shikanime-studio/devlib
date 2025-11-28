@@ -278,23 +278,6 @@ with lib;
         };
       };
 
-      stale = {
-        enable = mkDefault true;
-        settings = {
-          name = "Stale";
-          on = {
-            schedule = [ { cron = "30 1 * * *"; } ];
-          };
-          jobs.stale = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              stale
-            ];
-          };
-        };
-      };
-
       triage = {
         enable = mkDefault true;
         settings = {
@@ -306,13 +289,15 @@ with lib;
             ];
             check_suite.types = [ "completed" ];
           };
-          jobs.triage = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              add-dependencies-labels
-            ];
+          jobs = {
+            labels = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                add-dependencies-labels
+              ];
+            };
           };
         };
       };
@@ -335,17 +320,19 @@ with lib;
                 {
                   env = {
                     GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-                    PR_HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
-                    PR_USERNAME = mkWorkflowRef "github.event.pull_request.user.login";
                     REPOSITORY = mkWorkflowRef "github.repository";
                   };
                   run = ''
-                    if echo "$PR_HEAD_REF" | grep -qE "^gh/$PR_USERNAME/[0-9]+/head$"; then
-                      PREFIX_DIR="$(dirname "$PR_HEAD_REF")"
-                      for ref in "$PREFIX_DIR/head" "$PREFIX_DIR/orig" "$PREFIX_DIR/base"; do
-                        gh api -X DELETE "repos/$REPOSITORY/git/refs/heads/$ref" || true
-                      done
-                    fi
+                    for NAME in $(gh api --paginate "repos/$REPOSITORY/branches" -q '.[] | .name' | grep '^gh/' || true); do
+                      PREFIX_DIR="$(dirname "$NAME")"
+                      NUMBER="$(echo "$NAME" | awk -F/ '{print $3}')"
+                      STATE="$(gh api -X GET "repos/$REPOSITORY/pulls/$NUMBER" -q '.state' || echo "")"
+                      if [ "$STATE" = "closed" ] || [ "$STATE" = "merged" ]; then
+                        for t in head orig base; do
+                          gh api -X DELETE "repos/$REPOSITORY/git/refs/heads/$PREFIX_DIR/$t" || true
+                        done
+                      fi
+                    done
                   '';
                 }
               ];
@@ -366,6 +353,33 @@ with lib;
               steps = with config.github.actions; [
                 create-github-app-token
                 stale
+              ];
+            };
+
+            ghstack-sweep = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                {
+                  env = {
+                    GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+                    REPOSITORY = mkWorkflowRef "github.repository";
+                  };
+                  run = ''
+                    set -euo pipefail
+                    for NAME in $(gh api --paginate "repos/$REPOSITORY/branches" -q '.[] | .name' | grep '^gh/' || true); do
+                      PREFIX_DIR="$(dirname "$NAME")"
+                      NUMBER="$(echo "$NAME" | awk -F/ '{print $3}')"
+                      STATE="$(gh api -X GET "repos/$REPOSITORY/pulls/$NUMBER" -q '.state' || echo "")"
+                      if [ "$STATE" = "closed" ] || [ "$STATE" = "merged" ]; then
+                        for t in head orig base; do
+                          gh api -X DELETE "repos/$REPOSITORY/git/refs/heads/$PREFIX_DIR/$t" || true
+                        done
+                      fi
+                    done
+                  '';
+                }
               ];
             };
           };
