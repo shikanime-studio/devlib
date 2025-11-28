@@ -325,49 +325,14 @@ with lib;
             schedule = [ { cron = "0 0 * * 0"; } ];
             workflow_dispatch = null;
           };
-          jobs = {
-            ghstack = {
-              "if" = "github.event_name == 'pull_request' && github.event.action == 'closed'";
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                {
-                  env = {
-                    GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-                    PR_HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
-                    PR_USERNAME = mkWorkflowRef "github.event.pull_request.user.login";
-                    REPOSITORY = mkWorkflowRef "github.repository";
-                  };
-                  run = ''
-                    if echo "$PR_HEAD_REF" | grep -qE "^gh/$PR_USERNAME/[0-9]+/head$"; then
-                      PREFIX_DIR="$(dirname "$PR_HEAD_REF")"
-                      for ref in "$PREFIX_DIR/head" "$PREFIX_DIR/orig" "$PREFIX_DIR/base"; do
-                        gh api -X DELETE "repos/$REPOSITORY/git/refs/heads/$ref" || true
-                      done
-                    fi
-                  '';
-                }
-              ];
-            };
-
-            dependencies = {
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                automata
-              ];
-            };
-
-            stale = {
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                stale
-              ];
-            };
+          jobs.update = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              setup-nix
+              automata
+            ];
           };
         };
       };
