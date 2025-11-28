@@ -13,11 +13,10 @@ in
 {
   config = mkIf cfg.enable {
     git-hooks.hooks = {
-      hadolint.excludes = [ "^vendor/" ];
-
-      shellcheck.excludes = [ "^vendor/" ];
-
       golangci-lint.excludes = [ "^vendor/" ];
+      gotest.enable = mkDefault true;
+      hadolint.excludes = [ "^vendor/" ];
+      shellcheck.excludes = [ "^vendor/" ];
     };
 
     gitignore = {
