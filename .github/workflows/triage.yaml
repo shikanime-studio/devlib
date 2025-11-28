@@ -7,16 +7,17 @@ jobs:
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ steps.createGithubAppToken.outputs.token }}
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         if:
           github.event.pull_request.user.login == 'yorha-operator-6o[bot]' || github.event.pull_request.user.login
           == 'dependabot[bot]'
-        run: gh pr edit ${{ github.event.pull_request.number }} --add-label dependencies
+        run: gh pr edit $PR_NUMBER --add-label dependencies
 name: Triage
 "on":
   check_suite:

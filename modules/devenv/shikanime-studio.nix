@@ -90,7 +90,10 @@ with lib;
 
     actions = with config.github.lib; {
       add-dependencies-labels = {
-        env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
+        };
         "if" = concatStringsSep " || " [
           "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
           "github.event.pull_request.user.login == 'dependabot[bot]'"
@@ -99,7 +102,7 @@ with lib;
           "gh"
           "pr"
           "edit"
-          (mkWorkflowRef "github.event.pull_request.number")
+          "$PR_NUMBER"
           "--add-label"
           "dependencies"
         ];
@@ -127,14 +130,18 @@ with lib;
       };
 
       create-release = {
-        env.GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          REF_NAME = mkWorkflowRef "github.ref_name";
+          REPOSITORY = mkWorkflowRef "github.repository";
+        };
         run = mkWorkflowRun [
           "gh"
           "release"
           "create"
-          (mkWorkflowRef "github.ref_name")
+          "$REF_NAME"
           "--repo"
-          (mkWorkflowRef "github.repository")
+          "$REPOSITORY"
           "--generate-notes"
         ];
       };
@@ -318,14 +325,49 @@ with lib;
             schedule = [ { cron = "0 0 * * 0"; } ];
             workflow_dispatch = null;
           };
-          jobs.update = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              setup-nix
-              automata
-            ];
+          jobs = {
+            ghstack = {
+              "if" = "github.event_name == 'pull_request' && github.event.action == 'closed'";
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                {
+                  env = {
+                    GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+                    PR_HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
+                    PR_USERNAME = mkWorkflowRef "github.event.pull_request.user.login";
+                    REPOSITORY = mkWorkflowRef "github.repository";
+                  };
+                  run = ''
+                    if echo "$PR_HEAD_REF" | grep -qE "^gh/$PR_USERNAME/[0-9]+/head$"; then
+                      PREFIX_DIR="$(dirname "$PR_HEAD_REF")"
+                      for ref in "$PREFIX_DIR/head" "$PREFIX_DIR/orig" "$PREFIX_DIR/base"; do
+                        gh api -X DELETE "repos/$REPOSITORY/git/refs/heads/$ref" || true
+                      done
+                    fi
+                  '';
+                }
+              ];
+            };
+
+            dependencies = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                automata
+              ];
+            };
+
+            stale = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                stale
+              ];
+            };
           };
         };
       };
