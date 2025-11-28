@@ -114,8 +114,8 @@ with lib;
           PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
         };
         "if" = concatStringsSep " && " [
-          "startsWith(github.event.pull_request.head.ref, 'gh/')"
-          "!endsWith(github.event.pull_request.head.ref, '/head')"
+          "startsWith(github.head_ref, 'gh/')"
+          "!endsWith(github.head_ref, '/head')"
         ];
         run = mkWorkflowRun [
           "gh"
@@ -130,8 +130,8 @@ with lib;
       cleanup-pr = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-          PR_BASE_REF = mkWorkflowRef "github.event.pull_request.base.ref";
-          PR_HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
+          BASE_REF = mkWorkflowRef "github.base_ref";
+          HEAD_REF = mkWorkflowRef "github.head_ref";
           REPO = mkWorkflowRef "github.repository";
         };
         "if" = "!contains(github.event.pull_request.labels.*.name, 'ghstack')";
@@ -140,21 +140,21 @@ with lib;
           "push"
           "origin"
           "--delete"
-          ''"$PR_HEAD_REF"''
+          ''"$HEAD_REF"''
         ];
       };
 
       cleanup-ghstack = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-          PR_BASE_REF = mkWorkflowRef "github.event.pull_request.base.ref";
-          PR_HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
+          BASE_REF = mkWorkflowRef "github.base_ref";
+          HEAD_REF = mkWorkflowRef "github.head_ref";
           REPO = mkWorkflowRef "github.repository";
         };
         "if" = "contains(github.event.pull_request.labels.*.name, 'ghstack')";
         run = ''
           for role in base head orig; do
-            git push origin --delete "''${PR_HEAD_REF%/head}/$role" || true
+            git push origin --delete "''${HEAD_REF%/head}/$role" || true
           done
         '';
       };

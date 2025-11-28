@@ -40,9 +40,7 @@ jobs:
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        if:
-          startsWith(github.event.pull_request.head.ref, 'gh/') && !endsWith(github.event.pull_request.head.ref,
-          '/head')
+        if: startsWith(github.head_ref, 'gh/') && !endsWith(github.head_ref, '/head')
         run: gh pr edit "$PR_NUMBER" --add-label ghstack
   merge:
     needs:
