@@ -89,7 +89,7 @@ with lib;
     enable = mkDefault true;
 
     actions = with config.github.lib; {
-      add-labels = {
+      add-dependencies-labels = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
@@ -105,6 +105,25 @@ with lib;
           ''"$PR_NUMBER"''
           "--add-label"
           "dependencies"
+        ];
+      };
+
+      add-ghstack-labels = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
+        };
+        "if" = concatStringsSep " && " [
+          "startsWith(github.event.pull_request.head.ref, 'gh/')"
+          "!endsWith(github.event.pull_request.head.ref, '/head')"
+        ];
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "edit"
+          ''"$PR_NUMBER"''
+          "--add-label"
+          "ghstack"
         ];
       };
 
@@ -203,16 +222,12 @@ with lib;
         };
       };
 
-      setup-nix = {
-        uses = "shikanime-studio/setup-nix-action@v1";
-        "with".github-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-      };
-
       sapling-ghstack-merge = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
         };
+        "if" = "contains(github.event.issue.labels.*.name, 'ghstack')";
         run = mkWorkflowRun [
           "nix"
           "run"
@@ -222,6 +237,11 @@ with lib;
           "land"
           ''"$PR_HTML_URL"''
         ];
+      };
+
+      setup-nix = {
+        uses = "shikanime-studio/setup-nix-action@v1";
+        "with".github-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
       };
 
       stale = {
@@ -343,7 +363,8 @@ with lib;
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
-                add-labels
+                add-dependencies-labels
+                add-ghstack-labels
               ];
             };
 

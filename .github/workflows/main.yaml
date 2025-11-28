@@ -37,7 +37,8 @@ jobs:
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           PR_HTML_URL: ${{ github.event.issue.pull_request.html_url }}
-        run: nix run nixpkgs#sapling -- ghstack merge "$PR_HTML_URL"
+        if: contains(github.event.issue.labels.*.name, 'ghstack')
+        run: nix run nixpkgs#sapling -- ghstack land "$PR_HTML_URL"
 name: Main
 "on":
   pull_request:
