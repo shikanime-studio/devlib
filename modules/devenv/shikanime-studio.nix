@@ -133,7 +133,7 @@ with lib;
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           REF_NAME = mkWorkflowRef "github.ref_name";
-          REPOSITORY = mkWorkflowRef "github.repository";
+          REPO = mkWorkflowRef "github.repository";
         };
         run = mkWorkflowRun [
           "gh"
@@ -141,7 +141,7 @@ with lib;
           "create"
           "$REF_NAME"
           "--repo"
-          "$REPOSITORY"
+          "$REPO"
           "--generate-notes"
         ];
       };
