@@ -89,6 +89,25 @@ with lib;
     enable = mkDefault true;
 
     actions = with config.github.lib; {
+      assign-pr = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
+        };
+        "if" = concatStringsSep " || " [
+          "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
+          "github.event.pull_request.user.login == 'dependabot[bot]'"
+        ];
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "edit"
+          ''"$PR_NUMBER"''
+          "--assignee"
+          "@yorha-operator-6o"
+        ];
+      };
+
       add-dependencies-labels = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
@@ -341,17 +360,18 @@ with lib;
             "gh/*/*/base"
           ];
           jobs = {
-            labels = {
+            triage = {
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
+                assign-pr
                 add-dependencies-labels
                 add-ghstack-labels
               ];
             };
             check = {
-              needs = [ "labels" ];
+              needs = [ "triage" ];
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
                 create-github-app-token
