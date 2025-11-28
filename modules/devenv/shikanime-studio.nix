@@ -208,6 +208,22 @@ with lib;
         "with".github-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
       };
 
+      sapling-ghstack-merge = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
+        };
+        run = mkWorkflowRun [
+          "nix"
+          "run"
+          "nixpkgs#sapling"
+          "--"
+          "ghstack"
+          "land"
+          ''"$PR_HTML_URL"''
+        ];
+      };
+
       stale = {
         uses = "actions/stale@v10";
         "with" = {
@@ -252,15 +268,29 @@ with lib;
               "gh/*/*/base"
             ];
           };
-          jobs.check = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              setup-nix
-              direnv
-              nix-flake-check
-            ];
+          jobs = {
+            check = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                direnv
+                nix-flake-check
+              ];
+            };
+
+            merge = {
+              "if" = "contains(github.event.pull_request.labels.*.name, 'dependencies')";
+              needs = [ "check" ];
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                sapling-ghstack-merge
+              ];
+            };
           };
         };
       };

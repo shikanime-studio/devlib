@@ -16,6 +16,28 @@ jobs:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - uses: shikanime-studio/direnv-action@v2
       - run: nix flake check --accept-flake-config --all-systems --no-pure-eval
+  merge:
+    if: contains(github.event.pull_request.labels.*.name, 'dependencies')
+    needs:
+      - check
+    runs-on: ubuntu-latest
+    steps:
+      - id: createGithubAppToken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token }}
+      - uses: shikanime-studio/setup-nix-action@v1
+        with:
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
+      - env:
+          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+          PR_HTML_URL: ${{ github.event.issue.pull_request.html_url }}
+        run: nix run nixpkgs#sapling -- ghstack merge "$PR_HTML_URL"
 name: Main
 "on":
   pull_request:
