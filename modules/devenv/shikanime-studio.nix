@@ -89,26 +89,7 @@ with lib;
     enable = mkDefault true;
 
     actions = with config.github.lib; {
-      assign-pr = {
-        env = {
-          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-          PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
-        };
-        "if" = concatStringsSep " || " [
-          "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
-          "github.event.pull_request.user.login == 'dependabot[bot]'"
-        ];
-        run = mkWorkflowRun [
-          "gh"
-          "pr"
-          "edit"
-          ''"$PR_NUMBER"''
-          "--assignee"
-          "@yorha-operator-6o"
-        ];
-      };
-
-      add-dependencies-labels = {
+      bot-triage = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
@@ -124,25 +105,8 @@ with lib;
           ''"$PR_NUMBER"''
           "--add-label"
           "dependencies"
-        ];
-      };
-
-      add-ghstack-labels = {
-        env = {
-          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-          PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
-        };
-        "if" = concatStringsSep " && " [
-          "startsWith(github.head_ref, 'gh/')"
-          "endsWith(github.head_ref, '/head')"
-        ];
-        run = mkWorkflowRun [
-          "gh"
-          "pr"
-          "edit"
-          ''"$PR_NUMBER"''
-          "--add-label"
-          "ghstack"
+          "--assignee"
+          "@yorha-operator-6o"
         ];
       };
 
@@ -240,10 +204,7 @@ with lib;
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
         };
-        "if" = concatStringsSep " && " [
-          "contains(github.event.pull_request.labels.*.name, 'dependencies')"
-          "contains(github.event.issue.labels.*.name, 'ghstack')"
-        ];
+        "if" = "contains(github.event.issue.labels.*.name, 'ghstack')";
         run = mkWorkflowRun [
           "nix"
           "run"
@@ -255,15 +216,31 @@ with lib;
         ];
       };
 
+      ghstack-triage = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
+        };
+        "if" = concatStringsSep " && " [
+          "startsWith(github.head_ref, 'gh/')"
+          "endsWith(github.head_ref, '/head')"
+        ];
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "edit"
+          ''"$PR_NUMBER"''
+          "--add-label"
+          "ghstack"
+        ];
+      };
+
       pr-merge = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
         };
-        "if" = concatStringsSep " && " [
-          "contains(github.event.pull_request.labels.*.name, 'dependencies')"
-          "!contains(github.event.issue.labels.*.name, 'ghstack')"
-        ];
+        "if" = "!contains(github.event.issue.labels.*.name, 'ghstack')";
         run = mkWorkflowRun [
           "gh"
           "pr"
@@ -365,9 +342,8 @@ with lib;
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
-                assign-pr
-                add-dependencies-labels
-                add-ghstack-labels
+                bot-triage
+                ghstack-triage
               ];
             };
             check = {
@@ -382,6 +358,7 @@ with lib;
               ];
             };
             merge = {
+              "if" = "contains(github.event.pull_request.labels.*.name, 'auto')";
               needs = [ "check" ];
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [

@@ -19,6 +19,7 @@ jobs:
       - uses: shikanime-studio/direnv-action@v2
       - run: nix flake check --accept-flake-config --all-systems --no-pure-eval
   merge:
+    if: contains(github.event.pull_request.labels.*.name, 'auto')
     needs:
       - check
     runs-on: ubuntu-latest
@@ -38,16 +39,12 @@ jobs:
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           PR_HTML_URL: ${{ github.event.issue.pull_request.html_url }}
-        if:
-          contains(github.event.pull_request.labels.*.name, 'dependencies') && contains(github.event.issue.labels.*.name,
-          'ghstack')
+        if: contains(github.event.issue.labels.*.name, 'ghstack')
         run: nix run nixpkgs#sapling -- ghstack land "$PR_HTML_URL"
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           PR_HTML_URL: ${{ github.event.issue.pull_request.html_url }}
-        if:
-          contains(github.event.pull_request.labels.*.name, 'dependencies') && !contains(github.event.issue.labels.*.name,
-          'ghstack')
+        if: "!contains(github.event.issue.labels.*.name, 'ghstack')"
         run: gh pr merge --auto "$PR_HTML_URL"
   triage:
     runs-on: ubuntu-latest
@@ -67,14 +64,7 @@ jobs:
         if:
           github.event.pull_request.user.login == 'yorha-operator-6o[bot]' || github.event.pull_request.user.login
           == 'dependabot[bot]'
-        run: gh pr edit "$PR_NUMBER" --assignee @yorha-operator-6o
-      - env:
-          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        if:
-          github.event.pull_request.user.login == 'yorha-operator-6o[bot]' || github.event.pull_request.user.login
-          == 'dependabot[bot]'
-        run: gh pr edit "$PR_NUMBER" --add-label dependencies
+        run: gh pr edit "$PR_NUMBER" --add-label dependencies --assignee @yorha-operator-6o
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
