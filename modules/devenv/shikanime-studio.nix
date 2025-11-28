@@ -322,7 +322,7 @@ with lib;
         settings = {
           name = "Update";
           on = {
-            schedule = [ { cron = "0 0 * * 0"; } ];
+            schedule = [ { cron = "0 4 * * 0"; } ];
             workflow_dispatch = null;
           };
           jobs.update = {
