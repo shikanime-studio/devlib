@@ -22,53 +22,6 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           sign-commits: true
           username: Operator 6O <operator6o@shikanime.studio>
-  ghstack:
-    if: github.event_name == 'pull_request' && github.event.action == 'closed'
-    runs-on: ubuntu-latest
-    steps:
-      - id: createGithubAppToken
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ steps.createGithubAppToken.outputs.token }}
-      - env:
-          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          REPOSITORY: ${{ github.repository }}
-        run:
-          "for NAME in $(gh api --paginate \"repos/$REPOSITORY/branches\" -q '.[]\
-          \ | .name' | grep '^gh/' || true); do\n  PREFIX_DIR=\"$(dirname \"$NAME\"\
-          )\"\n  NUMBER=\"$(echo \"$NAME\" | awk -F/ '{print $3}')\"\n  STATE=\"$(gh\
-          \ api -X GET \"repos/$REPOSITORY/pulls/$NUMBER\" -q '.state' || echo \"\"\
-          )\"\n  if [ \"$STATE\" = \"closed\" ] || [ \"$STATE\" = \"merged\" ]; then\n\
-          \    for t in head orig base; do\n      gh api -X DELETE \"repos/$REPOSITORY/git/refs/heads/$PREFIX_DIR/$t\"\
-          \ || true\n    done\n  fi\ndone\n"
-  ghstack-sweep:
-    runs-on: ubuntu-latest
-    steps:
-      - id: createGithubAppToken
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ steps.createGithubAppToken.outputs.token }}
-      - env:
-          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          REPOSITORY: ${{ github.repository }}
-        run:
-          "set -euo pipefail\nfor NAME in $(gh api --paginate \"repos/$REPOSITORY/branches\"\
-          \ -q '.[] | .name' | grep '^gh/' || true); do\n  PREFIX_DIR=\"$(dirname \"\
-          $NAME\")\"\n  NUMBER=\"$(echo \"$NAME\" | awk -F/ '{print $3}')\"\n  STATE=\"\
-          $(gh api -X GET \"repos/$REPOSITORY/pulls/$NUMBER\" -q '.state' || echo \"\
-          \")\"\n  if [ \"$STATE\" = \"closed\" ] || [ \"$STATE\" = \"merged\" ]; then\n\
-          \    for t in head orig base; do\n      gh api -X DELETE \"repos/$REPOSITORY/git/refs/heads/$PREFIX_DIR/$t\"\
-          \ || true\n    done\n  fi\ndone\n"
   stale:
     runs-on: ubuntu-latest
     steps:

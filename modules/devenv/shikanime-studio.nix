@@ -271,7 +271,6 @@ with lib;
                 create-github-app-token
                 checkout
                 create-release
-
               ];
             };
           };
@@ -311,33 +310,6 @@ with lib;
             workflow_dispatch = null;
           };
           jobs = {
-            ghstack = {
-              "if" = "github.event_name == 'pull_request' && github.event.action == 'closed'";
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                {
-                  env = {
-                    GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-                    REPOSITORY = mkWorkflowRef "github.repository";
-                  };
-                  run = ''
-                    for NAME in $(gh api --paginate "repos/$REPOSITORY/branches" -q '.[] | .name' | grep '^gh/' || true); do
-                      PREFIX_DIR="$(dirname "$NAME")"
-                      NUMBER="$(echo "$NAME" | awk -F/ '{print $3}')"
-                      STATE="$(gh api -X GET "repos/$REPOSITORY/pulls/$NUMBER" -q '.state' || echo "")"
-                      if [ "$STATE" = "closed" ] || [ "$STATE" = "merged" ]; then
-                        for t in head orig base; do
-                          gh api -X DELETE "repos/$REPOSITORY/git/refs/heads/$PREFIX_DIR/$t" || true
-                        done
-                      fi
-                    done
-                  '';
-                }
-              ];
-            };
-
             dependencies = {
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
@@ -353,33 +325,6 @@ with lib;
               steps = with config.github.actions; [
                 create-github-app-token
                 stale
-              ];
-            };
-
-            ghstack-sweep = {
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                {
-                  env = {
-                    GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-                    REPOSITORY = mkWorkflowRef "github.repository";
-                  };
-                  run = ''
-                    set -euo pipefail
-                    for NAME in $(gh api --paginate "repos/$REPOSITORY/branches" -q '.[] | .name' | grep '^gh/' || true); do
-                      PREFIX_DIR="$(dirname "$NAME")"
-                      NUMBER="$(echo "$NAME" | awk -F/ '{print $3}')"
-                      STATE="$(gh api -X GET "repos/$REPOSITORY/pulls/$NUMBER" -q '.state' || echo "")"
-                      if [ "$STATE" = "closed" ] || [ "$STATE" = "merged" ]; then
-                        for t in head orig base; do
-                          gh api -X DELETE "repos/$REPOSITORY/git/refs/heads/$PREFIX_DIR/$t" || true
-                        done
-                      fi
-                    done
-                  '';
-                }
               ];
             };
           };
