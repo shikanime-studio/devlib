@@ -127,21 +127,35 @@ with lib;
         ];
       };
 
-      cleanup = {
+      cleanup-pr = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           PR_BASE_REF = mkWorkflowRef "github.event.pull_request.base.ref";
           PR_HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
           REPO = mkWorkflowRef "github.repository";
         };
+        "if" = "!contains(github.event.pull_request.labels.*.name, 'ghstack')";
+        run = mkWorkflowRun [
+          "git"
+          "push"
+          "origin"
+          "--delete"
+          "$PR_HEAD_REF"
+        ];
+      };
+
+      cleanup-ghstack = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_BASE_REF = mkWorkflowRef "github.event.pull_request.base.ref";
+          PR_HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
+          REPO = mkWorkflowRef "github.repository";
+        };
+        "if" = "contains(github.event.pull_request.labels.*.name, 'ghstack')";
         run = ''
-          if [[ "$PR_HEAD_REF" =~ ^gh/[^/]+/[^/]+/head$ && "$PR_BASE_REF" =~ ^gh/[^/]+/[^/]+/base$ && "''${PR_HEAD_REF%/head}" == "''${PR_BASE_REF%/base}" ]]; then
-            for role in base head orig; do
-              git push origin --delete "''${PR_HEAD_REF%/head}/$role" || true
-            done
-          else
-            git push origin --delete "$PR_HEAD_REF" || true
-          fi
+          for role in base head orig; do
+            git push origin --delete "''${PR_HEAD_REF%/head}/$role" || true
+          done
         '';
       };
 
@@ -274,10 +288,10 @@ with lib;
         };
       };
 
-      main = {
+      push = {
         enable = mkDefault true;
         settings = {
-          name = "Main";
+          name = "Push";
           on = {
             push.branches = [
               "main"
@@ -288,6 +302,27 @@ with lib;
               "gh/*/*/base"
             ];
           };
+          jobs.check = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              setup-nix
+              direnv
+              nix-flake-check
+            ];
+          };
+        };
+      };
+
+      pull_request = {
+        enable = mkDefault true;
+        settings = {
+          name = "Pull Request";
+          on.pull_request.branches = [
+            "main"
+            "gh/*/*/base"
+          ];
           jobs = {
             check = {
               runs-on = "ubuntu-latest";
@@ -374,7 +409,8 @@ with lib;
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
-                cleanup
+                cleanup-pr
+                cleanup-ghstack
               ];
             };
           };

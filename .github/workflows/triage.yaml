@@ -17,12 +17,17 @@ jobs:
           PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
           REPO: ${{ github.repository }}
+        if: "!contains(github.event.pull_request.labels.*.name, 'ghstack')"
+        run: git push origin --delete $PR_HEAD_REF
+      - env:
+          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+          REPO: ${{ github.repository }}
+        if: contains(github.event.pull_request.labels.*.name, 'ghstack')
         run:
-          "if [[ \"$PR_HEAD_REF\" =~ ^gh/[^/]+/[^/]+/head$ && \"$PR_BASE_REF\" =~\
-          \ ^gh/[^/]+/[^/]+/base$ && \"${PR_HEAD_REF%/head}\" == \"${PR_BASE_REF%/base}\"\
-          \ ]]; then\n  for role in base head orig; do\n    git push origin --delete\
-          \ \"${PR_HEAD_REF%/head}/$role\" || true\n  done\nelse\n  git push origin\
-          \ --delete \"$PR_HEAD_REF\" || true\nfi\n"
+          "for role in base head orig; do\n  git push origin --delete \"${PR_HEAD_REF%/head}/$role\"\
+          \ || true\ndone\n"
   labels:
     if: github.event.action == 'opened'
     runs-on: ubuntu-latest

@@ -39,13 +39,9 @@ jobs:
           PR_HTML_URL: ${{ github.event.issue.pull_request.html_url }}
         if: contains(github.event.issue.labels.*.name, 'ghstack')
         run: nix run nixpkgs#sapling -- ghstack land "$PR_HTML_URL"
-name: Main
+name: Pull Request
 "on":
   pull_request:
     branches:
       - main
       - gh/*/*/base
-  push:
-    branches:
-      - main
-      - release-*
