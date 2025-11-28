@@ -111,18 +111,17 @@ with lib;
       cleanup = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_BASE_REF = mkWorkflowRef "github.event.pull_request.base.ref";
+          PR_HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
           REPO = mkWorkflowRef "github.repository";
-          BASE_REF = mkWorkflowRef "github.event.pull_request.base.ref";
-          HEAD_REF = mkWorkflowRef "github.event.pull_request.head.ref";
         };
         run = ''
-          if [[ "$HEAD_REF" =~ ^gh/[^/]+/[^/]+/head$ && "$BASE_REF" =~ ^gh/[^/]+/[^/]+/base$ && "''${HEAD_REF%/head}" == "''${BASE_REF%/base}" ]]; then
-            prefix="''${HEAD_REF%/head}"
+          if [[ "$PR_HEAD_REF" =~ ^gh/[^/]+/[^/]+/head$ && "$PR_BASE_REF" =~ ^gh/[^/]+/[^/]+/base$ && "''${PR_HEAD_REF%/head}" == "''${PR_BASE_REF%/base}" ]]; then
             for role in base head orig; do
-              git push origin --delete "$prefix/$role" || true
+              git push origin --delete "''${PR_HEAD_REF%/head}/$role" || true
             done
           else
-            git push origin --delete "$HEAD_REF" || true
+            git push origin --delete "$PR_HEAD_REF" || true
           fi
         '';
       };
@@ -152,7 +151,7 @@ with lib;
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           REF_NAME = mkWorkflowRef "github.ref_name";
-          REPOSITORY = mkWorkflowRef "github.repository";
+          REPO = mkWorkflowRef "github.repository";
         };
         run = mkWorkflowRun [
           "gh"
@@ -160,7 +159,7 @@ with lib;
           "create"
           "$REF_NAME"
           "--repo"
-          "$REPOSITORY"
+          "$REPO"
           "--generate-notes"
         ];
       };
