@@ -1,6 +1,5 @@
 jobs:
   cleanup:
-    if: github.event.action == 'closed'
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken
@@ -18,7 +17,7 @@ jobs:
           PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
           REPO: ${{ github.repository }}
         if: "!contains(github.event.pull_request.labels.*.name, 'ghstack')"
-        run: git push origin --delete $PR_HEAD_REF
+        run: git push origin --delete "$PR_HEAD_REF"
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
@@ -28,34 +27,7 @@ jobs:
         run:
           "for role in base head orig; do\n  git push origin --delete \"${PR_HEAD_REF%/head}/$role\"\
           \ || true\ndone\n"
-  labels:
-    if: github.event.action == 'opened'
-    runs-on: ubuntu-latest
-    steps:
-      - id: createGithubAppToken
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ steps.createGithubAppToken.outputs.token }}
-      - env:
-          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        if:
-          github.event.pull_request.user.login == 'yorha-operator-6o[bot]' || github.event.pull_request.user.login
-          == 'dependabot[bot]'
-        run: gh pr edit "$PR_NUMBER" --add-label dependencies
-      - env:
-          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        if:
-          startsWith(github.event.pull_request.head.ref, 'gh/') && !endsWith(github.event.pull_request.head.ref,
-          '/head')
-        run: gh pr edit "$PR_NUMBER" --add-label ghstack
-name: Triage
+name: Cleanup
 "on":
   check_suite:
     types:
@@ -63,4 +35,3 @@ name: Triage
   pull_request:
     types:
       - closed
-      - opened

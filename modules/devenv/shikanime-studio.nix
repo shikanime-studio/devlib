@@ -140,7 +140,7 @@ with lib;
           "push"
           "origin"
           "--delete"
-          "$PR_HEAD_REF"
+          ''"$PR_HEAD_REF"''
         ];
       };
 
@@ -236,12 +236,15 @@ with lib;
         };
       };
 
-      sapling-ghstack-merge = {
+      ghstack-merge = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
           PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
         };
-        "if" = "contains(github.event.issue.labels.*.name, 'ghstack')";
+        "if" = concatStringsSep " && " [
+          "contains(github.event.pull_request.labels.*.name, 'dependencies')"
+          "contains(github.event.issue.labels.*.name, 'ghstack')"
+        ];
         run = mkWorkflowRun [
           "nix"
           "run"
@@ -315,16 +318,27 @@ with lib;
         };
       };
 
-      pull_request = {
+      integration = {
         enable = mkDefault true;
         settings = {
-          name = "Pull Request";
+          name = "Integration";
           on.pull_request.branches = [
             "main"
             "gh/*/*/base"
           ];
           jobs = {
-            check = {
+            labels = {
+              "if" = "github.event.action == 'opened'";
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                add-dependencies-labels
+                add-ghstack-labels
+              ];
+            };
+            integration = {
+              needs = [ "labels" ];
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -332,18 +346,7 @@ with lib;
                 setup-nix
                 direnv
                 nix-flake-check
-              ];
-            };
-
-            merge = {
-              "if" = "contains(github.event.pull_request.labels.*.name, 'dependencies')";
-              needs = [ "check" ];
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                sapling-ghstack-merge
+                ghstack-merge
               ];
             };
           };
@@ -380,39 +383,24 @@ with lib;
         };
       };
 
-      triage = {
+      cleanup = {
         enable = mkDefault true;
         settings = {
-          name = "Triage";
+          name = "Cleanup";
           on = {
             pull_request.types = [
               "closed"
-              "opened"
             ];
             check_suite.types = [ "completed" ];
           };
-          jobs = {
-            labels = {
-              "if" = "github.event.action == 'opened'";
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                add-dependencies-labels
-                add-ghstack-labels
-              ];
-            };
-
-            cleanup = {
-              "if" = "github.event.action == 'closed'";
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                cleanup-pr
-                cleanup-ghstack
-              ];
-            };
+          jobs.cleanup = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              cleanup-pr
+              cleanup-ghstack
+            ];
           };
         };
       };

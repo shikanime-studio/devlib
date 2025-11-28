@@ -1,5 +1,7 @@
 jobs:
-  check:
+  integration:
+    needs:
+      - labels
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken
@@ -16,10 +18,15 @@ jobs:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - uses: shikanime-studio/direnv-action@v2
       - run: nix flake check --accept-flake-config --all-systems --no-pure-eval
-  merge:
-    if: contains(github.event.pull_request.labels.*.name, 'dependencies')
-    needs:
-      - check
+      - env:
+          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+          PR_HTML_URL: ${{ github.event.issue.pull_request.html_url }}
+        if:
+          contains(github.event.pull_request.labels.*.name, 'dependencies') && contains(github.event.issue.labels.*.name,
+          'ghstack')
+        run: nix run nixpkgs#sapling -- ghstack land "$PR_HTML_URL"
+  labels:
+    if: github.event.action == 'opened'
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken
@@ -31,15 +38,21 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.createGithubAppToken.outputs.token }}
-      - uses: shikanime-studio/setup-nix-action@v1
-        with:
-          github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          PR_HTML_URL: ${{ github.event.issue.pull_request.html_url }}
-        if: contains(github.event.issue.labels.*.name, 'ghstack')
-        run: nix run nixpkgs#sapling -- ghstack land "$PR_HTML_URL"
-name: Pull Request
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        if:
+          github.event.pull_request.user.login == 'yorha-operator-6o[bot]' || github.event.pull_request.user.login
+          == 'dependabot[bot]'
+        run: gh pr edit "$PR_NUMBER" --add-label dependencies
+      - env:
+          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        if:
+          startsWith(github.event.pull_request.head.ref, 'gh/') && !endsWith(github.event.pull_request.head.ref,
+          '/head')
+        run: gh pr edit "$PR_NUMBER" --add-label ghstack
+name: Integration
 "on":
   pull_request:
     branches:
