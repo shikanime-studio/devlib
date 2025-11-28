@@ -271,26 +271,8 @@ with lib;
                 create-github-app-token
                 checkout
                 create-release
-
               ];
             };
-          };
-        };
-      };
-
-      stale = {
-        enable = mkDefault true;
-        settings = {
-          name = "Stale";
-          on = {
-            schedule = [ { cron = "30 1 * * *"; } ];
-          };
-          jobs.stale = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              stale
-            ];
           };
         };
       };
@@ -325,14 +307,24 @@ with lib;
             schedule = [ { cron = "0 4 * * 0"; } ];
             workflow_dispatch = null;
           };
-          jobs.update = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              setup-nix
-              automata
-            ];
+          jobs = {
+            dependencies = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                automata
+              ];
+            };
+
+            stale = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                stale
+              ];
+            };
           };
         };
       };
