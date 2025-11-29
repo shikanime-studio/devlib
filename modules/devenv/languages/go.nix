@@ -17,6 +17,7 @@ in
       gotest.enable = mkDefault true;
       hadolint.excludes = [ "^vendor/" ];
       shellcheck.excludes = [ "^vendor/" ];
+      statix.excludes = [ "^vendor/" ];
     };
 
     gitignore = {
