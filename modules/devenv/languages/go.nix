@@ -12,7 +12,7 @@ in
 {
   config = mkIf cfg.enable {
     git-hooks = {
-      excludes = [ "^./vendor" ];
+      excludes = [ "^vendor/" ];
 
       hooks.gotest = {
         enable = mkDefault true;

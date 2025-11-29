@@ -21,6 +21,19 @@ with lib;
 
   golangci-lint.settings = {
     version = 2;
+    formatters = {
+      enable = [
+        "gci"
+        "gofmt"
+        "gofumpt"
+        "goimports"
+      ];
+      settings.gci.sections = [
+        "standard"
+        "default"
+        "localmodule"
+      ];
+    };
     linters = {
       enable = [
         "bodyclose"
@@ -70,19 +83,7 @@ with lib;
         };
       };
     };
-    formatters = {
-      enable = [
-        "gci"
-        "gofmt"
-        "gofumpt"
-        "goimports"
-      ];
-      settings.gci.sections = [
-        "standard"
-        "default"
-        "localmodule"
-      ];
-    };
+    run.modules-download-mode = "vendor";
   };
 
   github = {
