@@ -17,7 +17,7 @@ in
 
       hooks.gotest = {
         enable = mkDefault true;
-        package = cfg.package;
+        inherit (cfg) package;
       };
     };
 
