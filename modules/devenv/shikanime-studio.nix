@@ -191,12 +191,23 @@ with lib;
       direnv.uses = "shikanime-studio/direnv-action@v2";
 
       docker-login = {
-        uses = "docker/login-action@v3";
-        "with" = {
-          registry = "ghcr.io";
-          username = mkWorkflowRef "github.actor";
-          password = mkWorkflowRef "secrets.GITHUB_TOKEN";
+        env = {
+          DOCKER_REGISTRY = "ghcr.io";
+          GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
+          USERNAME = mkWorkflowRef "github.actor";
         };
+        run = mkWorkflowRun [
+          "nix"
+          "run"
+          "nixpkgs#docker"
+          "--"
+          "login"
+          ''"$DOCKER_REGISTRY"''
+          "--username"
+          ''"$USERNAME"''
+          "--password"
+          ''"$GITHUB_TOKEN"''
+        ];
       };
 
       ghstack-merge = {
