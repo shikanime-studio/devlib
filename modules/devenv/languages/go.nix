@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -13,7 +12,7 @@ in
 {
   config = mkIf cfg.enable {
     git-hooks = {
-      excludes = [ "vendor" ];
+      excludes = [ "^vendor/" ];
 
       hooks.gotest = {
         enable = mkDefault true;
@@ -40,7 +39,7 @@ in
         after = [ "devlib:go:tidy" ];
         before = [ "devenv:enterShell" ];
         description = "Download go dependencies";
-        exec = "${getExe pkgs.go} mod download";
+        exec = "${getExe cfg.package} mod download";
         execIfModified = [
           "go.sum"
         ];
@@ -49,13 +48,13 @@ in
       "devlib:go:tidy" = {
         before = [ "devenv:enterShell" ];
         description = "Run go mod tidy";
-        exec = "${getExe pkgs.go} mod tidy";
+        exec = "${getExe cfg.package} mod tidy";
       };
 
       "devlib:go:vendor" = {
         before = [ "devenv:enterShell" ];
         description = "Run go mod vendor";
-        exec = "${getExe pkgs.go} mod vendor";
+        exec = "${getExe cfg.package} mod vendor";
         execIfModified = [
           "go.sum"
         ];
