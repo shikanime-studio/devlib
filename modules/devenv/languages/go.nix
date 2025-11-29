@@ -14,9 +14,16 @@ in
   config = mkIf cfg.enable {
     git-hooks.hooks = {
       golangci-lint.excludes = [ "^vendor/" ];
-      gotest.enable = mkDefault true;
+
+      gotest = {
+        enable = mkDefault true;
+        package = cfg.package;
+      };
+
       hadolint.excludes = [ "^vendor/" ];
+
       shellcheck.excludes = [ "^vendor/" ];
+
       statix.excludes = [ "^vendor/" ];
     };
 
