@@ -13,6 +13,8 @@ in
 {
   config = mkIf cfg.enable {
     git-hooks.hooks = {
+      deadnix.excludes = [ "^vendor/" ];
+
       golangci-lint.excludes = [ "^vendor/" ];
 
       gotest = {
