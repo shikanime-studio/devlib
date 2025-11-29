@@ -104,8 +104,6 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    git-hooks.hooks.actionlint.enable = mkDefault true;
-
     github.lib = {
       mkWorkflowRef = name: "\${{ ${name} }}";
       mkWorkflowRun = args: concatStringsSep " " args;
@@ -135,6 +133,6 @@ in
       "devenv:treefmt:run".after = [ "devlib:github:workflows:generate" ];
     };
 
-    treefmt.config.programs.prettier.enable = mkDefault true;
+    treefmt.config.programs.actionlint.enable = mkDefault true;
   };
 }

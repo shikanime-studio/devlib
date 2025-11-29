@@ -11,17 +11,17 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks.hooks = {
-      deadnix.enable = mkDefault true;
-      flake-checker.enable = mkDefault true;
-      statix.enable = mkDefault true;
-    };
+    git-hooks.hooks.flake-checker.enable = mkDefault true;
 
     gitignore.templates = [
       "gh:Nix"
       "repo:shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore"
     ];
 
-    treefmt.config.programs.nixfmt.enable = mkDefault true;
+    treefmt.config.programs = {
+      deadnix.enable = mkDefault true;
+      nixfmt.enable = mkDefault true;
+      statix.enable = mkDefault true;
+    };
   };
 }
