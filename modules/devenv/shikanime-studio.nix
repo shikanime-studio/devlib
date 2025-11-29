@@ -440,6 +440,7 @@ with lib;
                 create-github-app-token
                 checkout
                 setup-nix
+                direnv
                 automata
               ];
             };
