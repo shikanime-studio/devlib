@@ -11,13 +11,9 @@ let
 in
 {
   config = mkIf cfg.enable {
-    git-hooks = {
-      excludes = [ "^vendor/" ];
-
-      hooks.gotest = {
-        enable = mkDefault true;
-        inherit (cfg) package;
-      };
+    git-hooks.hooks.gotest = {
+      enable = mkDefault true;
+      inherit (cfg) package;
     };
 
     gitignore = {
@@ -50,17 +46,6 @@ in
         description = "Run go mod tidy";
         exec = "${getExe cfg.package} mod tidy";
       };
-
-      "devlib:go:vendor" = {
-        before = [ "devenv:enterShell" ];
-        description = "Run go mod vendor";
-        exec = "${getExe cfg.package} mod vendor";
-        execIfModified = [
-          "go.sum"
-        ];
-      };
     };
-
-    treefmt.config.settings.global.excludes = [ "vendor/*" ];
   };
 }

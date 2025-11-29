@@ -83,7 +83,6 @@ with lib;
         };
       };
     };
-    run.modules-download-mode = "vendor";
   };
 
   github = {
