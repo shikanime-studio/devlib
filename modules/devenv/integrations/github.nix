@@ -112,7 +112,6 @@ in
     tasks = {
       "devlib:github:workflows:generate" = {
         description = "Generate GitHub Actions workflow files";
-        before = [ "devenv:enterShell" ];
         exec =
           let
             enabled = filterAttrs (_: w: w.enable) cfg.workflows;

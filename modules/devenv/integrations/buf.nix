@@ -87,7 +87,6 @@ in
     tasks = {
       "devlib:buf:generate" = {
         description = "Run buf generate with buf.gen.yaml";
-        before = [ "devenv:enterShell" ];
         exec = ''
           ${getExe package} generate
         '';
