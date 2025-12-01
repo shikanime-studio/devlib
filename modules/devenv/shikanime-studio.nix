@@ -271,6 +271,11 @@ with lib;
         "--no-pure-eval"
       ];
 
+      nix-fmt.run = mkWorkflowRun [
+        "nix"
+        "fmt"
+      ];
+
       sapling = {
         uses = "shikanime-studio/sapling-action@v5";
         "with" = {
@@ -333,7 +338,6 @@ with lib;
               create-github-app-token
               checkout
               setup-nix
-              direnv
               nix-flake-check
             ];
           };
@@ -365,7 +369,6 @@ with lib;
                 create-github-app-token
                 checkout
                 setup-nix
-                direnv
                 nix-flake-check
               ];
             };
@@ -397,7 +400,6 @@ with lib;
                 create-github-app-token
                 checkout
                 setup-nix
-                direnv
                 nix-flake-check
               ];
             };
@@ -452,7 +454,7 @@ with lib;
                 create-github-app-token
                 checkout
                 setup-nix
-                direnv
+                nix-fmt
                 automata
               ];
             };
