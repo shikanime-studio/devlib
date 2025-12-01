@@ -85,13 +85,14 @@ in
     packages = [ cfg.package ];
 
     tasks = {
+      "devenv:treefmt:run".after = [ "devlib:buf:generate" ];
+
       "devlib:buf:generate" = {
         description = "Run buf generate with buf.gen.yaml";
         exec = ''
           ${getExe package} generate
         '';
       };
-      "devenv:automata:update".after = [ "devlib:buf:generate" ];
     };
 
     treefmt.config.programs.buf.enable = mkDefault true;

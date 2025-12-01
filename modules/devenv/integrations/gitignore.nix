@@ -87,17 +87,21 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    tasks."devlib:gitignore:install" = {
-      before = [ "devenv:enterShell" ];
-      description = "Generate .gitignore file";
-      exec = ''
-        temp_file=$(${pkgs.coreutils}/bin/mktemp)
-        ${optionalString (
-          templates != [ ]
-        ) "${getExe cfg.package} create ${concatStringsSep " " templates} -f \"$temp_file\""}
-        ${optionalString (cfg.content != [ ]) "${pkgs.coreutils}/bin/echo \"${content}\" >> \"$temp_file\""}
-        ${pkgs.coreutils}/bin/mv "$temp_file" "${config.env.DEVENV_ROOT}/.gitignore"
-      '';
+    tasks = {
+      "devenv:treefmt:run".after = [ "devlib:gitignore:install" ];
+
+      "devlib:gitignore:install" = {
+        before = [ "devenv:enterShell" ];
+        description = "Generate .gitignore file";
+        exec = ''
+            temp_file=$(${pkgs.coreutils}/bin/mktemp)
+            ${optionalString (
+              templates != [ ]
+            ) "${getExe cfg.package} create ${concatStringsSep " " templates} -f \"$temp_file\""}
+          ${optionalString (cfg.content != [ ]) "${pkgs.coreutils}/bin/echo \"${content}\" >> \"$temp_file\""}
+          ${pkgs.coreutils}/bin/mv "$temp_file" "${config.env.DEVENV_ROOT}/.gitignore"
+        '';
+      };
     };
   };
 }
