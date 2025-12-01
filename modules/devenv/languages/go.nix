@@ -35,18 +35,12 @@ in
     };
 
     tasks = {
-      "devlib:go:download" = {
-        after = [ "devlib:go:tidy" ];
-        description = "Download go dependencies";
-        exec = "${getExe cfg.package} mod download";
-        execIfModified = [
-          "go.sum"
-        ];
-      };
-
       "devlib:go:tidy" = {
         description = "Run go mod tidy";
         exec = "${getExe cfg.package} mod tidy";
+        execIfModified = [
+          "**/*.go"
+        ];
       };
 
       "devlib:go:vendor" = {
