@@ -87,11 +87,17 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    enterShell = mkIf (templates != [ ] || cfg.content != [ ]) ''
-      temp_file=$(${pkgs.coreutils}/bin/mktemp)
-      ${getExe pkgs.gitnr} create ${concatStringsSep " " templates} -f "$temp_file"
-      ${pkgs.coreutils}/bin/echo "${content}" >> "$temp_file"
-      ${pkgs.coreutils}/bin/mv "$temp_file" "${config.env.DEVENV_ROOT}/.gitignore"
-    '';
+    tasks."devlib:gitignore:install" = {
+      before = [ "devenv:enterShell" ];
+      description = "Generate .gitignore file";
+      exec = ''
+        temp_file=$(${pkgs.coreutils}/bin/mktemp)
+        ${optionalString (
+          templates != [ ]
+        ) "${getExe cfg.package} create ${concatStringsSep " " templates} -f \"$temp_file\""}
+        ${optionalString (cfg.content != [ ]) "${pkgs.coreutils}/bin/echo \"${content}\" >> \"$temp_file\""}
+        ${pkgs.coreutils}/bin/mv "$temp_file" "${config.env.DEVENV_ROOT}/.gitignore"
+      '';
+    };
   };
 }
