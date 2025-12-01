@@ -24,16 +24,17 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    tasks = {
-      "devlib:sops:updatekeys" = {
-        description = "Run sops updatekeys";
-        exec = ''
-          ${getExe pkgs.findutils} . -type f -name "*.enc.*" -print0 | while IFS= read -r -d ''' f; do
-            ${getExe cfg.package} updatekeys --yes "$f"
-          done
-        '';
-      };
-      "devenv:automata:update".after = [ "devlib:sops:updatekeys" ];
+    tasks."devlib:sops:updatekeys" = {
+      before = [ "devenv:enterShell" ];
+      description = "Run sops updatekeys";
+      exec = ''
+        ${getExe pkgs.findutils} . -type f -name "*.enc.*" -print0 | while IFS= read -r -d ''' f; do
+          ${getExe cfg.package} updatekeys --yes "$f"
+        done
+      '';
+      execIfModified = [
+        "**/*.enc.*"
+      ];
     };
 
     treefmt.config.programs = {

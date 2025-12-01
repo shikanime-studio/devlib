@@ -109,27 +109,25 @@ in
       mkWorkflowRun = args: concatStringsSep " " args;
     };
 
-    tasks = {
-      "devlib:github:workflows:generate" = {
-        description = "Generate GitHub Actions workflow files";
-        exec =
-          let
-            enabled = filterAttrs (_: w: w.enable) cfg.workflows;
-          in
-          concatStringsSep "\n" (
-            mapAttrsToList (
-              name: workflow:
-              let
-                file = settingsFormat.generate "${name}.yaml" workflow.settings;
-              in
-              ''
-                mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
-                cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
-              ''
-            ) enabled
-          );
-      };
-      "devenv:automata:update".after = [ "devlib:github:workflows:generate" ];
+    tasks."devlib:github:workflows:generate" = {
+      before = [ "devenv:enterShell" ];
+      description = "Generate GitHub Actions workflow files";
+      exec =
+        let
+          enabled = filterAttrs (_: w: w.enable) cfg.workflows;
+        in
+        concatStringsSep "\n" (
+          mapAttrsToList (
+            name: workflow:
+            let
+              file = settingsFormat.generate "${name}.yaml" workflow.settings;
+            in
+            ''
+              mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
+              cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
+            ''
+          ) enabled
+        );
     };
 
     treefmt.config.programs.actionlint.enable = mkDefault true;
