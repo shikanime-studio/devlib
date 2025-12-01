@@ -91,7 +91,7 @@ in
           ${getExe package} generate
         '';
       };
-      "devenv:treefmt:run".after = [ "devlib:buf:generate" ];
+      "devenv:automata:update".after = [ "devlib:buf:generate" ];
     };
 
     treefmt.config.programs.buf.enable = mkDefault true;

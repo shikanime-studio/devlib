@@ -129,7 +129,7 @@ in
             ) enabled
           );
       };
-      "devenv:treefmt:run".after = [ "devlib:github:workflows:generate" ];
+      "devenv:automata:update".after = [ "devlib:github:workflows:generate" ];
     };
 
     treefmt.config.programs.actionlint.enable = mkDefault true;

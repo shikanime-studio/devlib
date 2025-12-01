@@ -33,7 +33,7 @@ in
           done
         '';
       };
-      "devenv:treefmt:run".after = [ "devlib:sops:updatekeys" ];
+      "devenv:automata:update".after = [ "devlib:sops:updatekeys" ];
     };
 
     treefmt.config.programs = {
