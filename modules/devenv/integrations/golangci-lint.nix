@@ -19,8 +19,10 @@ let
   wrapped = pkgs.runCommand "golangci-lint-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
     makeWrapper ${cfg.package}/bin/golangci-lint $out/bin/golangci-lint \
       --prefix PATH : ${go}/bin \
-      --append-flag --config \
-      --append-flag "${configFile}"
+      ${lib.optionalString (cfg.settings != { }) ''
+        --append-flag --config \
+        --append-flag "${configFile}"
+      ''}
   '';
 in
 {

@@ -16,8 +16,10 @@ let
 
   wrapped = pkgs.runCommand "air-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
     makeWrapper ${cfg.package}/bin/air $out/bin/air \
-      --append-flag -c \
-      --append-flag "${configFile}"
+      ${lib.optionalString (cfg.settings != { }) ''
+        --append-flag -c \
+        --append-flag "${configFile}"
+      ''}
   '';
 in
 {
