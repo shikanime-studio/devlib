@@ -14,11 +14,13 @@ let
 
   go = cfg.packageOverrides.go or pkgs.go;
 
+  configFile = yamlFormat.generate "golangci-lint.yaml" cfg.settings;
+
   wrapped = pkgs.runCommand "golangci-lint-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
     makeWrapper ${cfg.package}/bin/golangci-lint $out/bin/golangci-lint \
       --prefix PATH : ${go}/bin \
       --append-flag --config \
-      --append-flag "${yamlFormat.generate "golangci-lint.yaml" cfg.settings}"
+      --append-flag "${configFile}"
   '';
 in
 {

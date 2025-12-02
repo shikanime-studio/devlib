@@ -102,12 +102,13 @@ in
   };
 
   config = mkIf cfg.enable {
-    packages = [ cfg.package ];
 
     github.lib = {
       mkWorkflowRef = name: "\${{ ${name} }}";
       mkWorkflowRun = args: concatStringsSep " " args;
     };
+
+    packages = [ cfg.package ];
 
     tasks = {
       "devenv:treefmt:run".after = [ "devlib:github:workflows:install" ];
