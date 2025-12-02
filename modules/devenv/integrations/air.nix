@@ -9,8 +9,16 @@ with lib;
 
 let
   cfg = config.air;
+
   settingsFormat = pkgs.formats.toml { };
-  configFile = settingsFormat.generate ".air.toml" cfg.settings;
+
+  configFile = settingsFormat.generate "air.toml" cfg.settings;
+
+  wrapped = pkgs.runCommand "air-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
+    makeWrapper ${cfg.package}/bin/air $out/bin/air \
+      --append-flag -c \
+      --append-flag "${configFile}"
+  '';
 in
 {
   options.air = {
@@ -74,15 +82,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    packages = [ cfg.package ];
-
-    enterShell = ''
-      mkdir -p "${cfg.settings.tmp_dir}"
-      cat ${configFile} > ${config.env.DEVENV_ROOT}/.air.toml
-    '';
-
-    gitignore.content = [
-      ".air.toml"
-    ];
+    packages = [ wrapped ];
   };
 }
