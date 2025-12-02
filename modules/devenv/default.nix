@@ -11,6 +11,7 @@
     ./integrations/sops.nix
     ./languages/go.nix
     ./languages/javascript.nix
+    ./languages/latex.nix
     ./languages/nix.nix
     ./languages/opentofu.nix
     ./languages/python.nix
