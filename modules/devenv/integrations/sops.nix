@@ -9,12 +9,17 @@ with lib;
 
 let
   cfg = config.sops;
+
   yamlFormat = pkgs.formats.yaml { };
+
   configFile = yamlFormat.generate "sops.yaml" cfg.settings;
+
   wrapped = pkgs.runCommand "sops-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
     makeWrapper ${cfg.package}/bin/sops $out/bin/sops \
-      --append-flag --config \
-      --append-flag "${configFile}"
+      ${lib.optionalString (cfg.settings != { }) ''
+        --append-flag --config \
+        --append-flag "${configFile}"
+      ''}
   '';
 in
 {
