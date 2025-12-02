@@ -104,8 +104,6 @@ with lib;
           "pr"
           "edit"
           ''"$PR_NUMBER"''
-          "--add-assignee"
-          "@me"
           "--add-label"
           "dependencies"
         ];
@@ -242,8 +240,6 @@ with lib;
           "pr"
           "edit"
           ''"$PR_NUMBER"''
-          "--add-assignee"
-          "@me"
           "--add-label"
           "ghstack"
         ];
