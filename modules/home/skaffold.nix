@@ -30,10 +30,10 @@ in
   config = mkIf cfg.enable {
     home.packages = [ cfg.package ];
 
+    home.sessionVariables.SKAFFOLD_CONFIG = "${config.xdg.configHome}/skaffold/config";
+
     xdg.configFile."skaffold/config" = mkIf (cfg.settings != { }) {
       text = builtins.toJSON cfg.settings;
     };
-
-    home.sessionVariables.SKAFFOLD_CONFIG = "${config.xdg.configHome}/skaffold/config";
   };
 }
