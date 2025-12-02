@@ -14,13 +14,19 @@ let
 
   configFile = settingsFormat.generate "air.toml" cfg.settings;
 
-  wrapped = pkgs.runCommand "air-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-    makeWrapper ${cfg.package}/bin/air $out/bin/air \
-      ${lib.optionalString (cfg.settings != { }) ''
-        --append-flag -c \
-        --append-flag "${configFile}"
-      ''}
-  '';
+  wrapped =
+    pkgs.runCommand "air-wrapped"
+      {
+        buildInputs = [ pkgs.makeWrapper ];
+        meta.mainProgram = "air";
+      }
+      ''
+        makeWrapper ${cfg.package}/bin/air $out/bin/air \
+          ${lib.optionalString (cfg.settings != { }) ''
+            --add-flag -c \
+            --add-flag "${configFile}"
+          ''}
+      '';
 in
 {
   options.air = {
