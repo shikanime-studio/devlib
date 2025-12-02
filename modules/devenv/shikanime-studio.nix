@@ -106,8 +106,6 @@ with lib;
           ''"$PR_NUMBER"''
           "--add-label"
           "dependencies"
-          "--add-assignee"
-          "@yorha-operator-6o"
         ];
       };
 
