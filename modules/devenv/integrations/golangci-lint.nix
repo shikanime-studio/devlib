@@ -16,14 +16,20 @@ let
 
   configFile = yamlFormat.generate "golangci-lint.yaml" cfg.settings;
 
-  wrapped = pkgs.runCommand "golangci-lint-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-    makeWrapper ${cfg.package}/bin/golangci-lint $out/bin/golangci-lint \
-      --prefix PATH : ${go}/bin \
-      ${lib.optionalString (cfg.settings != { }) ''
-        --append-flag --config \
-        --append-flag "${configFile}"
-      ''}
-  '';
+  wrapped =
+    pkgs.runCommand "golangci-lint-wrapped"
+      {
+        buildInputs = [ pkgs.makeWrapper ];
+        meta.mainProgram = "golangci-lint";
+      }
+      ''
+        makeWrapper ${cfg.package}/bin/golangci-lint $out/bin/golangci-lint \
+          --prefix PATH : ${go}/bin \
+          ${lib.optionalString (cfg.settings != { }) ''
+            --add-flag --config \
+            --add-flag "${configFile}"
+          ''}
+      '';
 in
 {
   options.golangci-lint = {

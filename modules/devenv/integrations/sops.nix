@@ -14,13 +14,19 @@ let
 
   configFile = yamlFormat.generate "sops.yaml" cfg.settings;
 
-  wrapped = pkgs.runCommand "sops-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-    makeWrapper ${cfg.package}/bin/sops $out/bin/sops \
-      ${lib.optionalString (cfg.settings != { }) ''
-        --append-flag --config \
-        --append-flag "${configFile}"
-      ''}
-  '';
+  wrapped =
+    pkgs.runCommand "sops-wrapped"
+      {
+        buildInputs = [ pkgs.makeWrapper ];
+        meta.mainProgram = "sops";
+      }
+      ''
+        makeWrapper ${cfg.package}/bin/sops $out/bin/sops \
+          ${lib.optionalString (cfg.settings != { }) ''
+            --add-flag --config \
+            --add-flag "${configFile}"
+          ''}
+      '';
 in
 {
   options.sops = {
@@ -51,9 +57,7 @@ in
         before = [ "devenv:enterShell" ];
         description = "Run sops updatekeys";
         exec = ''
-          ${getExe pkgs.findutils} . -type f -name "*.enc.*" -print0 | while IFS= read -r -d '\0' f; do
-            ${getExe wrapped} updatekeys --yes "$f"
-          done
+          ${getExe pkgs.findutils} . -type f -name "*.enc.*" -exec ${getExe wrapped} updatekeys --yes {} +
         '';
         execIfModified = [
           "**/*.enc.*"
