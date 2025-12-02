@@ -9,6 +9,18 @@ with lib;
 
 let
   cfg = config.sops;
+
+  yamlFormat = pkgs.formats.yaml { };
+
+  configFile = yamlFormat.generate "sops.yaml" cfg.settings;
+
+  wrapped = pkgs.runCommand "sops-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
+    makeWrapper ${cfg.package}/bin/sops $out/bin/sops \
+      ${lib.optionalString (cfg.settings != { }) ''
+        --append-flag --config \
+        --append-flag "${configFile}"
+      ''}
+  '';
 in
 {
   options.sops = {
@@ -19,10 +31,18 @@ in
       default = pkgs.sops;
       description = "Sops CLI package to expose in the dev shell.";
     };
+
+    settings = mkOption {
+      type = types.submodule {
+        freeformType = yamlFormat.type;
+      };
+      default = { };
+      description = "SOPS YAML configuration passed via --config";
+    };
   };
 
   config = mkIf cfg.enable {
-    packages = [ cfg.package ];
+    packages = [ wrapped ];
 
     tasks = {
       "devenv:treefmt:run".after = [ "devlib:sops:updatekeys" ];
@@ -31,8 +51,8 @@ in
         before = [ "devenv:enterShell" ];
         description = "Run sops updatekeys";
         exec = ''
-          ${getExe pkgs.findutils} . -type f -name "*.enc.*" -print0 | while IFS= read -r -d ''' f; do
-            ${getExe cfg.package} updatekeys --yes "$f"
+          ${getExe pkgs.findutils} . -type f -name "*.enc.*" -print0 | while IFS= read -r -d '\0' f; do
+            ${getExe wrapped} updatekeys --yes "$f"
           done
         '';
         execIfModified = [
