@@ -187,6 +187,21 @@ with lib;
         };
       };
 
+      comment-land = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
+        };
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "comment"
+          ''"$PR_HTML_URL"''
+          "--body"
+          ".land"
+        ];
+      };
+
       direnv.uses = "shikanime-studio/direnv-action@v2";
 
       docker-login = {
@@ -209,23 +224,6 @@ with lib;
         ];
       };
 
-      ghstack-merge = {
-        env = {
-          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-          PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
-        };
-        "if" = "contains(github.event.issue.labels.*.name, 'ghstack')";
-        run = mkWorkflowRun [
-          "nix"
-          "run"
-          "nixpkgs#sapling"
-          "--"
-          "ghstack"
-          "land"
-          ''"$PR_HTML_URL"''
-        ];
-      };
-
       ghstack-triage = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
@@ -242,21 +240,6 @@ with lib;
           ''"$PR_NUMBER"''
           "--add-label"
           "ghstack"
-        ];
-      };
-
-      pr-merge = {
-        env = {
-          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-          PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
-        };
-        "if" = "!contains(github.event.issue.labels.*.name, 'ghstack')";
-        run = mkWorkflowRun [
-          "gh"
-          "pr"
-          "merge"
-          "--auto"
-          ''"$PR_HTML_URL"''
         ];
       };
 
@@ -315,6 +298,7 @@ with lib;
               checkout
               setup-nix
               sapling
+              comment-land
             ];
           };
         };
@@ -378,8 +362,7 @@ with lib;
                 create-github-app-token
                 checkout
                 setup-nix
-                ghstack-merge
-                pr-merge
+                comment-land
               ];
             };
           };
