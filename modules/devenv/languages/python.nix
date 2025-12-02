@@ -16,6 +16,11 @@ in
       "tt:python"
     ];
 
+    languages.python.uv = {
+      enable = true;
+      sync.enable = true;
+    };
+
     tasks = mkIf cfg.uv.enable {
       "devlib:python:uv:sync" = {
         before = [ "devenv:enterShell" ];

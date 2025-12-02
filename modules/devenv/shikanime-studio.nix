@@ -478,12 +478,6 @@ with lib;
 
   languages = {
     nix.enable = mkDefault true;
-
-    python.uv = {
-      enable = true;
-      sync.enable = true;
-    };
-
     shell.enable = mkDefault true;
   };
 
