@@ -402,12 +402,9 @@ with lib;
         enable = mkDefault true;
         settings = {
           name = "Cleanup";
-          on = {
-            pull_request.types = [
-              "closed"
-            ];
-            check_suite.types = [ "completed" ];
-          };
+          on.pull_request.types = [
+            "closed"
+          ];
           jobs.cleanup = {
             runs-on = "ubuntu-latest";
             steps = with config.github.actions; [
