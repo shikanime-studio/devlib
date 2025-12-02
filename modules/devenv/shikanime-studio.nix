@@ -105,7 +105,7 @@ with lib;
           "edit"
           ''"$PR_NUMBER"''
           "--add-assignee"
-          "@yorha-operator-6o"
+          "@me"
           "--add-label"
           "dependencies"
         ];
@@ -243,7 +243,7 @@ with lib;
           "edit"
           ''"$PR_NUMBER"''
           "--add-assignee"
-          "@yorha-operator-6o"
+          "@me"
           "--add-label"
           "ghstack"
         ];
@@ -478,12 +478,6 @@ with lib;
 
   languages = {
     nix.enable = mkDefault true;
-
-    python.uv = {
-      enable = true;
-      sync.enable = true;
-    };
-
     shell.enable = mkDefault true;
   };
 
