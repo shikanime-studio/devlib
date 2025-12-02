@@ -96,7 +96,7 @@ with lib;
           PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
         };
         "if" = concatStringsSep " || " [
-          "github.event.pull_request.user.login == 'yorha-operator6o[bot]'"
+          "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'"
           "github.event.pull_request.user.login == 'dependabot[bot]'"
         ];
         run = mkWorkflowRun [
@@ -105,7 +105,7 @@ with lib;
           "edit"
           ''"$PR_NUMBER"''
           "--add-assignee"
-          "@yorha-operator6o[bot]"
+          "@yorha-operator-6o[bot]"
           "--add-label"
           "dependencies"
         ];
@@ -243,7 +243,7 @@ with lib;
           "edit"
           ''"$PR_NUMBER"''
           "--add-assignee"
-          "@yorha-operator6o[bot]"
+          "@yorha-operator-6o[bot]"
           "--add-label"
           "ghstack"
         ];
