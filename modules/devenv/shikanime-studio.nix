@@ -104,10 +104,10 @@ with lib;
           "pr"
           "edit"
           ''"$PR_NUMBER"''
+          "--add-assignee"
+          "@yorha-operator-6o[bot]"
           "--add-label"
           "dependencies"
-          "--add-assignee"
-          "@yorha-operator-6o"
         ];
       };
 
@@ -243,7 +243,7 @@ with lib;
           "edit"
           ''"$PR_NUMBER"''
           "--add-assignee"
-          "@yorha-operator-6o"
+          "@yorha-operator-6o[bot]"
           "--add-label"
           "ghstack"
         ];
