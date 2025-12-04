@@ -9,6 +9,7 @@
     ./integrations/github.nix
     ./integrations/gitignore.nix
     ./integrations/sops.nix
+    ./languages/elixir.nix
     ./languages/go.nix
     ./languages/javascript.nix
     ./languages/latex.nix
