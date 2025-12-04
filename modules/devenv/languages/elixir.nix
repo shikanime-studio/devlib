@@ -11,6 +11,11 @@ let
 in
 {
   config = mkIf cfg.enable {
+    gitignore.templates = [
+      "tt:erlang"
+      "tt:elixir"
+    ];
+
     treefmt.config.programs = {
       efmt.enable = mkDefault true;
       mix-format.enable = mkDefault true;
