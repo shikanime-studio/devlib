@@ -39,8 +39,7 @@ let
 
   package = pkgs.runCommand "buf-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
     makeWrapper ${cfg.package}/bin/buf $out/bin/buf \
-      --add-flag --template \
-      --add-flag "${templateConfigFile}"
+      --add-flags "--template ${templateConfigFile}"
   '';
 in
 {

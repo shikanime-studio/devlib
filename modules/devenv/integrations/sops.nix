@@ -14,6 +14,10 @@ let
 
   configFile = yamlFormat.generate "sops.yaml" cfg.settings;
 
+  addFlagsConfigArg = lib.optionalString (cfg.settings != { }) ''
+    --add-flags "--config ${configFile}"
+  '';
+
   wrapped =
     pkgs.runCommand "sops-wrapped"
       {
@@ -22,10 +26,7 @@ let
       }
       ''
         makeWrapper ${cfg.package}/bin/sops $out/bin/sops \
-          ${lib.optionalString (cfg.settings != { }) ''
-            --add-flag --config \
-            --add-flag "${configFile}"
-          ''}
+          ${addFlagsConfigArg}
       '';
 in
 {

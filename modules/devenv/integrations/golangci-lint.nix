@@ -16,6 +16,10 @@ let
 
   configFile = yamlFormat.generate "golangci-lint.yaml" cfg.settings;
 
+  addFlagsConfigArg = lib.optionalString (cfg.settings != { }) ''
+    --add-flags "--config ${configFile}"
+  '';
+
   wrapped =
     pkgs.runCommand "golangci-lint-wrapped"
       {
@@ -25,10 +29,7 @@ let
       ''
         makeWrapper ${cfg.package}/bin/golangci-lint $out/bin/golangci-lint \
           --prefix PATH : ${go}/bin \
-          ${lib.optionalString (cfg.settings != { }) ''
-            --add-flag --config \
-            --add-flag "${configFile}"
-          ''}
+          ${addFlagsConfigArg}
       '';
 in
 {

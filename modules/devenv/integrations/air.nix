@@ -14,6 +14,10 @@ let
 
   configFile = settingsFormat.generate "air.toml" cfg.settings;
 
+  addFlagsConfigArg = lib.optionalString (cfg.settings != { }) ''
+    --add-flags "-c ${configFile}"
+  '';
+
   wrapped =
     pkgs.runCommand "air-wrapped"
       {
@@ -22,10 +26,7 @@ let
       }
       ''
         makeWrapper ${cfg.package}/bin/air $out/bin/air \
-          ${lib.optionalString (cfg.settings != { }) ''
-            --add-flag -c \
-            --add-flag "${configFile}"
-          ''}
+          ${addFlagsConfigArg}
       '';
 in
 {
