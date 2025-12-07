@@ -189,7 +189,7 @@ with lib;
 
       comment-land = {
         env = {
-          GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
           PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
         };
         run = mkWorkflowRun [
