@@ -298,7 +298,6 @@ with lib;
               checkout
               setup-nix
               sapling
-              comment-land
             ];
           };
         };
