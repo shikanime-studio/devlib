@@ -1,30 +1,23 @@
 {
   config,
-  lib,
   pkgs,
   ...
 }:
 
-with lib;
-
-let
-  cfg = config.programs.go;
-in
 {
-  config = mkIf cfg.enable {
-    home = {
-      packages = [
-        pkgs.gopls
-      ];
+  home = {
+    packages = [
+      pkgs.gopls
+    ];
 
-      sessionPath = [
-        "${config.xdg.dataHome}/go/bin"
-      ];
-    };
+    sessionPath = [
+      "${config.xdg.dataHome}/go/bin"
+    ];
+  };
 
-    programs.go = {
-      env.GOPATH = "${config.xdg.dataHome}/go";
-      telemetry.mode = "off";
-    };
+  programs.go = {
+    enable = true;
+    env.GOPATH = "${config.xdg.dataHome}/go";
+    telemetry.mode = "off";
   };
 }

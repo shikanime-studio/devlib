@@ -42,7 +42,18 @@
         devenvModule = ./modules/devenv/default.nix;
         devenvModules.shikanime-studio = ./modules/devenv/shikanime-studio.nix;
 
-        homeManagerModule = ./modules/home/default.nix;
+        homeManagerModules = {
+          beam = ./modules/home/beam.nix;
+          docker = ./modules/home/docker.nix;
+          go = ./modules/home/go.nix;
+          javascript = ./modules/home/javascript.nix;
+          nix = ./modules/home/nix.nix;
+          python = ./modules/home/python.nix;
+          rustup = ./modules/home/rustup.nix;
+          shell = ./modules/home/shell.nix;
+          skaffold = ./modules/home/skaffold.nix;
+          yaml = ./modules/home/yaml.nix;
+        };
 
         flakeModule = ./modules/flake/default.nix;
 
