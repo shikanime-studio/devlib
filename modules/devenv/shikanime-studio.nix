@@ -187,11 +187,15 @@ with lib;
         };
       };
 
-      comment-land = {
+      comment-land-ghstack = {
         env = {
           GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
-          PR_HTML_URL = mkWorkflowRef "github.event.issue.pull_request.html_url";
+          PR_HTML_URL = mkWorkflowRef "github.event.pull_request.html_url";
         };
+        "if" = concatStringsSep " && " [
+          "contains(github.event.pull_request.labels.*.name, 'auto')"
+          "contains(github.event.pull_request.labels.*.name, 'ghstack')"
+        ];
         run = mkWorkflowRun [
           "gh"
           "pr"
@@ -199,6 +203,27 @@ with lib;
           ''"$PR_HTML_URL"''
           "--body"
           ".land"
+        ];
+      };
+
+      comment-land-pr = {
+        env = {
+          GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
+          PR_HTML_URL = mkWorkflowRef "github.event.pull_request.html_url";
+        };
+        "if" = concatStringsSep " && " [
+          "contains(github.event.pull_request.labels.*.name, 'auto')"
+          "!contains(github.event.pull_request.labels.*.name, 'ghstack')"
+        ];
+        run = mkWorkflowRun [
+          "gh"
+          "pr"
+          "comment"
+          ''"$PR_HTML_URL"''
+          "--body"
+          ".land"
+          "|"
+          "pr"
         ];
       };
 
@@ -334,17 +359,7 @@ with lib;
             "gh/*/*/base"
           ];
           jobs = {
-            triage = {
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                bot-triage
-                ghstack-triage
-              ];
-            };
             check = {
-              needs = [ "triage" ];
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -354,14 +369,14 @@ with lib;
               ];
             };
             merge = {
-              "if" = "contains(github.event.pull_request.labels.*.name, 'auto')";
               needs = [ "check" ];
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
                 setup-nix
-                comment-land
+                comment-land-ghstack
+                comment-land-pr
               ];
             };
           };
@@ -393,6 +408,26 @@ with lib;
                 create-release
               ];
             };
+          };
+        };
+      };
+
+      triage = {
+        enable = mkDefault true;
+        settings = {
+          name = "Triage";
+          on.pull_request.branches = [
+            "main"
+            "gh/*/*/base"
+          ];
+          jobs.triage = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              bot-triage
+              ghstack-triage
+            ];
           };
         };
       };
