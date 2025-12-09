@@ -115,22 +115,6 @@ with lib;
           };
         };
 
-        bot-triage = {
-          env = {
-            GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-            PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
-          };
-          "if" = mergeCondition;
-          run = mkWorkflowRun [
-            "gh"
-            "pr"
-            "edit"
-            ''"$PR_NUMBER"''
-            "--add-label"
-            "dependencies"
-          ];
-        };
-
         cleanup-pr = {
           env = {
             GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
@@ -261,22 +245,6 @@ with lib;
           ];
         };
 
-        ghstack-triage = {
-          env = {
-            GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
-            PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
-          };
-          "if" = ghstackCondition;
-          run = mkWorkflowRun [
-            "gh"
-            "pr"
-            "edit"
-            ''"$PR_NUMBER"''
-            "--add-label"
-            "ghstack"
-          ];
-        };
-
         nix-flake-check.run = mkWorkflowRun [
           "nix"
           "flake"
@@ -311,6 +279,38 @@ with lib;
             stale-issue-label = "stale";
             stale-pr-label = "stale";
           };
+        };
+
+        triage-bot = {
+          env = {
+            GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+            PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
+          };
+          "if" = mergeCondition;
+          run = mkWorkflowRun [
+            "gh"
+            "pr"
+            "edit"
+            ''"$PR_NUMBER"''
+            "--add-label"
+            "dependencies"
+          ];
+        };
+
+        triage-ghstack = {
+          env = {
+            GITHUB_TOKEN = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+            PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
+          };
+          "if" = ghstackCondition;
+          run = mkWorkflowRun [
+            "gh"
+            "pr"
+            "edit"
+            ''"$PR_NUMBER"''
+            "--add-label"
+            "ghstack"
+          ];
         };
       };
 
@@ -452,8 +452,8 @@ with lib;
             steps = with config.github.actions; [
               create-github-app-token
               checkout
-              bot-triage
-              ghstack-triage
+              triage-bot
+              triage-ghstack
             ];
           };
         };
