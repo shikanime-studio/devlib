@@ -3,8 +3,12 @@
     ./beam.nix
     ./docker.nix
     ./go.nix
-    ./nodejs.nix
+    ./nix.nix
+    ./javascript.nix
+    ./python.nix
     ./rustup.nix
+    ./shell.nix
     ./skaffold.nix
+    ./yaml.nix
   ];
 }

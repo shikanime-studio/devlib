@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 
@@ -11,9 +12,15 @@ let
 in
 {
   config = mkIf cfg.enable {
-    home.sessionPath = [
-      "${config.xdg.dataHome}/go/bin"
-    ];
+    home = {
+      packages = [
+        pkgs.gopls
+      ];
+
+      sessionPath = [
+        "${config.xdg.dataHome}/go/bin"
+      ];
+    };
 
     programs.go = {
       env.GOPATH = "${config.xdg.dataHome}/go";

@@ -8,21 +8,25 @@
 with lib;
 
 let
-  cfg = config.programs.nodejs;
+  cfg = config.programs.javascript;
 in
 {
-  options.programs.nodejs = {
+  options.programs.javascript = {
     enable = mkEnableOption "Node.js development environment";
 
     package = mkOption {
       type = types.package;
-      default = pkgs.nodejs;
+      default = pkgs.javascript;
       description = "Node.js package to install";
     };
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ cfg.package ];
+    home.packages = [
+      pkgs.typescript-language-server
+      pkgs.vscode-langservers-extracted
+      cfg.package
+    ];
 
     home.sessionVariables = {
       NPM_CONFIG_CACHE = "${config.xdg.cacheHome}/npm";

@@ -7,6 +7,12 @@ let
 in
 {
   config = mkIf cfg.enable {
+    home.packages = [
+      pkgs.docker-compose-language-service
+      pkgs.dockerfile-language-server
+      pkgs.yaml-language-server
+    ];
+
     programs.docker-cli = {
       configDir = "${config.xdg.configHome}/docker";
       settings.auths = {
