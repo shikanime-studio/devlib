@@ -10,5 +10,6 @@
     ./shell.nix
     ./k8s.nix
     ./yaml.nix
+    ./vcs.nix
   ];
 }

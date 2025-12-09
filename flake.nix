@@ -55,6 +55,7 @@
           shell = ./modules/home/shell.nix;
           skaffold = ./modules/home/k8s.nix;
           yaml = ./modules/home/yaml.nix;
+          vcs = ./modules/home/vcs.nix;
         };
 
         flakeModule = ./modules/flake/default.nix;
