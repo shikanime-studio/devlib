@@ -43,6 +43,7 @@
         devenvModules.shikanime-studio = ./modules/devenv/shikanime-studio.nix;
 
         homeManagerModules = {
+          default = ./modules/home/default.nix;
           beam = ./modules/home/beam.nix;
           docker = ./modules/home/docker.nix;
           go = ./modules/home/go.nix;
