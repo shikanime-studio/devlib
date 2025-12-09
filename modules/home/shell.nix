@@ -12,5 +12,5 @@
 
   programs.bash.historyFile = "${config.xdg.dataHome}/bash/history";
 
-  programs.zsh.historyFile = "${config.xdg.dataHome}/zsh/history";
+  programs.zsh.history.path = "${config.xdg.dataHome}/zsh/history";
 }
