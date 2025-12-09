@@ -311,6 +311,58 @@ with lib;
     };
 
     workflows = with config.github.lib; {
+      cleanup = {
+        enable = mkDefault true;
+        settings = {
+          name = "Cleanup";
+          on.pull_request.types = [
+            "closed"
+          ];
+          jobs.cleanup = {
+            runs-on = "ubuntu-latest";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              cleanup-pr
+              cleanup-ghstack
+            ];
+          };
+        };
+      };
+
+      integration = {
+        enable = mkDefault true;
+        settings = {
+          name = "Integration";
+          on.pull_request.branches = [
+            "main"
+            "gh/*/*/base"
+          ];
+          jobs = {
+            check = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                nix-flake-check
+              ];
+            };
+            merge = {
+              needs = [ "check" ];
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                comment-land-ghstack
+                comment-land-pr
+              ];
+            };
+          };
+        };
+      };
+
       land = {
         enable = mkDefault true;
         settings = {
@@ -346,39 +398,6 @@ with lib;
               setup-nix
               nix-flake-check
             ];
-          };
-        };
-      };
-
-      integration = {
-        enable = mkDefault true;
-        settings = {
-          name = "Integration";
-          on.pull_request.branches = [
-            "main"
-            "gh/*/*/base"
-          ];
-          jobs = {
-            check = {
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                nix-flake-check
-              ];
-            };
-            merge = {
-              needs = [ "check" ];
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                comment-land-ghstack
-                comment-land-pr
-              ];
-            };
           };
         };
       };
@@ -427,25 +446,6 @@ with lib;
               checkout
               bot-triage
               ghstack-triage
-            ];
-          };
-        };
-      };
-
-      cleanup = {
-        enable = mkDefault true;
-        settings = {
-          name = "Cleanup";
-          on.pull_request.types = [
-            "closed"
-          ];
-          jobs.cleanup = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              cleanup-pr
-              cleanup-ghstack
             ];
           };
         };
