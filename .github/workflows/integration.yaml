@@ -36,15 +36,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_HTML_URL: ${{ github.event.pull_request.html_url }}
         if:
-          contains(github.event.pull_request.labels.*.name, 'auto') && contains(github.event.pull_request.labels.*.name,
-          'ghstack')
+          (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login
+          == 'yorha-operator-6o[bot]') && (startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref,
+          '/head'))
         run: gh pr comment "$PR_HTML_URL" --body .land
       - env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_HTML_URL: ${{ github.event.pull_request.html_url }}
         if:
-          contains(github.event.pull_request.labels.*.name, 'auto') && !contains(github.event.pull_request.labels.*.name,
-          'ghstack')
+          (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login
+          == 'yorha-operator-6o[bot]') && !(startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref,
+          '/head'))
         run: gh pr comment "$PR_HTML_URL" --body .land | pr
 name: Integration
 "on":
