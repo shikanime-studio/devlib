@@ -6,7 +6,7 @@
     ./javascript.nix
     ./nix.nix
     ./python.nix
-    ./rustup.nix
+    ./rust.nix
     ./shell.nix
     ./skaffold.nix
     ./yaml.nix

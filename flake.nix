@@ -51,7 +51,7 @@
           javascript = ./modules/home/javascript.nix;
           nix = ./modules/home/nix.nix;
           python = ./modules/home/python.nix;
-          rustup = ./modules/home/rustup.nix;
+          rust = ./modules/home/rust.nix;
           shell = ./modules/home/shell.nix;
           skaffold = ./modules/home/skaffold.nix;
           yaml = ./modules/home/yaml.nix;
