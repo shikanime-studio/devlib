@@ -8,7 +8,7 @@
     ./python.nix
     ./rust.nix
     ./shell.nix
-    ./skaffold.nix
+    ./k8s.nix
     ./yaml.nix
   ];
 }

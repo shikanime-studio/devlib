@@ -53,7 +53,7 @@
           python = ./modules/home/python.nix;
           rust = ./modules/home/rust.nix;
           shell = ./modules/home/shell.nix;
-          skaffold = ./modules/home/skaffold.nix;
+          skaffold = ./modules/home/k8s.nix;
           yaml = ./modules/home/yaml.nix;
         };
 
