@@ -213,6 +213,8 @@ with lib;
             ''"$PR_HTML_URL"''
             "--body"
             ".land"
+            "|"
+            "ghstack"
           ];
         };
 
