@@ -29,3 +29,6 @@ name: Triage
     branches:
       - main
       - gh/*/*/base
+    types:
+      - opened
+      - reopened

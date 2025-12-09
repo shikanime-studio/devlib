@@ -443,6 +443,10 @@ with lib;
             "main"
             "gh/*/*/base"
           ];
+          on.pull_request.types = [
+            "opened"
+            "reopened"
+          ];
           jobs.triage = {
             runs-on = "ubuntu-latest";
             steps = with config.github.actions; [
