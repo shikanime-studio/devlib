@@ -1,7 +1,5 @@
 jobs:
   check:
-    needs:
-      - triage
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken
@@ -18,7 +16,6 @@ jobs:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - run: nix flake check --accept-flake-config --all-systems --no-pure-eval
   merge:
-    if: contains(github.event.pull_request.labels.*.name, 'auto')
     needs:
       - check
     runs-on: ubuntu-latest
@@ -36,33 +33,21 @@ jobs:
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - env:
-          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          PR_HTML_URL: ${{ github.event.issue.pull_request.html_url }}
-        run: gh pr comment "$PR_HTML_URL" --body .land
-  triage:
-    runs-on: ubuntu-latest
-    steps:
-      - id: createGithubAppToken
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
-          token: ${{ steps.createGithubAppToken.outputs.token }}
-      - env:
-          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HTML_URL: ${{ github.event.pull_request.html_url }}
         if:
-          github.event.pull_request.user.login == 'yorha-operator-6o[bot]' || github.event.pull_request.user.login
-          == 'dependabot[bot]'
-        run: gh pr edit "$PR_NUMBER" --add-label dependencies
+          (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login
+          == 'yorha-operator-6o[bot]') && (startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref,
+          '/head'))
+        run: gh pr comment "$PR_HTML_URL" --body .land | ghstack
       - env:
-          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
-          PR_NUMBER: ${{ github.event.pull_request.number }}
-        if: startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref, '/head')
-        run: gh pr edit "$PR_NUMBER" --add-label ghstack
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_HTML_URL: ${{ github.event.pull_request.html_url }}
+        if:
+          (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login
+          == 'yorha-operator-6o[bot]') && !(startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref,
+          '/head'))
+        run: gh pr comment "$PR_HTML_URL" --body .land | pr
 name: Integration
 "on":
   pull_request:
