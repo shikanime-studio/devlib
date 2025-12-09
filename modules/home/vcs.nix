@@ -2,8 +2,9 @@
 
 {
   home.packages = [
-    pkgs.gh
     pkgs.ghstack
     pkgs.sapling
   ];
+
+  programs.gh.enable = true;
 }
