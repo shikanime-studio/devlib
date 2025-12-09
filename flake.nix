@@ -42,6 +42,7 @@
         devenvModule = ./modules/devenv/default.nix;
         devenvModules.shikanime-studio = ./modules/devenv/shikanime-studio.nix;
 
+        homeManagerModule = ./modules/home/default.nix;
         homeManagerModules = {
           default = ./modules/home/default.nix;
           beam = ./modules/home/beam.nix;
