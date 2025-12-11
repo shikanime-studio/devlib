@@ -18,7 +18,5 @@ in
     ];
 
     languages.javascript.corepack.enable = mkDefault true;
-
-    treefmt.config.programs.prettier.enable = mkDefault true;
   };
 }

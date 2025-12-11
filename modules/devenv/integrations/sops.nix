@@ -65,10 +65,5 @@ in
         ];
       };
     };
-
-    treefmt.config.programs = {
-      prettier.enable = mkDefault true;
-      taplo.enable = mkDefault true;
-    };
   };
 }
