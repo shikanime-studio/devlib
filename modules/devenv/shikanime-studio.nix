@@ -506,6 +506,11 @@ with lib;
 
   treefmt = {
     enable = mkDefault true;
-    config.programs.prettier.enable = true;
+    config.programs = {
+      jsonfmt.enable = true;
+      taplo.enable = true;
+      xmllint.enable = true;
+      yamlfmt.enable = true;
+    };
   };
 }
