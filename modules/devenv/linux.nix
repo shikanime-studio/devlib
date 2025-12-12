@@ -14,6 +14,7 @@
     pkgs.gnumake
     pkgs.ncurses
     pkgs.openssl
+    pkgs.pahole
     pkgs.pkg-config
     pkgs.python3
     pkgs.zlib
