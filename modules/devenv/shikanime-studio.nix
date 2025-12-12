@@ -12,14 +12,14 @@ with lib;
     ./base.nix
   ];
 
-  automata.enable = mkDefault true;
+  automata.enable = true;
 
   cachix = {
-    enable = mkDefault true;
+    enable = true;
     push = "shikanime-studio";
   };
 
-  docker.enable = mkDefault true;
+  docker.enable = true;
 
   golangci-lint.settings = {
     version = 2;
@@ -89,7 +89,7 @@ with lib;
   };
 
   github = {
-    enable = mkDefault true;
+    enable = true;
 
     actions =
       with config.github.lib;
@@ -318,7 +318,7 @@ with lib;
 
     workflows = with config.github.lib; {
       cleanup = {
-        enable = mkDefault true;
+        enable = true;
         settings = {
           name = "Cleanup";
           on.pull_request.types = [
@@ -337,7 +337,7 @@ with lib;
       };
 
       integration = {
-        enable = mkDefault true;
+        enable = true;
         settings = {
           name = "Integration";
           on.pull_request.branches = [
@@ -370,7 +370,7 @@ with lib;
       };
 
       land = {
-        enable = mkDefault true;
+        enable = true;
         settings = {
           name = "Land";
           on.issue_comment.types = [ "created" ];
@@ -387,7 +387,7 @@ with lib;
       };
 
       push = {
-        enable = mkDefault true;
+        enable = true;
         settings = {
           name = "Push";
           on = {
@@ -409,7 +409,7 @@ with lib;
       };
 
       release = {
-        enable = mkDefault true;
+        enable = true;
         settings = {
           name = "Release";
           on.push.tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
@@ -438,7 +438,7 @@ with lib;
       };
 
       triage = {
-        enable = mkDefault true;
+        enable = true;
         settings = {
           name = "Triage";
           on.pull_request.branches = [
@@ -462,7 +462,7 @@ with lib;
       };
 
       update = {
-        enable = mkDefault true;
+        enable = true;
         settings = {
           name = "Update";
           on = {
@@ -493,11 +493,11 @@ with lib;
     };
   };
 
-  gitignore.enable = mkDefault true;
+  gitignore.enable = true;
 
   languages = {
-    nix.enable = mkDefault true;
-    shell.enable = mkDefault true;
+    nix.enable = true;
+    shell.enable = true;
   };
 
   packages = [
@@ -507,7 +507,7 @@ with lib;
   ];
 
   treefmt = {
-    enable = mkDefault true;
+    enable = true;
     config.programs = {
       jsonfmt.enable = true;
       taplo.enable = true;
