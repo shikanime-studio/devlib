@@ -40,7 +40,10 @@
       ];
       flake = {
         devenvModule = ./modules/devenv/default.nix;
-        devenvModules.shikanime-studio = ./modules/devenv/shikanime-studio.nix;
+        devenvModules = {
+          linux = ./modules/devenv/linux.nix;
+          shikanime-studio = ./modules/devenv/shikanime-studio.nix;
+        };
 
         homeManagerModule = ./modules/home/default.nix;
         homeManagerModules = {
