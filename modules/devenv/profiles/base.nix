@@ -3,7 +3,12 @@
     ../integrations/gitignore.nix
   ];
 
-  gitignore.enable = true;
+  gitignore = {
+    enable = true;
+    content = [
+      ".pre-commit-config.yaml"
+    ];
+  };
 
   treefmt = {
     enable = true;
