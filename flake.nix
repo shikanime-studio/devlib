@@ -74,19 +74,6 @@
 
         flakeModule = ./modules/flake/default.nix;
 
-        devenv.shells =
-          let
-            linux = {
-              imports = [
-                ./modules/devenv/shells/linux.nix
-              ];
-            };
-          in
-          {
-            x86_64-linux = linux;
-            aarch64-linux = linux;
-          };
-
         templates = {
           default = {
             path = ./templates/default;
@@ -109,6 +96,9 @@
               ./modules/devenv/profiles/nix.nix
               ./modules/devenv/profiles/shell.nix
               ./modules/devenv/shells/default.nix
+            ];
+            linux.imports = [
+              ./modules/devenv/shells/linux.nix
             ];
             longhorn.imports = [
               ./modules/devenv/shells/longhorn.nix

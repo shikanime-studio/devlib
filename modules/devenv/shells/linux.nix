@@ -10,7 +10,6 @@
   packages = [
     pkgs.bc
     pkgs.bison
-    pkgs.elfutils
     pkgs.flex
     pkgs.gcc
     pkgs.gnumake
@@ -20,5 +19,8 @@
     pkgs.pkg-config
     pkgs.python3
     pkgs.zlib
+  ]
+  ++ optionals pkgs.hostPlatform.isLinux [
+    pkgs.elfutils
   ];
 }
