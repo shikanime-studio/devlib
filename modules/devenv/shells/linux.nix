@@ -1,4 +1,6 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+
+with lib;
 
 {
   imports = [
@@ -15,12 +17,10 @@
     pkgs.gnumake
     pkgs.ncurses
     pkgs.openssl
-    pkgs.pahole
     pkgs.pkg-config
     pkgs.python3
     pkgs.zlib
   ]
-  ++ optionals pkgs.hostPlatform.isLinux [
-    pkgs.elfutils
-  ];
+  ++ optional (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.elfutils) pkgs.elfutils
+  ++ optional (lib.meta.availableOn pkgs.stdenv.hostPlatform pkgs.pahole) pkgs.pahole;
 }
