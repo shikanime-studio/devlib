@@ -3,10 +3,6 @@
 with lib;
 
 {
-  imports = [
-    ./base.nix
-  ];
-
   languages.c.enable = true;
 
   packages = [

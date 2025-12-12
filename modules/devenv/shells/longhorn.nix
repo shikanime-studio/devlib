@@ -1,10 +1,6 @@
 { pkgs, ... }:
 
 {
-  imports = [
-    ./base.nix
-  ];
-
   git-hooks.hooks = {
     golangci-lint.enable = true;
     gotest.enable = true;
