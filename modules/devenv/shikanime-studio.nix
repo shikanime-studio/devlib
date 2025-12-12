@@ -19,8 +19,6 @@ with lib;
     push = "shikanime-studio";
   };
 
-  containers = pkgs.lib.mkForce { };
-
   docker.enable = mkDefault true;
 
   golangci-lint.settings = {
