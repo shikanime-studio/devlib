@@ -39,18 +39,28 @@
         ./modules/flake/default.nix
       ];
       flake = {
-        devenvModule = ./modules/devenv/default.nix;
+        devenvModule = ./modules/devenv/shells/default.nix;
         devenvModules = {
           linux = ./modules/devenv/linux.nix;
           longhorn = ./modules/devenv/longhorn.nix;
           shikanime-studio = ./modules/devenv/shikanime-studio.nix;
+          docker = ./modules/devenv/profiles/docker.nix;
+          elixir = ./modules/devenv/profiles/elixir.nix;
+          go = ./modules/devenv/profiles/go.nix;
+          javascript = ./modules/devenv/profiles/javascript.nix;
+          nix = ./modules/devenv/profiles/nix.nix;
+          python = ./modules/devenv/profiles/python.nix;
+          rust = ./modules/devenv/profiles/rust.nix;
+          shell = ./modules/devenv/profiles/shell.nix;
+          skaffold = ./modules/devenv/profiles/k8s.nix;
+          yaml = ./modules/devenv/profiles/yaml.nix;
         };
 
         homeManagerModule = ./modules/home/default.nix;
         homeManagerModules = {
           default = ./modules/home/default.nix;
-          beam = ./modules/home/beam.nix;
           docker = ./modules/home/docker.nix;
+          elixir = ./modules/home/elixir.nix;
           go = ./modules/home/go.nix;
           javascript = ./modules/home/javascript.nix;
           nix = ./modules/home/nix.nix;
@@ -80,13 +90,18 @@
         {
           devenv.shells = {
             default.imports = [
-              ./modules/devenv/shikanime-studio.nix
+              ./modules/devenv/profiles/docs.nix
+              ./modules/devenv/profiles/formats.nix
+              ./modules/devenv/profiles/github.nix
+              ./modules/devenv/profiles/nix.nix
+              ./modules/devenv/profiles/shell.nix
+              ./modules/devenv/shells/default.nix
             ];
             linux.imports = [
-              ./modules/devenv/linux.nix
+              ./modules/devenv/shells/linux.nix
             ];
             longhorn.imports = [
-              ./modules/devenv/longhorn.nix
+              ./modules/devenv/shells/longhorn.nix
             ];
           };
           packages = {

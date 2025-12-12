@@ -5,6 +5,8 @@
     ./base.nix
   ];
 
+  languages.c.enable = true;
+
   packages = [
     pkgs.bc
     pkgs.bison
