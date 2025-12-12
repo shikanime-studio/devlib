@@ -1,33 +1,47 @@
 {
   lib,
-  stdenv,
+  python3Packages,
   fetchFromGitHub,
-  pkg-config,
-  openssl,
-  zlib,
 }:
 
-stdenv.mkDerivation rec {
+python3Packages.buildPythonApplication rec {
   pname = "mistral-vibe";
-  version = "0.1.0";
+  version = "1.1.3";
+  pyproject = true;
 
   src = fetchFromGitHub {
     owner = "mistralai";
-    repo = "vibe";
+    repo = "mistral-vibe";
     rev = "v${version}";
-    sha256 = lib.fakeSha256;
+    sha256 = "1y0lah0f89pmy8vw1vsswyn4qibasixakn3rb5bdzzdslx75xmcv";
   };
 
-  nativeBuildInputs = [ pkg-config ];
-  buildInputs = [
-    openssl
-    zlib
+  build-system = with python3Packages; [
+    uv-build
   ];
 
-  installPhase = ''
-    mkdir -p $out
-    cp -r * $out/
-  '';
+  dependencies = with python3Packages; [
+    aiofiles
+    httpx
+    mcp
+    (callPackage ../python-mistralai { })
+    pexpect
+    (callPackage ../python-pydantic { })
+    pyperclip
+    python-dotenv
+    rich
+    textual
+    tomli-w
+    (callPackage ../python-watchfiles { })
+  ];
+
+  pythonRelaxDeps = [
+    "pydantic"
+    "pydantic-settings"
+    "watchfiles"
+  ];
+
+  pythonImportsCheck = [ "vibe" ];
 
   meta = with lib; {
     description = "Mistral Vibe client/tools";

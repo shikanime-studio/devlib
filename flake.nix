@@ -41,17 +41,18 @@
       flake = {
         devenvModule = ./modules/devenv/shells/default.nix;
         devenvModules = {
-          linux = ./modules/devenv/linux.nix;
-          longhorn = ./modules/devenv/longhorn.nix;
-          shikanime-studio = ./modules/devenv/shikanime-studio.nix;
           docker = ./modules/devenv/profiles/docker.nix;
           elixir = ./modules/devenv/profiles/elixir.nix;
           go = ./modules/devenv/profiles/go.nix;
           javascript = ./modules/devenv/profiles/javascript.nix;
+          linux = ./modules/devenv/linux.nix;
+          longhorn = ./modules/devenv/longhorn.nix;
           nix = ./modules/devenv/profiles/nix.nix;
+          nixos = ./modules/devenv/profiles/nixos.nix;
           python = ./modules/devenv/profiles/python.nix;
           rust = ./modules/devenv/profiles/rust.nix;
           shell = ./modules/devenv/profiles/shell.nix;
+          shikanime-studio = ./modules/devenv/shikanime-studio.nix;
           skaffold = ./modules/devenv/profiles/k8s.nix;
           yaml = ./modules/devenv/profiles/yaml.nix;
         };
@@ -86,8 +87,27 @@
         };
       };
       perSystem =
-        { pkgs, ... }:
         {
+          pkgs,
+          system,
+          ...
+        }:
+        {
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [
+              (_final: prev: {
+                python3Packages = prev.python3Packages.overrideScope (
+                  self: _super: {
+                    mistralai = self.callPackage ./pkgs/python-mistralai { };
+                    pydantic-settings = self.callPackage ./pkgs/python-pydantic-settings { };
+                    watchfiles = self.callPackage ./pkgs/python-watchfiles { };
+                    textual-speedups = self.callPackage ./pkgs/python-textual-speedups { };
+                  }
+                );
+              })
+            ];
+          };
           devenv.shells = {
             default.imports = [
               ./modules/devenv/profiles/docs.nix
@@ -102,6 +122,9 @@
             ];
             longhorn.imports = [
               ./modules/devenv/shells/longhorn.nix
+            ];
+            nixos.imports = [
+              ./modules/devenv/shells/nixos.nix
             ];
           };
           packages = {
