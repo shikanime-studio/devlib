@@ -87,8 +87,28 @@
         };
       };
       perSystem =
-        { pkgs, ... }:
         {
+          pkgs,
+          system,
+          ...
+        }:
+        {
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            overlays = [
+              (_final: prev: {
+                python3Packages = prev.python3Packages.overrideScope (
+                  _self: _super: {
+                    mistralai = final.callPackage ./pkgs/python-mistralai { };
+                    pydantic-settings = final.callPackage ./pkgs/python-pydantic-settings { };
+                    watchfiles = final.callPackage ./pkgs/python-watchfiles { };
+                    textual-speedups = final.callPackage ./pkgs/python-textual-speedups { };
+                    mistral-vibe = final.callPackage ./pkgs/mistral-vibe { };
+                  }
+                );
+              })
+            ];
+          };
           devenv.shells = {
             default.imports = [
               ./modules/devenv/profiles/docs.nix
@@ -112,6 +132,7 @@
             fleet = pkgs.callPackage ./pkgs/fleet { };
             bootloose = pkgs.callPackage ./pkgs/bootloose { };
             longhornctl = pkgs.callPackage ./pkgs/longhornctl { };
+            mistral-vibe = pkgs.callPackage ./pkgs/mistral-vibe { };
           };
         };
       systems = [
