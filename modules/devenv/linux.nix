@@ -4,8 +4,9 @@
   packages = [
     pkgs.bc
     pkgs.bison
-    pkgs.flex
     pkgs.elfutils
+    pkgs.flex
+    pkgs.gnumake
     pkgs.ncurses
     pkgs.openssl
     pkgs.pkg-config

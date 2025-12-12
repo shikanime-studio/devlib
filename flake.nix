@@ -42,6 +42,7 @@
         devenvModule = ./modules/devenv/default.nix;
         devenvModules = {
           linux = ./modules/devenv/linux.nix;
+          longhorn = ./modules/devenv/longhorn.nix;
           shikanime-studio = ./modules/devenv/shikanime-studio.nix;
         };
 
