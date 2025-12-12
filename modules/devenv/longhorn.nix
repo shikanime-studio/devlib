@@ -5,10 +5,16 @@
     ./base.nix
   ];
 
+  git-hooks.hooks = {
+    golangci-lint.enable = true;
+    gotest.enable = true;
+  };
+
+  languages.go.enable = true;
+
   packages = [
     pkgs.docker
     pkgs.gnumake
-    pkgs.go
     pkgs.kubectl
     pkgs.kustomize
   ];
