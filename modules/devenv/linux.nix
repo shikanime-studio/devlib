@@ -1,7 +1,9 @@
 { pkgs, ... }:
 
 {
-  containers = pkgs.lib.mkForce { };
+  imports = [
+    ./base.nix
+  ];
 
   packages = [
     pkgs.bc

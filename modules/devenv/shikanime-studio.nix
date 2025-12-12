@@ -8,6 +8,10 @@
 with lib;
 
 {
+  imports = [
+    ./base.nix
+  ];
+
   automata.enable = mkDefault true;
 
   cachix = {

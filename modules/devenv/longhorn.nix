@@ -1,6 +1,10 @@
 { pkgs, ... }:
 
 {
+  imports = [
+    ./base.nix
+  ];
+
   packages = [
     pkgs.docker
     pkgs.gnumake

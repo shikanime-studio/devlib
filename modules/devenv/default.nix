@@ -1,5 +1,6 @@
 {
   imports = [
+    ./base.nix
     ./integrations/air.nix
     ./integrations/automata.nix
     ./integrations/buf.nix
