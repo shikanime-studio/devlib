@@ -108,6 +108,7 @@
             fleet = pkgs.callPackage ./pkgs/fleet { };
             bootloose = pkgs.callPackage ./pkgs/bootloose { };
             longhornctl = pkgs.callPackage ./pkgs/longhornctl { };
+            mistral-vibe = pkgs.callPackage ./pkgs/mistral-vibe { };
           };
         };
       systems = [
