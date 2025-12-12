@@ -1,92 +1,12 @@
-{
-  config,
-  lib,
-  pkgs,
-  ...
-}:
+{ config, lib, ... }:
 
 with lib;
 
 {
   imports = [
     ./base.nix
+    ../integrations/github.nix
   ];
-
-  automata.enable = true;
-
-  cachix = {
-    enable = true;
-    push = "shikanime-studio";
-  };
-
-  docker.enable = true;
-
-  golangci-lint.settings = {
-    version = 2;
-    formatters = {
-      enable = [
-        "gci"
-        "gofmt"
-        "gofumpt"
-        "goimports"
-      ];
-      settings.gci.sections = [
-        "standard"
-        "default"
-        "localmodule"
-      ];
-    };
-    linters = {
-      enable = [
-        "bodyclose"
-        "dogsled"
-        "dupl"
-        "durationcheck"
-        "exhaustive"
-        "gocritic"
-        "godot"
-        "gomoddirectives"
-        "goprintffuncname"
-        "govet"
-        "importas"
-        "ineffassign"
-        "makezero"
-        "misspell"
-        "nakedret"
-        "nilerr"
-        "noctx"
-        "nolintlint"
-        "prealloc"
-        "predeclared"
-        "revive"
-        "rowserrcheck"
-        "sqlclosecheck"
-        "staticcheck"
-        "tparallel"
-        "unconvert"
-        "unparam"
-        "unused"
-        "wastedassign"
-        "whitespace"
-      ];
-      settings = {
-        misspell.locale = "US";
-        gocritic = {
-          enabled-tags = [
-            "diagnostic"
-            "experimental"
-            "opinionated"
-            "style"
-          ];
-          disabled-checks = [
-            "importShadow"
-            "unnamedResult"
-          ];
-        };
-      };
-    };
-    run.modules-download-mode = "vendor";
-  };
 
   github = {
     enable = true;
@@ -490,29 +410,6 @@ with lib;
           };
         };
       };
-    };
-  };
-
-  gitignore.enable = true;
-
-  languages = {
-    nix.enable = true;
-    shell.enable = true;
-  };
-
-  packages = [
-    pkgs.gh
-    pkgs.ghstack
-    pkgs.sapling
-  ];
-
-  treefmt = {
-    enable = true;
-    config.programs = {
-      jsonfmt.enable = true;
-      taplo.enable = true;
-      xmllint.enable = true;
-      yamlfmt.enable = true;
     };
   };
 }

@@ -58,6 +58,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    packages = [ wrapped ];
+
     git-hooks.hooks.golangci-lint = {
       enable = true;
       package = wrapped;

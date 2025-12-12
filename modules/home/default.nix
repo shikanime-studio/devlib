@@ -1,7 +1,7 @@
 {
   imports = [
-    ./beam.nix
     ./docker.nix
+    ./elixir.nix
     ./go.nix
     ./javascript.nix
     ./nix.nix
