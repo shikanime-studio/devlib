@@ -77,11 +77,11 @@
         templates = {
           default = {
             path = ./templates/default;
-            description = "A direnv supported Nix flake with devenv integration.";
+            description = "A devenv template with default settings.";
           };
-          shikanime-studio = {
-            path = ./templates/shikanime-studio;
-            description = "A direnv supported Nix flake with devenv integration for shikanime-studio.";
+          remote = {
+            path = ./templates/remote;
+            description = "A simple direnv with remote flake.";
           };
         };
       };
