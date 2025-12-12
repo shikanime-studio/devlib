@@ -41,17 +41,18 @@
       flake = {
         devenvModule = ./modules/devenv/shells/default.nix;
         devenvModules = {
-          linux = ./modules/devenv/linux.nix;
-          longhorn = ./modules/devenv/longhorn.nix;
-          shikanime-studio = ./modules/devenv/shikanime-studio.nix;
           docker = ./modules/devenv/profiles/docker.nix;
           elixir = ./modules/devenv/profiles/elixir.nix;
           go = ./modules/devenv/profiles/go.nix;
           javascript = ./modules/devenv/profiles/javascript.nix;
+          linux = ./modules/devenv/linux.nix;
+          longhorn = ./modules/devenv/longhorn.nix;
           nix = ./modules/devenv/profiles/nix.nix;
+          nixos = ./modules/devenv/profiles/nixos.nix;
           python = ./modules/devenv/profiles/python.nix;
           rust = ./modules/devenv/profiles/rust.nix;
           shell = ./modules/devenv/profiles/shell.nix;
+          shikanime-studio = ./modules/devenv/shikanime-studio.nix;
           skaffold = ./modules/devenv/profiles/k8s.nix;
           yaml = ./modules/devenv/profiles/yaml.nix;
         };
@@ -102,6 +103,9 @@
             ];
             longhorn.imports = [
               ./modules/devenv/shells/longhorn.nix
+            ];
+            nixos.imports = [
+              ./modules/devenv/shells/nixos.nix
             ];
           };
           packages = {
