@@ -1,13 +1,10 @@
 { pkgs, ... }:
 
 {
-  docker.enable = true;
-
-  languages.go.enable = true;
-
   packages = [
     pkgs.docker
     pkgs.gnumake
+    pkgs.go
     pkgs.kubectl
     pkgs.kustomize
   ];
