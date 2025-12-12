@@ -10,6 +10,7 @@
     pkgs.bison
     pkgs.elfutils
     pkgs.flex
+    pkgs.gcc
     pkgs.gnumake
     pkgs.ncurses
     pkgs.openssl
