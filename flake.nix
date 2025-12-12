@@ -98,11 +98,12 @@
             overlays = [
               (_final: prev: {
                 python3Packages = prev.python3Packages.overrideScope (
-                  self: _super: {
-                    mistralai = self.callPackage ./pkgs/python-mistralai { };
-                    pydantic-settings = self.callPackage ./pkgs/python-pydantic-settings { };
-                    watchfiles = self.callPackage ./pkgs/python-watchfiles { };
-                    textual-speedups = self.callPackage ./pkgs/python-textual-speedups { };
+                  _self: _super: {
+                    mistralai = final.callPackage ./pkgs/python-mistralai { };
+                    pydantic-settings = final.callPackage ./pkgs/python-pydantic-settings { };
+                    watchfiles = final.callPackage ./pkgs/python-watchfiles { };
+                    textual-speedups = final.callPackage ./pkgs/python-textual-speedups { };
+                    mistral-vibe = final.callPackage ./pkgs/mistral-vibe { };
                   }
                 );
               })

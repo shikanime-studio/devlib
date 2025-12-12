@@ -1,10 +1,24 @@
 {
   lib,
-  python3Packages,
+  buildPythonApplication,
   fetchFromGitHub,
+  uv-build,
+  aiofiles,
+  httpx,
+  mcp,
+  mistralai,
+  pexpect,
+  pydantic,
+  pydantic-settings,
+  pyperclip,
+  python-dotenv,
+  rich,
+  textual,
+  tomli-w,
+  watchfiles,
 }:
 
-python3Packages.buildPythonApplication rec {
+buildPythonApplication rec {
   pname = "mistral-vibe";
   version = "1.1.3";
   pyproject = true;
@@ -16,23 +30,24 @@ python3Packages.buildPythonApplication rec {
     sha256 = "1y0lah0f89pmy8vw1vsswyn4qibasixakn3rb5bdzzdslx75xmcv";
   };
 
-  build-system = with python3Packages; [
+  build-system = [
     uv-build
   ];
 
-  dependencies = with python3Packages; [
+  dependencies = [
     aiofiles
     httpx
     mcp
-    (callPackage ../python-mistralai { })
+    mistralai
     pexpect
-    (callPackage ../python-pydantic { })
+    pydantic
+    pydantic-settings
     pyperclip
     python-dotenv
     rich
     textual
     tomli-w
-    (callPackage ../python-watchfiles { })
+    watchfiles
   ];
 
   pythonRelaxDeps = [
