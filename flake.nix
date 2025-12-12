@@ -78,9 +78,17 @@
       perSystem =
         { pkgs, ... }:
         {
-          devenv.shells.default.imports = [
-            ./modules/devenv/shikanime-studio.nix
-          ];
+          devenv.shells = {
+            default.imports = [
+              ./modules/devenv/shikanime-studio.nix
+            ];
+            linux.imports = [
+              ./modules/devenv/linux.nix
+            ];
+            longhorn.imports = [
+              ./modules/devenv/longhorn.nix
+            ];
+          };
           packages = {
             fleet = pkgs.callPackage ./pkgs/fleet { };
             bootloose = pkgs.callPackage ./pkgs/bootloose { };
