@@ -46,8 +46,8 @@
           elixir = ./modules/devenv/profiles/elixir.nix;
           go = ./modules/devenv/profiles/go.nix;
           javascript = ./modules/devenv/profiles/javascript.nix;
-          linux = ./modules/devenv/linux.nix;
-          longhorn = ./modules/devenv/longhorn.nix;
+          linux = ./modules/devenv/shells/linux.nix;
+          longhorn = ./modules/devenv/shells/longhorn.nix;
           nix = ./modules/devenv/profiles/nix.nix;
           nixos = ./modules/devenv/profiles/nixos.nix;
           python = ./modules/devenv/profiles/python.nix;
