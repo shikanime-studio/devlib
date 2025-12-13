@@ -53,7 +53,7 @@
           python = ./modules/devenv/profiles/python.nix;
           rust = ./modules/devenv/profiles/rust.nix;
           shell = ./modules/devenv/profiles/shell.nix;
-          shikanime = ./modules/devenv/shikanime.nix;
+          shikanime = ./modules/devenv/shells/shikanime.nix;
           skaffold = ./modules/devenv/profiles/k8s.nix;
           yaml = ./modules/devenv/profiles/yaml.nix;
         };
