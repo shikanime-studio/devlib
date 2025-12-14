@@ -44,6 +44,7 @@
           default = ./modules/devenv/shells/default.nix;
           docker = ./modules/devenv/profiles/docker.nix;
           elixir = ./modules/devenv/profiles/elixir.nix;
+          github = ./modules/devenv/profiles/github.nix;
           go = ./modules/devenv/profiles/go.nix;
           javascript = ./modules/devenv/profiles/javascript.nix;
           linux = ./modules/devenv/shells/linux.nix;
