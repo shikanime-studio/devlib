@@ -236,6 +236,28 @@ with lib;
       };
 
     workflows = with config.github.lib; {
+      check = {
+        enable = true;
+        settings = {
+          name = "Check";
+          on.pull_request.branches = [
+            "main"
+            "gh/*/*/base"
+          ];
+          jobs = {
+            check = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                nix-flake-check
+              ];
+            };
+          };
+        };
+      };
+
       cleanup = {
         enable = true;
         settings = {
@@ -251,39 +273,6 @@ with lib;
               cleanup-pr
               cleanup-ghstack
             ];
-          };
-        };
-      };
-
-      integration = {
-        enable = true;
-        settings = {
-          name = "Integration";
-          on.pull_request.branches = [
-            "main"
-            "gh/*/*/base"
-          ];
-          jobs = {
-            check = {
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                nix-flake-check
-              ];
-            };
-            merge = {
-              needs = [ "check" ];
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                comment-land-ghstack
-                comment-land-pr
-              ];
-            };
           };
         };
       };
