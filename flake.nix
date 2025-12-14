@@ -59,7 +59,6 @@
           shell = ./modules/devenv/profiles/shell.nix;
           shikanime = ./modules/devenv/shells/shikanime.nix;
           shikanime-studio = ./modules/devenv/shells/shikanime-studio.nix;
-          k8s = ./modules/devenv/profiles/k8s.nix;
           yaml = ./modules/devenv/profiles/yaml.nix;
         };
 
