@@ -240,10 +240,16 @@ with lib;
         enable = true;
         settings = {
           name = "Check";
-          on.pull_request.branches = [
-            "main"
-            "gh/*/*/base"
-          ];
+          on = {
+            pull_request.branches = [
+              "main"
+              "gh/*/*/base"
+            ];
+            push.branches = [
+              "main"
+              "release-*"
+            ];
+          };
           jobs = {
             check = {
               runs-on = "ubuntu-latest";
@@ -289,28 +295,6 @@ with lib;
               checkout
               setup-nix
               sapling
-            ];
-          };
-        };
-      };
-
-      push = {
-        enable = true;
-        settings = {
-          name = "Push";
-          on = {
-            push.branches = [
-              "main"
-              "release-*"
-            ];
-          };
-          jobs.check = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              setup-nix
-              nix-flake-check
             ];
           };
         };

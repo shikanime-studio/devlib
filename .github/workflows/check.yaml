@@ -21,3 +21,7 @@ name: Check
     branches:
       - main
       - gh/*/*/base
+  push:
+    branches:
+      - main
+      - release-*
