@@ -29,6 +29,7 @@
       flake-parts,
       git-hooks,
       treefmt-nix,
+      self,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -95,24 +96,24 @@
         {
           devenv.shells = {
             default.imports = [
-              ./modules/devenv/profiles/docs.nix
-              ./modules/devenv/profiles/formats.nix
-              ./modules/devenv/profiles/github.nix
-              ./modules/devenv/profiles/nix.nix
-              ./modules/devenv/profiles/shell.nix
-              ./modules/devenv/shells/default.nix
+              self.devenvModule
+              self.devenvModules.docs
+              self.devenvModules.formats
+              self.devenvModules.github
+              self.devenvModules.nix
+              self.devenvModules.shell
             ];
             linux.imports = [
-              ./modules/devenv/shells/linux.nix
+              self.devenvModules.linux
             ];
             longhorn.imports = [
-              ./modules/devenv/shells/longhorn.nix
+              self.devenvModules.longhorn
             ];
             nixos.imports = [
-              ./modules/devenv/shells/nixos.nix
+              self.devenvModules.nixos
             ];
             shikanime.imports = [
-              ./modules/devenv/shells/shikanime.nix
+              self.devenvModules.shikanime
             ];
           };
           packages = {
