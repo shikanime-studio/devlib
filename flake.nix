@@ -40,9 +40,9 @@
         ./modules/flake/default.nix
       ];
       flake = {
-        devenvModule = ./modules/devenv/shells/default.nix;
+        devenvModule = ./modules/devenv/default.nix;
         devenvModules = {
-          default = ./modules/devenv/shells/default.nix;
+          default = ./modules/devenv/default.nix;
           docker = ./modules/devenv/profiles/docker.nix;
           docs = ./modules/devenv/profiles/docs.nix;
           elixir = ./modules/devenv/profiles/elixir.nix;
@@ -58,6 +58,7 @@
           rust = ./modules/devenv/profiles/rust.nix;
           shell = ./modules/devenv/profiles/shell.nix;
           shikanime = ./modules/devenv/shells/shikanime.nix;
+          shikanime-studio = ./modules/devenv/shells/shikanime-studio.nix;
           k8s = ./modules/devenv/profiles/k8s.nix;
           yaml = ./modules/devenv/profiles/yaml.nix;
         };
@@ -96,12 +97,12 @@
         {
           devenv.shells = {
             default.imports = [
-              self.devenvModule
               self.devenvModules.docs
               self.devenvModules.formats
               self.devenvModules.github
               self.devenvModules.nix
               self.devenvModules.shell
+              self.devenvModules.shikanime-studio
             ];
             linux.imports = [
               self.devenvModules.linux
