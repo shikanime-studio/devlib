@@ -53,7 +53,7 @@
           linux = ./modules/devenv/shells/linux.nix;
           longhorn = ./modules/devenv/shells/longhorn.nix;
           nix = ./modules/devenv/profiles/nix.nix;
-          nixos = ./modules/devenv/profiles/nixos.nix;
+          nixos = ./modules/devenv/shells/nixos.nix;
           python = ./modules/devenv/profiles/python.nix;
           rust = ./modules/devenv/profiles/rust.nix;
           shell = ./modules/devenv/profiles/shell.nix;
