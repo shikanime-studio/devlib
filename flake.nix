@@ -54,7 +54,7 @@
           rust = ./modules/devenv/profiles/rust.nix;
           shell = ./modules/devenv/profiles/shell.nix;
           shikanime = ./modules/devenv/shells/shikanime.nix;
-          skaffold = ./modules/devenv/profiles/k8s.nix;
+          k8s = ./modules/devenv/profiles/k8s.nix;
           yaml = ./modules/devenv/profiles/yaml.nix;
         };
 
@@ -69,7 +69,7 @@
           python = ./modules/home/python.nix;
           rust = ./modules/home/rust.nix;
           shell = ./modules/home/shell.nix;
-          skaffold = ./modules/home/k8s.nix;
+          k8s = ./modules/home/k8s.nix;
           yaml = ./modules/home/yaml.nix;
           vcs = ./modules/home/vcs.nix;
         };
