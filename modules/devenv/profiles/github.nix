@@ -5,7 +5,6 @@ with lib;
 {
   imports = [
     ./base.nix
-    ../integrations/github.nix
   ];
 
   github = {

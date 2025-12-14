@@ -1,8 +1,4 @@
 {
-  imports = [
-    ../integrations/gitignore.nix
-  ];
-
   gitignore = {
     enable = true;
     content = [
