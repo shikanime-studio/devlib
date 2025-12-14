@@ -2,7 +2,6 @@
   config,
   inputs,
   lib,
-  self,
   ...
 }:
 
@@ -52,7 +51,7 @@ in
     perSystem =
       { config, ... }:
       {
-        devenv.modules = if cfg.devenv.enable then [ self.devenvModule ] else [ ];
+        devenv.modules = if cfg.devenv.enable then [ ../devenv/default.nix ] else [ ];
 
         pre-commit.settings =
           if cfg.git-hooks.enable && hasAttr cfg.git-hooks.shell config.devenv.shells then
