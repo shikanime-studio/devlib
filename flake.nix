@@ -55,6 +55,7 @@
           nix = ./modules/devenv/profiles/nix.nix;
           nixos = ./modules/devenv/shells/nixos.nix;
           opentofu = ./modules/devenv/profiles/opentofu.nix;
+          ocaml = ./modules/devenv/profiles/ocaml.nix;
           python = ./modules/devenv/profiles/python.nix;
           rust = ./modules/devenv/profiles/rust.nix;
           shell = ./modules/devenv/profiles/shell.nix;
