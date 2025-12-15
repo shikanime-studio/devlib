@@ -6,9 +6,10 @@
 
 {
   home.packages = [
+    pkgs.deno
     pkgs.typescript-language-server
-    pkgs.vscode-langservers-extracted
     pkgs.nodejs
+    pkgs.vscode-langservers-extracted
   ];
 
   home.sessionVariables = {

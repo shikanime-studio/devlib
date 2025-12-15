@@ -3,6 +3,7 @@
 {
   home.packages = [
     pkgs.basedpyright
+    pkgs.jupyter-all
     pkgs.python312Packages.jedi-language-server
     pkgs.uv
   ];
