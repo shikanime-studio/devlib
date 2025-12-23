@@ -50,6 +50,8 @@ with lib;
             "origin"
             "--delete"
             ''"$HEAD_REF"''
+            "||"
+            "true"
           ];
         };
 
