@@ -80,18 +80,12 @@
         ];
         settings = {
           misspell.locale = "US";
-          gocritic = {
-            enabled-tags = [
-              "diagnostic"
-              "experimental"
-              "opinionated"
-              "style"
-            ];
-            disabled-checks = [
-              "importShadow"
-              "unnamedResult"
-            ];
-          };
+          gocritic.enabled-tags = [
+            "diagnostic"
+            "experimental"
+            "opinionated"
+            "style"
+          ];
         };
       };
       run.modules-download-mode = "vendor";
