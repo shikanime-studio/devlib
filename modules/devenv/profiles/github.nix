@@ -178,7 +178,7 @@ with lib;
         ];
 
         sapling = {
-          uses = "shikanime-studio/sapling-action@v5";
+          uses = "shikanime-studio/sapling-action@v6";
           "with" = {
             github-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
             gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
