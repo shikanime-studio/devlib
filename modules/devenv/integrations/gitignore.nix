@@ -93,14 +93,20 @@ in
       "devlib:gitignore:install" = {
         before = [ "devenv:enterShell" ];
         description = "Generate .gitignore file";
-        exec = ''
-            temp_file=$(${pkgs.coreutils}/bin/mktemp)
-            ${optionalString (
+        exec =
+          let
+            templateArgs = optionalString (
               templates != [ ]
-            ) "${getExe cfg.package} create ${concatStringsSep " " templates} -f \"$temp_file\""}
-          ${optionalString (cfg.content != [ ]) "${pkgs.coreutils}/bin/echo \"${content}\" >> \"$temp_file\""}
-          ${pkgs.coreutils}/bin/mv "$temp_file" "${config.env.DEVENV_ROOT}/.gitignore"
-        '';
+            ) "<(${getExe cfg.package} create ${concatStringsSep " " templates})";
+
+            contentArg = optionalString (cfg.content != [ ]) "<(${pkgs.coreutils}/bin/echo \"${content}\")";
+          in
+          optionalString (templates != [ ] || cfg.content != [ ]) ''
+            ${pkgs.coreutils}/bin/cat \
+              ${templateArgs} \
+              ${contentArg} \
+              > "${config.env.DEVENV_ROOT}/.gitignore"
+          '';
       };
     };
   };
