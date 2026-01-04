@@ -11,7 +11,6 @@ let
         makeWrapper ${pkgs.gitlint}/bin/gitlint $out/bin/gitlint \
           --add-flags "--contrib CC1"
       '';
-
 in
 {
   imports = [
