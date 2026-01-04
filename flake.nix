@@ -76,6 +76,7 @@
           python = ./modules/home/python.nix;
           rust = ./modules/home/rust.nix;
           shell = ./modules/home/shell.nix;
+          typst = ./modules/home/typst.nix;
           unix = ./modules/home/unix.nix;
           vcs = ./modules/home/vcs.nix;
           yaml = ./modules/home/yaml.nix;
