@@ -1,4 +1,8 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -14,11 +18,9 @@ with lib;
 
   containers = mkForce { };
 
-  # ghstack requires python
-  languages.python.enable = mkDefault true;
+  ghstack.enable = true;
 
   packages = [
-    pkgs.ghstack
     pkgs.sapling
   ];
 }
