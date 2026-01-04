@@ -71,13 +71,14 @@
           elixir = ./modules/home/elixir.nix;
           go = ./modules/home/go.nix;
           javascript = ./modules/home/javascript.nix;
+          k8s = ./modules/home/k8s.nix;
           nix = ./modules/home/nix.nix;
           python = ./modules/home/python.nix;
           rust = ./modules/home/rust.nix;
           shell = ./modules/home/shell.nix;
-          k8s = ./modules/home/k8s.nix;
-          yaml = ./modules/home/yaml.nix;
+          unix = ./modules/home/unix.nix;
           vcs = ./modules/home/vcs.nix;
+          yaml = ./modules/home/yaml.nix;
         };
 
         flakeModule = ./modules/flake/default.nix;
