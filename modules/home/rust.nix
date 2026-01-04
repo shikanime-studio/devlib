@@ -6,7 +6,10 @@
 
 {
   home = {
-    packages = [ pkgs.rustup ];
+    packages = [
+      pkgs.rust-analyzer
+      pkgs.rustup
+    ];
 
     sessionPath = [
       "${config.xdg.configHome}/cargo/bin"
