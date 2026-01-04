@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ pkgs, ... }:
 
 let
   yamlFormat = pkgs.formats.yaml { };
@@ -6,6 +6,18 @@ let
   configFile = yamlFormat.generate ".gitlint" {
     general.contrib = "contrib-body-requires-signed-off-by";
   };
+
+  gitlint =
+    pkgs.runCommand "gitlint-wrapped"
+      {
+        buildInputs = [ pkgs.makeWrapper ];
+        meta.mainProgram = "gitlint";
+      }
+      ''
+        makeWrapper ${pkgs.gitlint}/bin/gitlint $out/bin/gitlint \
+          --add-flags "--config ${configFile}"
+      '';
+
 in
 {
   imports = [
@@ -14,6 +26,6 @@ in
 
   git-hooks.hooks.gitlint = {
     enable = true;
-    entry = "${config.git-hooks.hooks.gitlint.package}/bin/gitlint --staged --msg-filename --config ${configFile}";
+    package = gitlint;
   };
 }
