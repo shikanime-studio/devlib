@@ -1,4 +1,6 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+
+with lib;
 
 {
   imports = [
@@ -10,11 +12,12 @@
     push = "shikanime";
   };
 
-  containers = pkgs.lib.mkForce { };
+  containers = mkForce { };
+
+  ghstack.enable = true;
 
   packages = [
     pkgs.gh
-    pkgs.ghstack
     pkgs.sapling
   ];
 }
