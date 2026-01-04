@@ -18,7 +18,6 @@ with lib;
   languages.python.enable = mkDefault true;
 
   packages = [
-    pkgs.gh
     pkgs.ghstack
     pkgs.sapling
   ];

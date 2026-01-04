@@ -47,6 +47,7 @@
           docs = ./modules/devenv/profiles/docs.nix;
           elixir = ./modules/devenv/profiles/elixir.nix;
           formats = ./modules/devenv/profiles/formats.nix;
+          git = ./modules/devenv/profiles/git.nix;
           github = ./modules/devenv/profiles/github.nix;
           go = ./modules/devenv/profiles/go.nix;
           javascript = ./modules/devenv/profiles/javascript.nix;
@@ -101,6 +102,7 @@
             default.imports = [
               self.devenvModules.docs
               self.devenvModules.formats
+              self.devenvModules.git
               self.devenvModules.github
               self.devenvModules.nix
               self.devenvModules.shell

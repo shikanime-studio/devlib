@@ -9,6 +9,7 @@ with lib;
 
 let
   cfg = config.github;
+
   settingsFormat = pkgs.formats.yaml { };
 in
 {
