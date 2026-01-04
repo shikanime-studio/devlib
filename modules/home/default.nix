@@ -9,6 +9,7 @@
     ./python.nix
     ./rust.nix
     ./shell.nix
+    ./typst.nix
     ./unix.nix
     ./vcs.nix
     ./yaml.nix
