@@ -1,12 +1,6 @@
 { pkgs, ... }:
 
 let
-  tomlFormat = pkgs.formats.toml { };
-
-  configFile = tomlFormat.generate ".gitlint" {
-    general.contrib = "contrib-body-requires-signed-off-by";
-  };
-
   gitlint =
     pkgs.runCommand "gitlint-wrapped"
       {
@@ -15,7 +9,7 @@ let
       }
       ''
         makeWrapper ${pkgs.gitlint}/bin/gitlint $out/bin/gitlint \
-          --add-flags "--config ${configFile}"
+          --add-flags "--contrib CC1"
       '';
 
 in
