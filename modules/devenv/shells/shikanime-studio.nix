@@ -1,4 +1,6 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+
+with lib;
 
 {
   imports = [
@@ -10,7 +12,10 @@
     push = "shikanime-studio";
   };
 
-  containers = pkgs.lib.mkForce { };
+  containers = mkForce { };
+
+  # ghstack requires python
+  languages.python.enable = mkDefault true;
 
   packages = [
     pkgs.gh
