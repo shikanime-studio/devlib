@@ -1,9 +1,9 @@
 { config, pkgs, ... }:
 
 let
-  settingsFormat = pkgs.formats.toml { };
+  yamlFormat = pkgs.formats.yaml { };
 
-  configFile = settingsFormat.generate ".gitlint" {
+  configFile = yamlFormat.generate ".gitlint" {
     general.contrib = "contrib-body-requires-signed-off-by";
   };
 in
