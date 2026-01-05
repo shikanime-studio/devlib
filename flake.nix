@@ -51,10 +51,7 @@
           github = ./modules/devenv/profiles/github.nix;
           go = ./modules/devenv/profiles/go.nix;
           javascript = ./modules/devenv/profiles/javascript.nix;
-          linux = ./modules/devenv/shells/linux.nix;
-          longhorn = ./modules/devenv/shells/longhorn.nix;
           nix = ./modules/devenv/profiles/nix.nix;
-          nixos = ./modules/devenv/shells/nixos.nix;
           ocaml = ./modules/devenv/profiles/ocaml.nix;
           opentofu = ./modules/devenv/profiles/opentofu.nix;
           python = ./modules/devenv/profiles/python.nix;
@@ -100,29 +97,15 @@
       perSystem =
         { pkgs, ... }:
         {
-          devenv.shells = {
-            default.imports = [
-              self.devenvModules.docs
-              self.devenvModules.formats
-              self.devenvModules.git
-              self.devenvModules.github
-              self.devenvModules.nix
-              self.devenvModules.shell
-              self.devenvModules.shikanime-studio
-            ];
-            linux.imports = [
-              self.devenvModules.linux
-            ];
-            longhorn.imports = [
-              self.devenvModules.longhorn
-            ];
-            nixos.imports = [
-              self.devenvModules.nixos
-            ];
-            shikanime.imports = [
-              self.devenvModules.shikanime
-            ];
-          };
+          devenv.shells.default.imports = [
+            self.devenvModules.docs
+            self.devenvModules.formats
+            self.devenvModules.git
+            self.devenvModules.github
+            self.devenvModules.nix
+            self.devenvModules.shell
+            self.devenvModules.shikanime-studio
+          ];
           packages = {
             fleet = pkgs.callPackage ./pkgs/fleet { };
             bootloose = pkgs.callPackage ./pkgs/bootloose { };
