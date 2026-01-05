@@ -1,10 +1,6 @@
 { pkgs, ... }:
 
 {
-  imports = [
-    ./base.nix
-  ];
-
   cachix = {
     enable = true;
     push = "shikanime";

@@ -7,10 +7,6 @@
 with lib;
 
 {
-  imports = [
-    ./base.nix
-  ];
-
   cachix = {
     enable = true;
     push = "shikanime-studio";
