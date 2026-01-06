@@ -9,8 +9,4 @@
   containers = pkgs.lib.mkForce { };
 
   ghstack.enable = true;
-
-  packages = [
-    pkgs.sapling
-  ];
 }
