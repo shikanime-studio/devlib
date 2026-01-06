@@ -24,7 +24,10 @@ in
   config = mkIf cfg.enable {
     languages.python.enable = mkDefault true;
 
-    packages = [ cfg.package ];
+    packages = [
+      cfg.package
+      pkgs.gh
+    ];
 
     tasks."devlib:ghstack:hooks:install" = {
       before = [ "devenv:enterShell" ];
