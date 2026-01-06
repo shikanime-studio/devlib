@@ -22,10 +22,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    packages = [
-      cfg.package
-      pkgs.gh
-    ];
+    packages = [ cfg.package ];
 
     tasks."devlib:ghstack:hooks:install" = {
       before = [ "devenv:enterShell" ];
