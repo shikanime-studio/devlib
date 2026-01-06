@@ -1,6 +1,5 @@
 {
   lib,
-  pkgs,
   ...
 }:
 
@@ -15,8 +14,4 @@ with lib;
   containers = mkForce { };
 
   ghstack.enable = true;
-
-  packages = [
-    pkgs.sapling
-  ];
 }

@@ -22,8 +22,6 @@ in
   };
 
   config = mkIf cfg.enable {
-    languages.python.enable = mkDefault true;
-
     packages = [
       cfg.package
       pkgs.gh
