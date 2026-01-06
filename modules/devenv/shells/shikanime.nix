@@ -11,7 +11,6 @@
   ghstack.enable = true;
 
   packages = [
-    pkgs.gh
     pkgs.sapling
   ];
 }
