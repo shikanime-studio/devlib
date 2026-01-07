@@ -11,6 +11,8 @@
 
   languages.nix.enable = true;
 
+  renovate.settings.nix.enabled = true;
+
   treefmt.config.programs = {
     deadnix.enable = true;
     nixfmt.enable = true;

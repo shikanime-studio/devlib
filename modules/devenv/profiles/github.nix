@@ -386,4 +386,12 @@ with lib;
       };
     };
   };
+
+  renovate = {
+    enable = true;
+    settings = {
+      extends = [ "config:base" ];
+      lockFileMaintenance.enabled = true;
+    };
+  };
 }

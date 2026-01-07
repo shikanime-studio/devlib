@@ -10,7 +10,9 @@ with lib;
 let
   cfg = config.github;
 
-  settingsFormat = pkgs.formats.yaml { };
+  yamlFormat = pkgs.formats.yaml { };
+
+  jsonFormat = pkgs.formats.json { };
 in
 {
   options.github = {
@@ -29,7 +31,7 @@ in
     actions = mkOption {
       type = types.attrsOf (
         types.submodule {
-          freeformType = settingsFormat.type;
+          freeformType = yamlFormat.type;
         }
       );
 
@@ -57,7 +59,7 @@ in
 
             settings = mkOption {
               type = types.submodule {
-                freeformType = settingsFormat.type;
+                freeformType = yamlFormat.type;
               };
               default = { };
               description = "Workflow YAML settings";
@@ -100,6 +102,7 @@ in
         }
       '';
     };
+
   };
 
   config = mkIf cfg.enable {
@@ -124,7 +127,7 @@ in
             mapAttrsToList (
               name: workflow:
               let
-                file = settingsFormat.generate "${name}.yaml" workflow.settings;
+                file = yamlFormat.generate "${name}.yaml" workflow.settings;
               in
               ''
                 mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"

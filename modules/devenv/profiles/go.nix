@@ -109,6 +109,8 @@ in
     ];
   };
 
+  renovate.settings.gomod.enabled = true;
+
   languages.go.enable = true;
 
   tasks = {
