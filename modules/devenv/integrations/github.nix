@@ -11,8 +11,6 @@ let
   cfg = config.github;
 
   yamlFormat = pkgs.formats.yaml { };
-
-  jsonFormat = pkgs.formats.json { };
 in
 {
   options.github = {
