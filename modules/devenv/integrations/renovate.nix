@@ -38,7 +38,11 @@ in
   config = mkIf cfg.enable {
     tasks = {
       "devlib:renovate:install" = {
-        before = [ "devlib:github:workflows:install" ];
+        before = [
+          "devenv:enterShell"
+          "devlib:github:workflows:install"
+          "devenv:treefmt:run"
+        ];
         description = "Install renovate configuration";
         exec =
           let

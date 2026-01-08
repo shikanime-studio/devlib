@@ -111,29 +111,28 @@ in
 
     packages = [ cfg.package ];
 
-    tasks = {
-      "devenv:treefmt:run".after = [ "devlib:github:workflows:install" ];
-
-      "devlib:github:workflows:install" = {
-        before = [ "devenv:enterShell" ];
-        description = "Install GitHub Actions workflow files";
-        exec =
-          let
-            enabled = filterAttrs (_: w: w.enable) cfg.workflows;
-          in
-          concatStringsSep "\n" (
-            mapAttrsToList (
-              name: workflow:
-              let
-                file = yamlFormat.generate "${name}.yaml" workflow.settings;
-              in
-              ''
-                mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
-                cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
-              ''
-            ) enabled
-          );
-      };
+    tasks."devlib:github:workflows:install" = {
+      before = [
+        "devenv:enterShell"
+        "devenv:treefmt:run"
+      ];
+      description = "Install GitHub Actions workflow files";
+      exec =
+        let
+          enabled = filterAttrs (_: w: w.enable) cfg.workflows;
+        in
+        concatStringsSep "\n" (
+          mapAttrsToList (
+            name: workflow:
+            let
+              file = yamlFormat.generate "${name}.yaml" workflow.settings;
+            in
+            ''
+              mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
+              cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
+            ''
+          ) enabled
+        );
     };
 
     treefmt.config.programs.actionlint.enable = mkDefault true;
