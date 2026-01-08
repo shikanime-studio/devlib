@@ -1,4 +1,6 @@
-{ pkgs, ... }:
+{ lib, ... }:
+
+with lib;
 
 {
   cachix = {
@@ -6,7 +8,7 @@
     push = "shikanime";
   };
 
-  containers = pkgs.lib.mkForce { };
+  containers = mkForce { };
 
   ghstack.enable = true;
 }
