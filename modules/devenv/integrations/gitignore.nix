@@ -88,8 +88,6 @@ in
     packages = [ cfg.package ];
 
     tasks = {
-      "devenv:treefmt:run".after = [ "devlib:gitignore:install" ];
-
       "devlib:gitignore:install" = {
         before = [ "devenv:enterShell" ];
         description = "Generate .gitignore file";

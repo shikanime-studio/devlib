@@ -11,6 +11,12 @@ let
   cfg = config.renovate;
 
   jsonFormat = pkgs.formats.json { };
+
+  settings = cfg.settings // {
+    "$schema" = "https://docs.renovatebot.com/renovate-schema.json";
+  };
+
+  configFile = jsonFormat.generate "config.json" settings;
 in
 {
   options.renovate = mkOption {
@@ -38,23 +44,21 @@ in
   config = mkIf cfg.enable {
     tasks = {
       "devlib:renovate:install" = {
-        before = [ "devlib:github:workflows:install" ];
+        before = [
+          "devenv:enterShell"
+          "devenv:treefmt:run"
+        ];
         description = "Install renovate configuration";
         exec =
-          let
-            settings = cfg.settings // {
-              "$schema" = "https://docs.renovatebot.com/renovate-schema.json";
-            };
-
-            file = jsonFormat.generate "config.json" settings;
-          in
-          ''
-            if [ -d "${config.env.DEVENV_ROOT}/.github" ]; then
-              cat ${file} > "${config.env.DEVENV_ROOT}/.github/renovate.json"
-            else
-              cat ${file} > "${config.env.DEVENV_ROOT}/renovate.json"
-            fi
-          '';
+          if config.github.enable then
+            ''
+              mkdir -p "${config.env.DEVENV_ROOT}/.github"
+              cat ${configFile} > "${config.env.DEVENV_ROOT}/.github/renovate.json"
+            ''
+          else
+            ''
+              cat ${configFile} > "${config.env.DEVENV_ROOT}/renovate.json"
+            '';
       };
     };
   };

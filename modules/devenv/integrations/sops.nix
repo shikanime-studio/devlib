@@ -52,10 +52,11 @@ in
     packages = [ wrapped ];
 
     tasks = {
-      "devenv:treefmt:run".after = [ "devlib:sops:updatekeys" ];
-
       "devlib:sops:updatekeys" = {
-        before = [ "devenv:enterShell" ];
+        before = [
+          "devenv:enterShell"
+          "devenv:treefmt:run"
+        ];
         description = "Run sops updatekeys";
         exec = ''
           ${getExe pkgs.findutils} . -type f -name "*.enc.*" -exec ${getExe wrapped} updatekeys --yes {} +
