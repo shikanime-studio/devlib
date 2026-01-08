@@ -85,15 +85,15 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    tasks = {
-      "devenv:treefmt:run".after = [ "devlib:buf:generate" ];
-
-      "devlib:buf:generate" = {
-        description = "Run buf generate with buf.gen.yaml";
-        exec = ''
-          ${getExe package} generate
-        '';
-      };
+    tasks."devlib:buf:generate" = {
+      before = [
+        "devenv:enterShell"
+        "devenv:treefmt:run"
+      ];
+      description = "Run buf generate with buf.gen.yaml";
+      exec = ''
+        ${getExe package} generate
+      '';
     };
 
     treefmt.config.programs.buf.enable = mkDefault true;

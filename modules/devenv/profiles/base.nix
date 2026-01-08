@@ -21,4 +21,6 @@
       "*.webp"
     ];
   };
+
+  tasks."devenv:treefmt:run".before = [ "devenv:enterShell" ];
 }
