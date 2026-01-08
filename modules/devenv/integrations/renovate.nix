@@ -50,7 +50,7 @@ in
         ];
         description = "Install renovate configuration";
         exec =
-          if cfg.github.enable then
+          if config.github.enable then
             ''
               mkdir -p "${config.env.DEVENV_ROOT}/.github"
               cat ${configFile} > "${config.env.DEVENV_ROOT}/.github/renovate.json"
