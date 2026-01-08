@@ -40,7 +40,6 @@ in
       "devlib:renovate:install" = {
         before = [
           "devenv:enterShell"
-          "devlib:github:workflows:install"
           "devenv:treefmt:run"
         ];
         description = "Install renovate configuration";
@@ -52,13 +51,15 @@ in
 
             file = jsonFormat.generate "config.json" settings;
           in
-          ''
-            if [ -d "${config.env.DEVENV_ROOT}/.github" ]; then
+          if cfg.github.enable then
+            ''
+              mkdir -p "${config.env.DEVENV_ROOT}/.github"
               cat ${file} > "${config.env.DEVENV_ROOT}/.github/renovate.json"
-            else
+            ''
+          else
+            ''
               cat ${file} > "${config.env.DEVENV_ROOT}/renovate.json"
-            fi
-          '';
+            '';
       };
     };
   };
