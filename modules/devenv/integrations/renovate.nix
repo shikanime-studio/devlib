@@ -11,6 +11,12 @@ let
   cfg = config.renovate;
 
   jsonFormat = pkgs.formats.json { };
+
+  settings = cfg.settings // {
+    "$schema" = "https://docs.renovatebot.com/renovate-schema.json";
+  };
+
+  configFile = jsonFormat.generate "config.json" settings;
 in
 {
   options.renovate = mkOption {
@@ -44,21 +50,14 @@ in
         ];
         description = "Install renovate configuration";
         exec =
-          let
-            settings = cfg.settings // {
-              "$schema" = "https://docs.renovatebot.com/renovate-schema.json";
-            };
-
-            file = jsonFormat.generate "config.json" settings;
-          in
           if cfg.github.enable then
             ''
               mkdir -p "${config.env.DEVENV_ROOT}/.github"
-              cat ${file} > "${config.env.DEVENV_ROOT}/.github/renovate.json"
+              cat ${configFile} > "${config.env.DEVENV_ROOT}/.github/renovate.json"
             ''
           else
             ''
-              cat ${file} > "${config.env.DEVENV_ROOT}/renovate.json"
+              cat ${configFile} > "${config.env.DEVENV_ROOT}/renovate.json"
             '';
       };
     };
