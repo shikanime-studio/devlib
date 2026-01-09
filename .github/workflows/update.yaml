@@ -1,6 +1,6 @@
 jobs:
   dependencies:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
     - id: createGithubAppToken
       uses: actions/create-github-app-token@v2
@@ -23,7 +23,7 @@ jobs:
         sign-commits: true
         username: Operator 6O <operator6o@shikanime.studio>
   stale:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
     - id: createGithubAppToken
       uses: actions/create-github-app-token@v2

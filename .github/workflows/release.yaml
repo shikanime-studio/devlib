@@ -1,6 +1,6 @@
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
     - id: createGithubAppToken
       uses: actions/create-github-app-token@v2
@@ -15,10 +15,15 @@ jobs:
       with:
         github-token: ${{ steps.createGithubAppToken.outputs.token }}
     - run: nix flake check --accept-flake-config --no-pure-eval
+    strategy:
+      matrix:
+        os:
+        - ubuntu-latest
+        - macos-latest
   publish:
     needs:
     - check
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
     - id: createGithubAppToken
       uses: actions/create-github-app-token@v2
