@@ -27,11 +27,6 @@ in
         default = inputs.git-hooks != null;
         description = "Enable git-hooks git-hooks.";
       };
-      shell = mkOption {
-        type = types.str;
-        default = "default";
-        description = "Shell name to read git-hooks git-hooks configuration from.";
-      };
     };
 
     treefmt = {
@@ -39,11 +34,6 @@ in
         type = types.bool;
         default = inputs.treefmt-nix != null;
         description = "Enable treefmt.";
-      };
-      shell = mkOption {
-        type = types.str;
-        default = "default";
-        description = "Shell name to read treefmt configuration from.";
       };
     };
   };
@@ -67,14 +57,14 @@ in
             [ ];
 
         pre-commit.settings =
-          if cfg.git-hooks.enable && hasAttr cfg.git-hooks.shell config.devenv.shells then
-            config.devenv.shells.${cfg.git-hooks.shell}.git-hooks
+          if cfg.git-hooks.enable then
+            mkMerge (mapAttrsToList (_: shell: shell.git-hooks) config.devenv.shells)
           else
             { };
 
         treefmt =
-          if cfg.treefmt.enable && hasAttr cfg.treefmt.shell config.devenv.shells then
-            config.devenv.shells.${cfg.treefmt.shell}.treefmt.config
+          if cfg.treefmt.enable then
+            mkMerge (mapAttrsToList (_: shell: shell.treefmt.config) config.devenv.shells)
           else
             { };
       };
