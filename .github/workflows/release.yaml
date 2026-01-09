@@ -13,13 +13,15 @@ jobs:
         token: ${{ steps.createGithubAppToken.outputs.token }}
     - uses: shikanime-studio/setup-nix-action@v1
       with:
-        github-token: ${{ steps.createGithubAppToken.outputs.token }}
+        extra-platforms: ${{ matrix.extra-platforms }}
     - run: nix flake check --accept-flake-config --no-pure-eval
     strategy:
       matrix:
-        os:
-        - ubuntu-latest
-        - macos-latest
+        include:
+        - extra-platforms: aarch64-linux
+          os: ubuntu-latest
+        - extra-platforms: ''
+          os: macos-latest
   publish:
     needs:
     - check

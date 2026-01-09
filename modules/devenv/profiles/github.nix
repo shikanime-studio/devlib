@@ -253,17 +253,30 @@ with lib;
           };
           jobs = {
             check = {
-              strategy.matrix.os = [
-                "macos-latest"
-                "ubuntu-latest"
+              strategy.matrix.include = [
+                {
+                  os = "ubuntu-latest";
+                  extra-platforms = "aarch64-linux";
+                }
+                {
+                  os = "macos-latest";
+                  extra-platforms = "";
+                }
               ];
               runs-on = mkWorkflowRef "matrix.os";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                nix-flake-check
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  setup-nix-with-extra-platforms = setup-nix // {
+                    "with".extra-platforms = mkWorkflowRef "matrix.extra-platforms";
+                  };
+                in
+                [
+                  create-github-app-token
+                  checkout
+                  setup-nix-with-extra-platforms
+                  nix-flake-check
+                ];
             };
           };
         };
@@ -312,17 +325,30 @@ with lib;
           on.push.tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
           jobs = {
             check = {
-              strategy.matrix.os = [
-                "ubuntu-latest"
-                "macos-latest"
+              strategy.matrix.include = [
+                {
+                  os = "ubuntu-latest";
+                  extra-platforms = "aarch64-linux";
+                }
+                {
+                  os = "macos-latest";
+                  extra-platforms = "";
+                }
               ];
               runs-on = mkWorkflowRef "matrix.os";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                nix-flake-check
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  setup-nix-with-extra-platforms = setup-nix // {
+                    "with".extra-platforms = mkWorkflowRef "matrix.extra-platforms";
+                  };
+                in
+                [
+                  create-github-app-token
+                  checkout
+                  setup-nix-with-extra-platforms
+                  nix-flake-check
+                ];
             };
 
             publish = {
