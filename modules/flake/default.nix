@@ -2,6 +2,7 @@
   config,
   inputs,
   lib,
+  self,
   ...
 }:
 
@@ -49,9 +50,21 @@ in
 
   config = {
     perSystem =
-      { config, ... }:
+      { config, pkgs, ... }:
       {
-        devenv.modules = if cfg.devenv.enable then [ ../devenv/default.nix ] else [ ];
+        devenv.modules =
+          if cfg.devenv.enable then
+            [
+              ../devenv/default.nix
+              {
+                treefmt.config.programs.prettier.settings.pluginSearchDirs = [
+                  "${self.packages.${pkgs.stdenv.hostPlatform.system}.prettier-plugin-astro}/lib"
+                  "${self.packages.${pkgs.stdenv.hostPlatform.system}.prettier-plugin-tailwindcss}/lib"
+                ];
+              }
+            ]
+          else
+            [ ];
 
         pre-commit.settings =
           if cfg.git-hooks.enable && hasAttr cfg.git-hooks.shell config.devenv.shells then

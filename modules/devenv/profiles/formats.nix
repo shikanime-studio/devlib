@@ -4,9 +4,8 @@
   ];
 
   treefmt.config.programs = {
-    jsonfmt.enable = true;
+    prettier.enable = true;
     taplo.enable = true;
     xmllint.enable = true;
-    yamlfmt.enable = true;
   };
 }
