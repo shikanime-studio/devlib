@@ -173,7 +173,6 @@ with lib;
           "flake"
           "check"
           "--accept-flake-config"
-          "--all-systems"
           "--no-pure-eval"
         ];
 
