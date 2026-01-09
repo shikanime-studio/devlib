@@ -1,3 +1,4 @@
+{ withSystem, ... }:
 {
   config,
   inputs,
@@ -39,17 +40,20 @@ in
 
   config = {
     perSystem =
-      { config, final, ... }:
+      { config, system, ... }:
       {
         devenv.modules =
           if cfg.devenv.enable then
             [
               ../devenv/default.nix
               {
-                treefmt.config.programs.prettier.settings.pluginSearchDirs = [
-                  "${final.prettier-plugin-astro}/lib"
-                  "${final.prettier-plugin-tailwindcss}/lib"
-                ];
+                treefmt.config.programs.prettier.settings.pluginSearchDirs = withSystem system (
+                  { config, ... }:
+                  [
+                    "${config.packages.prettier-plugin-astro}/lib"
+                    "${config.packages.prettier-plugin-tailwindcss}/lib"
+                  ]
+                );
               }
             ]
           else

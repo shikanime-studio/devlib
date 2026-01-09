@@ -51,103 +51,111 @@
       self,
       ...
     }:
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [
-        devenv.flakeModule
-        flake-parts.flakeModules.easyOverlay
-        git-hooks.flakeModule
-        treefmt-nix.flakeModule
-        ./modules/flake/default.nix
-      ];
-      flake = {
-        devenvModule = ./modules/devenv/default.nix;
-        devenvModules = {
-          default = ./modules/devenv/default.nix;
-          docker = ./modules/devenv/profiles/docker.nix;
-          docs = ./modules/devenv/profiles/docs.nix;
-          elixir = ./modules/devenv/profiles/elixir.nix;
-          formats = ./modules/devenv/profiles/formats.nix;
-          git = ./modules/devenv/profiles/git.nix;
-          github = ./modules/devenv/profiles/github.nix;
-          go = ./modules/devenv/profiles/go.nix;
-          javascript = ./modules/devenv/profiles/javascript.nix;
-          nix = ./modules/devenv/profiles/nix.nix;
-          ocaml = ./modules/devenv/profiles/ocaml.nix;
-          opentofu = ./modules/devenv/profiles/opentofu.nix;
-          python = ./modules/devenv/profiles/python.nix;
-          rust = ./modules/devenv/profiles/rust.nix;
-          shell = ./modules/devenv/profiles/shell.nix;
-          shikanime = ./modules/devenv/shells/shikanime.nix;
-          shikanime-studio = ./modules/devenv/shells/shikanime-studio.nix;
-          texlive = ./modules/devenv/profiles/texlive.nix;
-          yaml = ./modules/devenv/profiles/yaml.nix;
-        };
+    flake-parts.lib.mkFlake { inherit inputs; } (
+      { flake-parts-lib, withSystem, ... }:
+      with flake-parts-lib;
+      let
+        flakeModule = importApply ./modules/flake/default.nix { inherit withSystem; };
+      in
+      {
+        imports = [
+          devenv.flakeModule
+          flake-parts.flakeModules.easyOverlay
+          git-hooks.flakeModule
+          treefmt-nix.flakeModule
+          flakeModule
+        ];
+        flake = {
+          devenvModule = ./modules/devenv/default.nix;
+          devenvModules = {
+            default = ./modules/devenv/default.nix;
+            docker = ./modules/devenv/profiles/docker.nix;
+            docs = ./modules/devenv/profiles/docs.nix;
+            elixir = ./modules/devenv/profiles/elixir.nix;
+            formats = ./modules/devenv/profiles/formats.nix;
+            git = ./modules/devenv/profiles/git.nix;
+            github = ./modules/devenv/profiles/github.nix;
+            go = ./modules/devenv/profiles/go.nix;
+            javascript = ./modules/devenv/profiles/javascript.nix;
+            nix = ./modules/devenv/profiles/nix.nix;
+            ocaml = ./modules/devenv/profiles/ocaml.nix;
+            opentofu = ./modules/devenv/profiles/opentofu.nix;
+            python = ./modules/devenv/profiles/python.nix;
+            rust = ./modules/devenv/profiles/rust.nix;
+            shell = ./modules/devenv/profiles/shell.nix;
+            shikanime = ./modules/devenv/shells/shikanime.nix;
+            shikanime-studio = ./modules/devenv/shells/shikanime-studio.nix;
+            texlive = ./modules/devenv/profiles/texlive.nix;
+            yaml = ./modules/devenv/profiles/yaml.nix;
+          };
 
-        homeManagerModule = ./modules/home/default.nix;
-        homeManagerModules = {
-          default = ./modules/home/default.nix;
-          docker = ./modules/home/docker.nix;
-          elixir = ./modules/home/elixir.nix;
-          go = ./modules/home/go.nix;
-          javascript = ./modules/home/javascript.nix;
-          k8s = ./modules/home/k8s.nix;
-          nix = ./modules/home/nix.nix;
-          python = ./modules/home/python.nix;
-          rust = ./modules/home/rust.nix;
-          shell = ./modules/home/shell.nix;
-          typst = ./modules/home/typst.nix;
-          unix = ./modules/home/unix.nix;
-          vcs = ./modules/home/vcs.nix;
-          yaml = ./modules/home/yaml.nix;
-        };
+          homeManagerModule = ./modules/home/default.nix;
+          homeManagerModules = {
+            default = ./modules/home/default.nix;
+            docker = ./modules/home/docker.nix;
+            elixir = ./modules/home/elixir.nix;
+            go = ./modules/home/go.nix;
+            javascript = ./modules/home/javascript.nix;
+            k8s = ./modules/home/k8s.nix;
+            nix = ./modules/home/nix.nix;
+            python = ./modules/home/python.nix;
+            rust = ./modules/home/rust.nix;
+            shell = ./modules/home/shell.nix;
+            typst = ./modules/home/typst.nix;
+            unix = ./modules/home/unix.nix;
+            vcs = ./modules/home/vcs.nix;
+            yaml = ./modules/home/yaml.nix;
+          };
 
-        flakeModule = ./modules/flake/default.nix;
+          inherit flakeModule;
+          flakeModules.default = flakeModule;
 
-        templates = {
-          default = {
-            path = ./templates/default;
-            description = "A devenv template with default settings.";
-          };
-          remote = {
-            path = ./templates/remote;
-            description = "A simple direnv with remote flake.";
-          };
-        };
-      };
-      perSystem =
-        { config, pkgs, ... }:
-        {
-          devenv.shells.default.imports = [
-            self.devenvModules.docs
-            self.devenvModules.formats
-            self.devenvModules.git
-            self.devenvModules.github
-            self.devenvModules.nix
-            self.devenvModules.shell
-            self.devenvModules.shikanime-studio
-          ];
-          overlayAttrs = {
-            inherit (config.packages)
-              fleet
-              bootloose
-              longhornctl
-              prettier-plugin-astro
-              prettier-plugin-tailwindcss
-              ;
-          };
-          packages = {
-            fleet = pkgs.callPackage ./pkgs/fleet { };
-            bootloose = pkgs.callPackage ./pkgs/bootloose { };
-            longhornctl = pkgs.callPackage ./pkgs/longhornctl { };
-            prettier-plugin-astro = pkgs.callPackage ./pkgs/prettier-plugin-astro { };
-            prettier-plugin-tailwindcss = pkgs.callPackage ./pkgs/prettier-plugin-tailwindcss { };
+          templates = {
+            default = {
+              path = ./templates/default;
+              description = "A devenv template with default settings.";
+            };
+            remote = {
+              path = ./templates/remote;
+              description = "A simple direnv with remote flake.";
+            };
           };
         };
-      systems = [
-        "x86_64-linux"
-        "x86_64-darwin"
-        "aarch64-linux"
-        "aarch64-darwin"
-      ];
-    };
+        perSystem =
+          { config, pkgs, ... }:
+          {
+            devenv.shells.default.imports = [
+              self.devenvModules.docs
+              self.devenvModules.formats
+              self.devenvModules.git
+              self.devenvModules.github
+              self.devenvModules.nix
+              self.devenvModules.shell
+              self.devenvModules.shikanime-studio
+            ];
+            overlayAttrs = {
+              inherit (config.packages)
+                fleet
+                bootloose
+                longhornctl
+                prettier-plugin-astro
+                prettier-plugin-tailwindcss
+                ;
+            };
+            packages = {
+              fleet = pkgs.callPackage ./pkgs/fleet { };
+              bootloose = pkgs.callPackage ./pkgs/bootloose { };
+              longhornctl = pkgs.callPackage ./pkgs/longhornctl { };
+              prettier-plugin-astro = pkgs.callPackage ./pkgs/prettier-plugin-astro { };
+              prettier-plugin-tailwindcss = pkgs.callPackage ./pkgs/prettier-plugin-tailwindcss { };
+            };
+          };
+        systems = [
+          "x86_64-linux"
+          "x86_64-darwin"
+          "aarch64-linux"
+          "aarch64-darwin"
+        ];
+      }
+    );
 }
