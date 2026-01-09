@@ -55,10 +55,6 @@ in
           else
             [ ];
 
-        overlayAttrs = {
-          inherit (config.packages) prettier-plugin-astro prettier-plugin-tailwindcss;
-        };
-
         pre-commit.settings =
           if cfg.git-hooks.enable then
             mkMerge (mapAttrsToList (_: shell: shell.git-hooks) config.devenv.shells)
