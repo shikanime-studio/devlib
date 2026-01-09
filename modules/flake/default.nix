@@ -47,13 +47,21 @@ in
             [
               ../devenv/default.nix
               {
-                treefmt.config.programs.prettier.settings.pluginSearchDirs = withSystem system (
-                  { config, ... }:
-                  [
-                    "${config.packages.prettier-plugin-astro}/lib"
-                    "${config.packages.prettier-plugin-tailwindcss}/lib"
-                  ]
-                );
+                treefmt.config.programs.prettier.settings = {
+                  overrides = [
+                    {
+                      files = "*.astro";
+                      options.parser = "astro";
+                    }
+                  ];
+                  pluginSearchDirs = withSystem system (
+                    { config, ... }:
+                    [
+                      "${config.packages.prettier-plugin-astro}/lib"
+                      "${config.packages.prettier-plugin-tailwindcss}/lib"
+                    ]
+                  );
+                };
               }
             ]
           else
