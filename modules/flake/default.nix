@@ -1,5 +1,6 @@
 {
   config,
+  flake-parts-lib,
   inputs,
   lib,
   ...
@@ -40,17 +41,16 @@ in
   config = {
     perSystem =
       { config, self', ... }:
+      with flake-parts-lib;
       {
         devenv.modules =
           if cfg.devenv.enable then
+            let
+              treefmtModule = importApply ./treefmt.nix { localSelf' = self'; };
+            in
             [
               ../devenv/default.nix
-              {
-                treefmt.config.programs.prettier.settings.pluginSearchDirs = [
-                  "${self'.packages.prettier-plugin-astro}/lib"
-                  "${self'.packages.prettier-plugin-tailwindcss}/lib"
-                ];
-              }
+              treefmtModule
             ]
           else
             [ ];
