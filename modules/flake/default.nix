@@ -1,6 +1,5 @@
 {
   config,
-  flake-parts-lib,
   inputs,
   lib,
   ...
@@ -40,20 +39,25 @@ in
 
   config = {
     perSystem =
-      { config, self', ... }:
-      with flake-parts-lib;
+      { config, final, ... }:
       {
         devenv.modules =
           if cfg.devenv.enable then
-            let
-              treefmtModule = importApply ./treefmt.nix { localSelf' = self'; };
-            in
             [
               ../devenv/default.nix
-              treefmtModule
+              {
+                treefmt.config.programs.prettier.settings.pluginSearchDirs = [
+                  "${final.prettier-plugin-astro}/lib"
+                  "${final.prettier-plugin-tailwindcss}/lib"
+                ];
+              }
             ]
           else
             [ ];
+
+        overlayAttrs = {
+          inherit (config.packages) prettier-plugin-astro prettier-plugin-tailwindcss;
+        };
 
         pre-commit.settings =
           if cfg.git-hooks.enable then
