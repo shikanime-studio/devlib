@@ -115,7 +115,7 @@
         };
       };
       perSystem =
-        { pkgs, ... }:
+        { config, pkgs, ... }:
         {
           devenv.shells.default.imports = [
             self.devenvModules.docs
@@ -126,6 +126,15 @@
             self.devenvModules.shell
             self.devenvModules.shikanime-studio
           ];
+          overlayAttrs = {
+            inherit (config.packages)
+              fleet
+              bootloose
+              longhornctl
+              prettier-plugin-astro
+              prettier-plugin-tailwindcss
+              ;
+          };
           packages = {
             fleet = pkgs.callPackage ./pkgs/fleet { };
             bootloose = pkgs.callPackage ./pkgs/bootloose { };
