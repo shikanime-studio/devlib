@@ -54,11 +54,10 @@ in
                       options.parser = "astro";
                     }
                   ];
-                  pluginSearchDirs = withSystem system (
+                  plugins = withSystem system (
                     { config, ... }:
                     [
-                      "${config.packages.prettier-plugin-astro}/lib"
-                      "${config.packages.prettier-plugin-tailwindcss}/lib"
+                      "${config.packages.prettier-plugin-astro}/lib/node_modules/prettier-plugin-astro/dist/index.js"
                     ]
                   );
                 };
