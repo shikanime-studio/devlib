@@ -253,7 +253,11 @@ with lib;
           };
           jobs = {
             check = {
-              runs-on = "ubuntu-latest";
+              strategy.matrix.os = [
+                "macos-latest"
+                "ubuntu-latest"
+              ];
+              runs-on = mkWorkflowRef "matrix.os";
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
@@ -273,7 +277,7 @@ with lib;
             "closed"
           ];
           jobs.cleanup = {
-            runs-on = "ubuntu-latest";
+            runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
               create-github-app-token
               checkout
@@ -290,7 +294,7 @@ with lib;
           name = "Land";
           on.issue_comment.types = [ "created" ];
           jobs.land = {
-            runs-on = "ubuntu-latest";
+            runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
               create-github-app-token
               checkout
@@ -308,7 +312,11 @@ with lib;
           on.push.tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
           jobs = {
             check = {
-              runs-on = "ubuntu-latest";
+              strategy.matrix.os = [
+                "ubuntu-latest"
+                "macos-latest"
+              ];
+              runs-on = mkWorkflowRef "matrix.os";
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
@@ -319,7 +327,7 @@ with lib;
 
             publish = {
               needs = [ "check" ];
-              runs-on = "ubuntu-latest";
+              runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
@@ -343,7 +351,7 @@ with lib;
             "reopened"
           ];
           jobs.triage = {
-            runs-on = "ubuntu-latest";
+            runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
               create-github-app-token
               checkout
@@ -364,7 +372,7 @@ with lib;
           };
           jobs = {
             dependencies = {
-              runs-on = "ubuntu-latest";
+              runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
@@ -374,7 +382,7 @@ with lib;
             };
 
             stale = {
-              runs-on = "ubuntu-latest";
+              runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
                 stale

@@ -1,6 +1,6 @@
 jobs:
   triage:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     steps:
     - id: createGithubAppToken
       uses: actions/create-github-app-token@v2
