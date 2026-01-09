@@ -15,4 +15,6 @@
     enable = true;
     corepack.enable = true;
   };
+
+  treefmt.config.programs.prettier.enable = true;
 }

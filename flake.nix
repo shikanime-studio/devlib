@@ -129,6 +129,8 @@
             fleet = pkgs.callPackage ./pkgs/fleet { };
             bootloose = pkgs.callPackage ./pkgs/bootloose { };
             longhornctl = pkgs.callPackage ./pkgs/longhornctl { };
+            prettier-plugin-astro = pkgs.callPackage ./pkgs/prettier-plugin-astro { };
+            prettier-plugin-tailwindcss = pkgs.callPackage ./pkgs/prettier-plugin-tailwindcss { };
           };
         };
       systems = [
