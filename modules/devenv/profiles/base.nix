@@ -6,8 +6,6 @@
     ];
   };
 
-  tasks."devenv:treefmt:run".before = [ "devenv:enterShell" ];
-
   treefmt = {
     enable = true;
     config.settings.global.excludes = [
