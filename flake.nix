@@ -54,6 +54,7 @@
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         devenv.flakeModule
+        flake-parts.flakeModules.easyOverlay
         git-hooks.flakeModule
         treefmt-nix.flakeModule
         ./modules/flake/default.nix

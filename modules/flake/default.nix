@@ -39,7 +39,7 @@ in
 
   config = {
     perSystem =
-      { config, self', ... }:
+      { config, final, ... }:
       {
         devenv.modules =
           if cfg.devenv.enable then
@@ -47,13 +47,17 @@ in
               ../devenv/default.nix
               {
                 treefmt.config.programs.prettier.settings.pluginSearchDirs = [
-                  "${self'.packages.prettier-plugin-astro}/lib"
-                  "${self'.packages.prettier-plugin-tailwindcss}/lib"
+                  "${final.prettier-plugin-astro}/lib"
+                  "${final.prettier-plugin-tailwindcss}/lib"
                 ];
               }
             ]
           else
             [ ];
+
+        overlayAttrs = {
+          inherit (config.packages) prettier-plugin-astro prettier-plugin-tailwindcss;
+        };
 
         pre-commit.settings =
           if cfg.git-hooks.enable then
