@@ -2,7 +2,6 @@
   config,
   inputs,
   lib,
-  self,
   ...
 }:
 
@@ -40,7 +39,7 @@ in
 
   config = {
     perSystem =
-      { config, pkgs, ... }:
+      { config, self', ... }:
       {
         devenv.modules =
           if cfg.devenv.enable then
@@ -48,8 +47,8 @@ in
               ../devenv/default.nix
               {
                 treefmt.config.programs.prettier.settings.pluginSearchDirs = [
-                  "${self.packages.${pkgs.stdenv.hostPlatform.system}.prettier-plugin-astro}/lib"
-                  "${self.packages.${pkgs.stdenv.hostPlatform.system}.prettier-plugin-tailwindcss}/lib"
+                  "${self'.packages.prettier-plugin-astro}/lib"
+                  "${self'.packages.prettier-plugin-tailwindcss}/lib"
                 ];
               }
             ]
