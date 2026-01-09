@@ -2,6 +2,7 @@
   lib,
   buildNpmPackage,
   fetchFromGitHub,
+  prettier,
 }:
 
 buildNpmPackage rec {
@@ -16,6 +17,11 @@ buildNpmPackage rec {
   };
 
   npmDepsHash = "sha256-J2TTD4rsEG2CYtGWfksbGdTD/yFOX/WeVwaUdlyjuPQ=";
+
+  postInstall = ''
+    mkdir -p $out/lib/node_modules/prettier-plugin-tailwindcss/node_modules
+    ln -s ${prettier}/lib/node_modules/prettier $out/lib/node_modules/prettier-plugin-tailwindcss/node_modules/prettier
+  '';
 
   meta = with lib; {
     description = "Prettier plugin for Tailwind CSS";

@@ -47,20 +47,25 @@ in
             [
               ../devenv/default.nix
               {
-                treefmt.config.programs.prettier.settings = {
-                  overrides = [
-                    {
-                      files = "*.astro";
-                      options.parser = "astro";
-                    }
-                  ];
-                  plugins = withSystem system (
-                    { config, ... }:
-                    [
-                      "${config.packages.prettier-plugin-astro}/lib/node_modules/prettier-plugin-astro/dist/index.js"
-                    ]
-                  );
-                };
+                treefmt.config.programs.prettier = withSystem system (
+                  { config, pkgs, ... }:
+                  {
+                    package = pkgs.prettier.override {
+                      plugins = [
+                        config.packages.prettier-plugin-astro
+                        config.packages.prettier-plugin-tailwindcss
+                      ];
+                    };
+                    settings = {
+                      overrides = [
+                        {
+                          files = "*.astro";
+                          options.parser = "astro";
+                        }
+                      ];
+                    };
+                  }
+                );
               }
             ]
           else

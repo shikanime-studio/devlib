@@ -45,6 +45,8 @@ stdenv.mkDerivation (finalAttrs: {
     mkdir -p $out/lib/node_modules/prettier-plugin-astro/dist
     cp -r dist/* $out/lib/node_modules/prettier-plugin-astro/dist
     cp -r node_modules $out/lib/node_modules/prettier-plugin-astro/node_modules
+    cp package.json $out/lib/node_modules/prettier-plugin-astro/package.json
+    cp README.md $out/lib/node_modules/prettier-plugin-astro/README.md
     runHook postInstall
   '';
 
