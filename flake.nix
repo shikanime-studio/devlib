@@ -122,7 +122,7 @@
           };
         };
         perSystem =
-          { config, pkgs, ... }:
+          { pkgs, ... }:
           {
             devenv.shells.default.imports = [
               self.devenvModules.docs
