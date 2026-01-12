@@ -40,6 +40,11 @@ in
         default = inputs.treefmt-nix != null;
         description = "Enable treefmt.";
       };
+      shell = mkOption {
+        type = types.str;
+        default = "default";
+        description = "The shell package to use for treefmt.";
+      };
     };
   };
 
@@ -100,24 +105,21 @@ in
 
         treefmt =
           if cfg.treefmt.enable then
-            mkMerge (
-              mapAttrsToList (
-                _: shell:
-                let
-                  # Filter out internal/computed options from programs to avoid conflicts/errors.
-                  treefmtPrograms = lib.mapAttrs (
-                    _: v: builtins.removeAttrs v [ "finalPackage" ]
-                  ) shell.treefmt.config.programs;
+            let
+              # Filter out internal/computed options from programs to avoid conflicts/errors.
+              treefmtPrograms = lib.mapAttrs (
+                _: v: builtins.removeAttrs v [ "finalPackage" ]
+              ) config.devenv.shells.${cfg.treefmt.shell}.treefmt.config.programs;
 
-                  # Keep global settings but remove generated formatter config.
-                  treefmtSettings = builtins.removeAttrs shell.treefmt.config.settings [ "formatter" ];
-                in
-                {
-                  programs = treefmtPrograms;
-                  settings = treefmtSettings;
-                }
-              ) config.devenv.shells
-            )
+              # Keep global settings but remove generated formatter config.
+              treefmtSettings =
+                builtins.removeAttrs config.devenv.shells.${cfg.treefmt.shell}.treefmt.config.settings
+                  [ "formatter" ];
+            in
+            {
+              programs = treefmtPrograms;
+              settings = treefmtSettings;
+            }
           else
             { };
       };
