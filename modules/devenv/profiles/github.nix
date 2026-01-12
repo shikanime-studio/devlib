@@ -258,10 +258,6 @@ with lib;
                   os = "ubuntu-latest";
                   extra-platforms = "aarch64-linux";
                 }
-                {
-                  os = "macos-latest";
-                  extra-platforms = "";
-                }
               ];
               runs-on = mkWorkflowRef "matrix.os";
               steps =
@@ -329,10 +325,6 @@ with lib;
                 {
                   os = "ubuntu-latest";
                   extra-platforms = "aarch64-linux";
-                }
-                {
-                  os = "macos-latest";
-                  extra-platforms = "";
                 }
               ];
               runs-on = mkWorkflowRef "matrix.os";
