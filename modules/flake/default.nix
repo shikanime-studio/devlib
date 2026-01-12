@@ -72,7 +72,7 @@ in
 
         pre-commit.settings =
           if cfg.git-hooks.enable then
-            mkMerge (mapAttrsToList (_: shell: shell.git-hooks) config.devenv.shells)
+            mkMerge (mapAttrsToList (_: shell: removeAttrs shell.git-hooks [ "run" ]) config.devenv.shells)
           else
             { };
 
