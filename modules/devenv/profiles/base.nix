@@ -1,4 +1,8 @@
 {
+  imports = [
+    ./default.nix
+  ];
+
   gitignore = {
     enable = true;
     content = [
