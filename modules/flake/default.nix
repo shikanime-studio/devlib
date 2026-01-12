@@ -81,45 +81,14 @@ in
             [ ];
 
         pre-commit.settings =
-          if cfg.git-hooks.enable && config.devenv.shells.${cfg.git-hooks.shell} != null then
-            {
-              inherit (config.devenv.shells.${cfg.git-hooks.shell}.git-hooks)
-                default_stages
-                enable
-                enabledPackages
-                excludes
-                gitPackage
-                hooks
-                install
-                installStages
-                package
-                rootSrc
-                run
-                shellHook
-                src
-                tools
-                ;
-            }
+          if cfg.git-hooks.enable && builtins.hasAttr cfg.git-hooks.shell config.devenv.shells then
+            config.devenv.shells.${cfg.git-hooks.shell}.git-hooks
           else
             { };
 
         treefmt =
-          if cfg.treefmt.enable then
-            let
-              # Filter out internal/computed options from programs to avoid conflicts/errors.
-              treefmtPrograms = lib.mapAttrs (
-                _: v: builtins.removeAttrs v [ "finalPackage" ]
-              ) config.devenv.shells.${cfg.treefmt.shell}.treefmt.config.programs;
-
-              # Keep global settings but remove generated formatter config.
-              treefmtSettings =
-                builtins.removeAttrs config.devenv.shells.${cfg.treefmt.shell}.treefmt.config.settings
-                  [ "formatter" ];
-            in
-            {
-              programs = treefmtPrograms;
-              settings = treefmtSettings;
-            }
+          if cfg.treefmt.enable && builtins.hasAttr cfg.treefmt.shell config.devenv.shells then
+            config.devenv.shells.${cfg.treefmt.shell}.treefmt.config
           else
             { };
       };
