@@ -66,9 +66,9 @@
           flakeModule
         ];
         flake = {
-          devenvModule = ./modules/devenv/default.nix;
+          devenvModule = ./modules/devenv/profiles/default.nix;
           devenvModules = {
-            default = ./modules/devenv/default.nix;
+            default = self.devenvModule;
             docker = ./modules/devenv/profiles/docker.nix;
             docs = ./modules/devenv/profiles/docs.nix;
             elixir = ./modules/devenv/profiles/elixir.nix;
@@ -91,7 +91,7 @@
 
           homeManagerModule = ./modules/home/default.nix;
           homeManagerModules = {
-            default = ./modules/home/default.nix;
+            default = self.homeManagerModule;
             docker = ./modules/home/docker.nix;
             elixir = ./modules/home/elixir.nix;
             go = ./modules/home/go.nix;
