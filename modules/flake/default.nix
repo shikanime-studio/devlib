@@ -27,6 +27,11 @@ in
         default = inputs.git-hooks != null;
         description = "Enable git-hooks git-hooks.";
       };
+      shell = mkOption {
+        type = types.str;
+        default = "default";
+        description = "The shell package to use for git-hooks and treefmt.";
+      };
     };
 
     treefmt = {
@@ -71,27 +76,25 @@ in
             [ ];
 
         pre-commit.settings =
-          if cfg.git-hooks.enable then
-            mkMerge (
-              mapAttrsToList (_: shell: {
-                inherit (shell.git-hooks)
-                  default_stages
-                  enable
-                  enabledPackages
-                  excludes
-                  gitPackage
-                  hooks
-                  install
-                  installStages
-                  package
-                  rootSrc
-                  run
-                  shellHook
-                  src
-                  tools
-                  ;
-              }) config.devenv.shells
-            )
+          if cfg.git-hooks.enable && config.devenv.shells.${cfg.git-hooks.shell} != null then
+            {
+              inherit (config.devenv.shells.${cfg.git-hooks.shell}.git-hooks)
+                default_stages
+                enable
+                enabledPackages
+                excludes
+                gitPackage
+                hooks
+                install
+                installStages
+                package
+                rootSrc
+                run
+                shellHook
+                src
+                tools
+                ;
+            }
           else
             { };
 
