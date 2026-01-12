@@ -45,7 +45,7 @@ in
         devenv.modules =
           if cfg.devenv.enable then
             [
-              ../devenv/default.nix
+              ../devenv/profiles/default.nix
               {
                 treefmt.config.programs.prettier = withSystem system (
                   { config, pkgs, ... }:
@@ -72,13 +72,36 @@ in
 
         pre-commit.settings =
           if cfg.git-hooks.enable then
-            mkMerge (mapAttrsToList (_: shell: shell.git-hooks) config.devenv.shells)
+            mkMerge (
+              mapAttrsToList (_: shell: {
+                inherit (shell.git-hooks)
+                  default_stages
+                  enable
+                  enabledPackages
+                  excludes
+                  gitPackage
+                  hooks
+                  install
+                  installStages
+                  package
+                  rootSrc
+                  run
+                  shellHook
+                  src
+                  tools
+                  ;
+              }) config.devenv.shells
+            )
           else
             { };
 
         treefmt =
           if cfg.treefmt.enable then
-            mkMerge (mapAttrsToList (_: shell: shell.treefmt.config) config.devenv.shells)
+            mkMerge (
+              mapAttrsToList (_: shell: {
+                inherit (shell.treefmt.config) programs settings;
+              }) config.devenv.shells
+            )
           else
             { };
       };
