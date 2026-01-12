@@ -98,9 +98,22 @@ in
         treefmt =
           if cfg.treefmt.enable then
             mkMerge (
-              mapAttrsToList (_: shell: {
-                inherit (shell.treefmt.config) programs settings;
-              }) config.devenv.shells
+              mapAttrsToList (
+                _: shell:
+                let
+                  # Filter out internal/computed options from programs to avoid conflicts/errors.
+                  treefmtPrograms = lib.mapAttrs (
+                    _: v: builtins.removeAttrs v [ "finalPackage" ]
+                  ) shell.treefmt.config.programs;
+
+                  # Keep global settings but remove generated formatter config.
+                  treefmtSettings = builtins.removeAttrs shell.treefmt.config.settings [ "formatter" ];
+                in
+                {
+                  programs = treefmtPrograms;
+                  settings = treefmtSettings;
+                }
+              ) config.devenv.shells
             )
           else
             { };
