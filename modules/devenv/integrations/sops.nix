@@ -55,7 +55,6 @@ in
       "devlib:sops:updatekeys" = {
         before = [
           "devenv:enterShell"
-          "devenv:treefmt:run"
         ];
         description = "Run sops updatekeys";
         exec = ''

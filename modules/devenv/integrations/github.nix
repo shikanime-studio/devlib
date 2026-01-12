@@ -135,6 +135,5 @@ in
         );
     };
 
-    treefmt.config.programs.actionlint.enable = mkDefault true;
   };
 }

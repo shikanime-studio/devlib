@@ -8,9 +8,4 @@
   ];
 
   languages.opentofu.enable = true;
-
-  treefmt.config.programs = {
-    hclfmt.enable = true;
-    terraform.enable = true;
-  };
 }

@@ -46,7 +46,6 @@ in
       "devlib:renovate:install" = {
         before = [
           "devenv:enterShell"
-          "devenv:treefmt:run"
         ];
         description = "Install renovate configuration";
         exec =

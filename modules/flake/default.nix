@@ -1,86 +1,55 @@
-{ withSystem, ... }:
+_:
+{ inputs, ... }:
+
 {
-  config,
-  inputs,
-  lib,
-  ...
-}:
+  perSystem =
+    { config, lib, ... }:
+    with lib;
+    let
+      cfg = config.devlib;
+    in
+    {
+      options.devlib = {
+        devenv = {
+          enable = mkOption {
+            type = types.bool;
+            default = inputs.devenv != null;
+            description = "Enable devenv.";
+          };
+        };
 
-with lib;
+        treefmt = {
+          enable = mkOption {
+            type = types.bool;
+            default = inputs.treefmt-nix != null;
+            description = "Enable treefmt.";
+          };
+        };
+      };
 
-let
-  cfg = config.devlib;
-in
-{
-  options.devlib = {
-    devenv = {
-      enable = mkOption {
-        type = types.bool;
-        default = inputs.devenv != null;
-        description = "Enable devenv.";
+      config = {
+        devenv.modules = mkIf cfg.devenv.enable [
+          ../devenv/profiles/default.nix
+          {
+            treefmt = mkIf cfg.treefmt.enable {
+              enable = true;
+              config =
+                let
+                  # Filter out internal/computed options from programs to avoid conflicts/errors.
+                  treefmtPrograms = lib.mapAttrs (
+                    _: v: builtins.removeAttrs v [ "finalPackage" ]
+                  ) config.treefmt.programs;
+
+                  # Keep global settings but remove generated formatter config.
+                  treefmtSettings = builtins.removeAttrs config.treefmt.settings [ "formatter" ];
+                in
+                {
+                  programs = treefmtPrograms;
+                  settings = treefmtSettings;
+                };
+            };
+          }
+        ];
       };
     };
-
-    git-hooks = {
-      enable = mkOption {
-        type = types.bool;
-        default = inputs.git-hooks != null;
-        description = "Enable git-hooks git-hooks.";
-      };
-    };
-
-    treefmt = {
-      enable = mkOption {
-        type = types.bool;
-        default = inputs.treefmt-nix != null;
-        description = "Enable treefmt.";
-      };
-    };
-  };
-
-  config = {
-    perSystem =
-      { config, system, ... }:
-      {
-        devenv.modules =
-          if cfg.devenv.enable then
-            [
-              ../devenv/default.nix
-              {
-                treefmt.config.programs.prettier = withSystem system (
-                  { config, pkgs, ... }:
-                  {
-                    includes = [ "*.astro" ];
-                    package = pkgs.prettier.override {
-                      plugins = [
-                        config.packages.prettier-plugin-astro
-                        config.packages.prettier-plugin-tailwindcss
-                      ];
-                    };
-                    settings.overrides = [
-                      {
-                        files = "*.astro";
-                        options.parser = "astro";
-                      }
-                    ];
-                  }
-                );
-              }
-            ]
-          else
-            [ ];
-
-        pre-commit.settings =
-          if cfg.git-hooks.enable then
-            mkMerge (mapAttrsToList (_: shell: removeAttrs shell.git-hooks [ "run" ]) config.devenv.shells)
-          else
-            { };
-
-        treefmt =
-          if cfg.treefmt.enable then
-            mkMerge (mapAttrsToList (_: shell: shell.treefmt.config) config.devenv.shells)
-          else
-            { };
-      };
-  };
 }

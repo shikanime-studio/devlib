@@ -88,7 +88,6 @@ in
     tasks."devlib:buf:generate" = {
       before = [
         "devenv:enterShell"
-        "devenv:treefmt:run"
       ];
       description = "Run buf generate with buf.gen.yaml";
       exec = ''
@@ -96,6 +95,5 @@ in
       '';
     };
 
-    treefmt.config.programs.buf.enable = mkDefault true;
   };
 }

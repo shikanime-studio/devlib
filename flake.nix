@@ -52,23 +52,48 @@
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } (
-      { flake-parts-lib, withSystem, ... }:
+      { flake-parts-lib, self', ... }:
       with flake-parts-lib;
       let
-        flakeModule = importApply ./modules/flake/default.nix { inherit withSystem; };
+        flakeModule = importApply ./modules/flake/default.nix { };
+
+        flakeModules = {
+          default = flakeModule;
+          base = importApply ./modules/flake/base.nix { };
+          docker = importApply ./modules/flake/docker.nix { };
+          docs = importApply ./modules/flake/docs.nix { };
+          elixir = importApply ./modules/flake/elixir.nix { };
+          formats = importApply ./modules/flake/formats.nix { };
+          git = importApply ./modules/flake/git.nix { };
+          go = importApply ./modules/flake/go.nix { };
+          javascript = importApply ./modules/flake/javascript.nix { };
+          nix = importApply ./modules/flake/nix.nix { };
+          ocaml = importApply ./modules/flake/ocaml.nix { };
+          opentofu = importApply ./modules/flake/opentofu.nix { };
+          python = importApply ./modules/flake/python.nix { };
+          rust = importApply ./modules/flake/rust.nix { };
+          shell = importApply ./modules/flake/shell.nix { };
+          texlive = importApply ./modules/flake/texlive.nix { };
+        };
       in
       {
         imports = [
           devenv.flakeModule
           flake-parts.flakeModules.easyOverlay
+          flakeModules.base
+          flakeModule
+          flakeModules.docs
+          flakeModules.formats
+          flakeModules.git
+          flakeModules.nix
+          flakeModules.shell
           git-hooks.flakeModule
           treefmt-nix.flakeModule
-          flakeModule
         ];
         flake = {
           devenvModule = ./modules/devenv/default.nix;
           devenvModules = {
-            default = ./modules/devenv/default.nix;
+            default = self'.flake.devenvModule;
             docker = ./modules/devenv/profiles/docker.nix;
             docs = ./modules/devenv/profiles/docs.nix;
             elixir = ./modules/devenv/profiles/elixir.nix;
@@ -86,12 +111,11 @@
             shikanime = ./modules/devenv/shells/shikanime.nix;
             shikanime-studio = ./modules/devenv/shells/shikanime-studio.nix;
             texlive = ./modules/devenv/profiles/texlive.nix;
-            yaml = ./modules/devenv/profiles/yaml.nix;
           };
 
           homeManagerModule = ./modules/home/default.nix;
           homeManagerModules = {
-            default = ./modules/home/default.nix;
+            default = self'.flake.homeManagerModule;
             docker = ./modules/home/docker.nix;
             elixir = ./modules/home/elixir.nix;
             go = ./modules/home/go.nix;
@@ -107,8 +131,7 @@
             yaml = ./modules/home/yaml.nix;
           };
 
-          inherit flakeModule;
-          flakeModules.default = flakeModule;
+          inherit flakeModule flakeModules;
 
           templates = {
             default = {
