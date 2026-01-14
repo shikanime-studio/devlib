@@ -273,7 +273,7 @@ with lib;
             push = {
               branches = [
                 "main"
-                "release-*"
+                "release-[0-9]+-[0-9]+"
               ];
               tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
             };
