@@ -112,9 +112,11 @@ with lib;
           run = ''gh pr comment "$PR_HTML_URL" --body .land | pr'';
         };
 
-        devenv-test.run = "nix run nixpkgs#devenv test";
+        devenv-test.run = "devenv test";
 
-        direnv.uses = "shikanime-studio/direnv-action@v2";
+        direnv-allow.run = "nix run nixpkgs#direnv allow";
+
+        direnv-export.run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\"";
 
         docker-login = {
           env = {
@@ -191,6 +193,8 @@ with lib;
               checkout
               setup-nix
               nix-flake-check
+              direnv-allow
+              direnv-export
               devenv-test
             ];
           };
@@ -218,6 +222,8 @@ with lib;
                 checkout
                 setup-nix
                 nix-flake-check
+                direnv-allow
+                direnv-export
                 devenv-test
               ];
             };
