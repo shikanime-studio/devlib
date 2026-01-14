@@ -1,0 +1,25 @@
+jobs:
+  release-unstable:
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-slim
+    steps:
+    - id: createGithubAppToken
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.OPERATOR_APP_ID }}
+        private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        ref: ${{ github.event.workflow_run.head_sha }}
+        token: ${{ steps.createGithubAppToken.outputs.token }}
+    - run: git push origin HEAD:refs/heads/release-unstable --force
+name: Channels
+'on':
+  workflow_run:
+    branches:
+    - main
+    types:
+    - completed
+    workflows:
+    - Check
