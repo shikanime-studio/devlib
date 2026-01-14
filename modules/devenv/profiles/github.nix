@@ -237,6 +237,46 @@ with lib;
       };
 
     workflows = with config.github.lib; {
+      channels = {
+        enable = true;
+        settings = {
+          name = "Channels";
+          on.workflow_run = {
+            workflows = [ "Check" ];
+            branches = [ "main" ];
+            types = [ "completed" ];
+          };
+          jobs.release-unstable = {
+            "if" = "github.event.workflow_run.conclusion == 'success'";
+            runs-on = "ubuntu-slim";
+            steps =
+              with config.github.actions;
+              let
+                checkout-from-workflow-run = checkout // {
+                  "with" = checkout."with" // {
+                    ref = mkWorkflowRef "github.event.workflow_run.head_sha";
+                  };
+                };
+
+                git-push = {
+                  run = mkWorkflowRun [
+                    "git"
+                    "push"
+                    "origin"
+                    "HEAD:refs/heads/release-unstable"
+                    "--force"
+                  ];
+                };
+              in
+              [
+                create-github-app-token
+                checkout-from-workflow-run
+                git-push
+              ];
+          };
+        };
+      };
+
       check = {
         enable = true;
         settings = {
