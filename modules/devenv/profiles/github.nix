@@ -168,6 +168,14 @@ with lib;
           ];
         };
 
+        git-push-release-unstable.run = mkWorkflowRun [
+          "git"
+          "push"
+          "origin"
+          "HEAD:refs/heads/release-unstable"
+          "--force"
+        ];
+
         nix-flake-check.run = mkWorkflowRun [
           "nix"
           "flake"
@@ -241,11 +249,33 @@ with lib;
         enable = true;
         settings = {
           name = "Integration";
-          on = {
-            pull_request.branches = [
-              "main"
-              "gh/*/*/base"
+          on.pull_request.branches = [
+            "main"
+            "gh/*/*/base"
+          ];
+          jobs.check = {
+            strategy.matrix.include = [
+              {
+                os = "ubuntu-latest";
+                extra-platforms = "aarch64-linux";
+              }
             ];
+            runs-on = mkWorkflowRef "matrix.os";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              setup-nix
+              nix-flake-check
+            ];
+          };
+        };
+      };
+
+      release = {
+        enable = true;
+        settings = {
+          name = "Release";
+          on = {
             push = {
               branches = [
                 "main"
@@ -255,7 +285,7 @@ with lib;
             };
           };
           jobs = {
-            main = {
+            check = {
               strategy.matrix.include = [
                 {
                   os = "ubuntu-latest";
@@ -271,35 +301,22 @@ with lib;
               ];
             };
 
-            release-unstable =
-              let
-                git-push = {
-                  run = mkWorkflowRun [
-                    "git"
-                    "push"
-                    "origin"
-                    "HEAD:refs/heads/release-unstable"
-                    "--force"
-                  ];
-                };
-              in
-              {
-                needs = [ "main" ];
-                "if" = concatStringsSep " && " [
-                  "github.event_name == 'push'"
-                  "github.ref == 'refs/heads/main'"
-                  "success()"
-                ];
-                runs-on = "ubuntu-slim";
-                steps = with config.github.actions; [
-                  create-github-app-token
-                  checkout
-                  git-push
-                ];
-              };
+            release-unstable = {
+              needs = [ "check" ];
+              "if" = concatStringsSep " && " [
+                "github.event_name == 'push'"
+                "github.ref == 'refs/heads/main'"
+              ];
+              runs-on = "ubuntu-slim";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                git-push-release-unstable
+              ];
+            };
 
             release-tag = {
-              needs = [ "main" ];
+              needs = [ "check" ];
               "if" = "startsWith(github.ref, 'refs/tags/v')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
