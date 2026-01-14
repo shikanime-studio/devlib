@@ -254,13 +254,7 @@ with lib;
             "gh/*/*/base"
           ];
           jobs.check = {
-            strategy.matrix.include = [
-              {
-                os = "ubuntu-latest";
-                extra-platforms = "aarch64-linux";
-              }
-            ];
-            runs-on = mkWorkflowRef "matrix.os";
+            runs-on = "ubuntu-latest";
             steps = with config.github.actions; [
               create-github-app-token
               checkout
@@ -286,13 +280,7 @@ with lib;
           };
           jobs = {
             check = {
-              strategy.matrix.include = [
-                {
-                  os = "ubuntu-latest";
-                  extra-platforms = "aarch64-linux";
-                }
-              ];
-              runs-on = mkWorkflowRef "matrix.os";
+              runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
