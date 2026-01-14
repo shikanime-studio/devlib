@@ -112,6 +112,8 @@ with lib;
           run = ''gh pr comment "$PR_HTML_URL" --body .land | pr'';
         };
 
+        devenv-test.run = "nix run nixpkgs#devenv test";
+
         direnv.uses = "shikanime-studio/direnv-action@v2";
 
         docker-login = {
@@ -189,6 +191,7 @@ with lib;
               checkout
               setup-nix
               nix-flake-check
+              devenv-test
             ];
           };
         };
@@ -215,6 +218,7 @@ with lib;
                 checkout
                 setup-nix
                 nix-flake-check
+                devenv-test
               ];
             };
 

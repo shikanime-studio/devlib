@@ -15,6 +15,7 @@ jobs:
       with:
         github-token: ${{ steps.createGithubAppToken.outputs.token }}
     - run: nix flake check --accept-flake-config --no-pure-eval
+    - run: devenv test
   release-tag:
     if: startsWith(github.ref, 'refs/tags/v')
     needs:
