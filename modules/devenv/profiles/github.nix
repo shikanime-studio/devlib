@@ -44,15 +44,7 @@ with lib;
             REPO = mkWorkflowRef "github.repository";
           };
           "if" = "!(${ghstackCondition})";
-          run = mkWorkflowRun [
-            "git"
-            "push"
-            "origin"
-            "--delete"
-            ''"$HEAD_REF"''
-            "||"
-            "true"
-          ];
+          run = ''git push origin --delete "$HEAD_REF" || true'';
         };
 
         cleanup-ghstack = {
@@ -85,15 +77,7 @@ with lib;
             REF_NAME = mkWorkflowRef "github.ref_name";
             REPO = mkWorkflowRef "github.repository";
           };
-          run = mkWorkflowRun [
-            "gh"
-            "release"
-            "create"
-            ''"$REF_NAME"''
-            "--repo"
-            ''"$REPO"''
-            "--generate-notes"
-          ];
+          run = ''gh release create "$REF_NAME" --repo "$REPO" --generate-notes'';
         };
 
         checkout = {
@@ -113,16 +97,7 @@ with lib;
             "(${mergeCondition})"
             "(${ghstackCondition})"
           ];
-          run = mkWorkflowRun [
-            "gh"
-            "pr"
-            "comment"
-            ''"$PR_HTML_URL"''
-            "--body"
-            ".land"
-            "|"
-            "ghstack"
-          ];
+          run = ''gh pr comment "$PR_HTML_URL" --body .land | ghstack'';
         };
 
         comment-land-pr = {
@@ -134,16 +109,7 @@ with lib;
             "(${mergeCondition})"
             "!(${ghstackCondition})"
           ];
-          run = mkWorkflowRun [
-            "gh"
-            "pr"
-            "comment"
-            ''"$PR_HTML_URL"''
-            "--body"
-            ".land"
-            "|"
-            "pr"
-          ];
+          run = ''gh pr comment "$PR_HTML_URL" --body .land | pr'';
         };
 
         direnv.uses = "shikanime-studio/direnv-action@v2";
@@ -154,35 +120,12 @@ with lib;
             GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             USERNAME = mkWorkflowRef "github.actor";
           };
-          run = mkWorkflowRun [
-            "nix"
-            "run"
-            "nixpkgs#docker"
-            "--"
-            "login"
-            ''"$DOCKER_REGISTRY"''
-            "--username"
-            ''"$USERNAME"''
-            "--password"
-            ''"$GITHUB_TOKEN"''
-          ];
+          run = ''nix run nixpkgs#docker -- login "$DOCKER_REGISTRY" --username "$USERNAME" --password "$GITHUB_TOKEN"'';
         };
 
-        git-push-release-unstable.run = mkWorkflowRun [
-          "git"
-          "push"
-          "origin"
-          "HEAD:refs/heads/release-unstable"
-          "--force"
-        ];
+        git-push-release-unstable.run = "git push origin HEAD:refs/heads/release-unstable --force";
 
-        nix-flake-check.run = mkWorkflowRun [
-          "nix"
-          "flake"
-          "check"
-          "--accept-flake-config"
-          "--no-pure-eval"
-        ];
+        nix-flake-check.run = "nix flake check --accept-flake-config --no-pure-eval";
 
         sapling = {
           uses = "shikanime-studio/sapling-action@v6";
@@ -217,14 +160,7 @@ with lib;
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = mergeCondition;
-          run = mkWorkflowRun [
-            "gh"
-            "pr"
-            "edit"
-            ''"$PR_NUMBER"''
-            "--add-label"
-            "dependencies"
-          ];
+          run = ''gh pr edit "$PR_NUMBER" --add-label dependencies'';
         };
 
         triage-ghstack = {
@@ -233,14 +169,7 @@ with lib;
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = ghstackCondition;
-          run = mkWorkflowRun [
-            "gh"
-            "pr"
-            "edit"
-            ''"$PR_NUMBER"''
-            "--add-label"
-            "ghstack"
-          ];
+          run = ''gh pr edit "$PR_NUMBER" --add-label ghstack'';
         };
       };
 
