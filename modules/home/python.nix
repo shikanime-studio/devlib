@@ -4,7 +4,7 @@
   home.packages = [
     pkgs.basedpyright
     pkgs.jupyter-all
-    pkgs.python313Packages.jedi-language-server
+    pkgs.ruff
     pkgs.uv
   ];
 
