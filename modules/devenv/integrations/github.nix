@@ -104,10 +104,7 @@ in
   };
 
   config = mkIf cfg.enable {
-    github.lib = {
-      mkWorkflowRef = name: "\${{ ${name} }}";
-      mkWorkflowRun = args: concatStringsSep " " args;
-    };
+    github.lib.mkWorkflowRef = name: "\${{ ${name} }}";
 
     packages = [ cfg.package ];
 
