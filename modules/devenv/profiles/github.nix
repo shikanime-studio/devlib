@@ -237,27 +237,42 @@ with lib;
       };
 
     workflows = with config.github.lib; {
-      channels = {
+      integration = {
         enable = true;
         settings = {
-          name = "Channels";
-          on.workflow_run = {
-            workflows = [ "Check" ];
-            branches = [ "main" ];
-            types = [ "completed" ];
+          name = "Integration";
+          on = {
+            pull_request.branches = [
+              "main"
+              "gh/*/*/base"
+            ];
+            push = {
+              branches = [
+                "main"
+                "release-*"
+              ];
+              tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
+            };
           };
-          jobs.release-unstable = {
-            "if" = "github.event.workflow_run.conclusion == 'success'";
-            runs-on = "ubuntu-slim";
-            steps =
-              with config.github.actions;
-              let
-                checkout-from-workflow-run = checkout // {
-                  "with" = checkout."with" // {
-                    ref = mkWorkflowRef "github.event.workflow_run.head_sha";
-                  };
-                };
+          jobs = {
+            main = {
+              strategy.matrix.include = [
+                {
+                  os = "ubuntu-latest";
+                  extra-platforms = "aarch64-linux";
+                }
+              ];
+              runs-on = mkWorkflowRef "matrix.os";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                nix-flake-check
+              ];
+            };
 
+            release-unstable =
+              let
                 git-push = {
                   run = mkWorkflowRun [
                     "git"
@@ -268,51 +283,30 @@ with lib;
                   ];
                 };
               in
-              [
-                create-github-app-token
-                checkout-from-workflow-run
-                git-push
-              ];
-          };
-        };
-      };
-
-      check = {
-        enable = true;
-        settings = {
-          name = "Check";
-          on = {
-            pull_request.branches = [
-              "main"
-              "gh/*/*/base"
-            ];
-            push.branches = [
-              "main"
-              "release-*"
-            ];
-          };
-          jobs = {
-            check = {
-              strategy.matrix.include = [
-                {
-                  os = "ubuntu-latest";
-                  extra-platforms = "aarch64-linux";
-                }
-              ];
-              runs-on = mkWorkflowRef "matrix.os";
-              steps =
-                with config.github.actions;
-                let
-                  setup-nix-with-extra-platforms = setup-nix // {
-                    "with".extra-platforms = mkWorkflowRef "matrix.extra-platforms";
-                  };
-                in
-                [
+              {
+                needs = [ "main" ];
+                "if" = concatStringsSep " && " [
+                  "github.event_name == 'push'"
+                  "github.ref == 'refs/heads/main'"
+                  "success()"
+                ];
+                runs-on = "ubuntu-slim";
+                steps = with config.github.actions; [
                   create-github-app-token
                   checkout
-                  setup-nix-with-extra-platforms
-                  nix-flake-check
+                  git-push
                 ];
+              };
+
+            release-tag = {
+              needs = [ "main" ];
+              "if" = "startsWith(github.ref, 'refs/tags/v')";
+              runs-on = "ubuntu-slim";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                create-release
+              ];
             };
           };
         };
@@ -350,48 +344,6 @@ with lib;
               setup-nix
               sapling
             ];
-          };
-        };
-      };
-
-      release = {
-        enable = true;
-        settings = {
-          name = "Release";
-          on.push.tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
-          jobs = {
-            check = {
-              strategy.matrix.include = [
-                {
-                  os = "ubuntu-latest";
-                  extra-platforms = "aarch64-linux";
-                }
-              ];
-              runs-on = mkWorkflowRef "matrix.os";
-              steps =
-                with config.github.actions;
-                let
-                  setup-nix-with-extra-platforms = setup-nix // {
-                    "with".extra-platforms = mkWorkflowRef "matrix.extra-platforms";
-                  };
-                in
-                [
-                  create-github-app-token
-                  checkout
-                  setup-nix-with-extra-platforms
-                  nix-flake-check
-                ];
-            };
-
-            publish = {
-              needs = [ "check" ];
-              runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                create-release
-              ];
-            };
           };
         };
       };
