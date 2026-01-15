@@ -17,8 +17,10 @@ with lib;
         mergeCondition =
           "github.event.pull_request.user.login == 'dependabot[bot]' || "
           + "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'";
+
+        githubAppToken = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
       in
-      {
+      rec {
         automata = {
           uses = "shikanime-studio/automata-action@v1";
           "with" = {
@@ -29,6 +31,11 @@ with lib;
             username = "Operator 6O <operator6o@shikanime.studio>";
           };
         };
+
+        automata-with-github-app-token = mkMerge [
+          automata
+          { "with".github-token = githubAppToken; }
+        ];
 
         cleanup-pr = {
           env = {
@@ -65,17 +72,26 @@ with lib;
 
         create-release = {
           env = {
-            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             REF_NAME = mkWorkflowRef "github.ref_name";
             REPO = mkWorkflowRef "github.repository";
           };
           run = ''gh release create "$REF_NAME" --repo "$REPO" --generate-notes'';
         };
 
+        create-release-with-github-app-token = mkMerge [
+          create-release
+          { env.GITHUB_TOKEN = githubAppToken; }
+        ];
+
         checkout = {
           uses = "actions/checkout@v6";
           "with".fetch-depth = 0;
         };
+
+        checkout-with-github-app-token = mkMerge [
+          checkout
+          { "with".token = githubAppToken; }
+        ];
 
         comment-land-ghstack = {
           env = {
@@ -120,7 +136,17 @@ with lib;
           };
         };
 
+        sapling-with-github-app-token = mkMerge [
+          sapling
+          { "with".github-token = githubAppToken; }
+        ];
+
         setup-nix.uses = "cachix/install-nix-action@v31";
+
+        setup-nix-with-github-app-token = mkMerge [
+          setup-nix
+          { "with".github_access_token = githubAppToken; }
+        ];
 
         stale = {
           uses = "actions/stale@v10";
@@ -132,23 +158,36 @@ with lib;
           };
         };
 
+        stale-with-github-app-token = mkMerge [
+          stale
+          { "with".repo-token = githubAppToken; }
+        ];
+
         triage-bot = {
           env = {
-            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = mergeCondition;
           run = ''gh pr edit "$PR_NUMBER" --add-label dependencies'';
         };
 
+        triage-bot-with-github-app-token = mkMerge [
+          triage-bot
+          { env.GITHUB_TOKEN = githubAppToken; }
+        ];
+
         triage-ghstack = {
           env = {
-            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = ghstackCondition;
           run = ''gh pr edit "$PR_NUMBER" --add-label ghstack'';
         };
+
+        triage-ghstack-with-github-app-token = mkMerge [
+          triage-ghstack
+          { env.GITHUB_TOKEN = githubAppToken; }
+        ];
       };
 
     workflows = {
@@ -198,8 +237,9 @@ with lib;
             check = {
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
-                checkout
-                setup-nix
+                create-github-app-token
+                checkout-with-github-app-token
+                setup-nix-with-github-app-token
                 nix-flake-check
               ];
             };
@@ -221,7 +261,8 @@ with lib;
               "if" = "github.event_name == 'push' && github.ref == 'refs/heads/main'";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
-                checkout
+                create-github-app-token
+                checkout-with-github-app-token
                 git-push-release-unstable
               ];
             };
@@ -234,8 +275,9 @@ with lib;
               "if" = "startsWith(github.ref, 'refs/tags/v')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
-                checkout
-                create-release
+                create-github-app-token
+                checkout-with-github-app-token
+                create-release-with-github-app-token
               ];
             };
           };
@@ -252,7 +294,8 @@ with lib;
           jobs.cleanup = {
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
-              checkout
+              create-github-app-token
+              checkout-with-github-app-token
               cleanup-pr
               cleanup-ghstack
             ];
@@ -268,9 +311,10 @@ with lib;
           jobs.land = {
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
-              checkout
-              setup-nix
-              sapling
+              create-github-app-token
+              checkout-with-github-app-token
+              setup-nix-with-github-app-token
+              sapling-with-github-app-token
             ];
           };
         };
@@ -291,10 +335,10 @@ with lib;
           jobs.triage = {
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
-              checkout
-              setup-nix
-              triage-bot
-              triage-ghstack
+              create-github-app-token
+              checkout-with-github-app-token
+              triage-bot-with-github-app-token
+              triage-ghstack-with-github-app-token
             ];
           };
         };
@@ -312,17 +356,18 @@ with lib;
             dependencies = {
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
-                checkout
-                setup-nix
-                automata
+                create-github-app-token
+                checkout-with-github-app-token
+                setup-nix-with-github-app-token
+                automata-with-github-app-token
               ];
             };
 
             stale = {
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
-                checkout
-                stale
+                create-github-app-token
+                stale-with-github-app-token
               ];
             };
           };
