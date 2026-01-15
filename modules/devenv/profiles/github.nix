@@ -65,6 +65,7 @@ with lib;
 
         create-release = {
           env = {
+            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             REF_NAME = mkWorkflowRef "github.ref_name";
             REPO = mkWorkflowRef "github.repository";
           };
@@ -133,6 +134,7 @@ with lib;
 
         triage-bot = {
           env = {
+            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = mergeCondition;
@@ -141,6 +143,7 @@ with lib;
 
         triage-ghstack = {
           env = {
+            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = ghstackCondition;
