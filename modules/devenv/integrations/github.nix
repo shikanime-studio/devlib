@@ -42,8 +42,8 @@ in
       example = literalExpression ''
         {
           setup-nix = {
-            uses = "shikanime-studio/setup-nix-action@v1";
-            with.github-token = mkWorkflowRef "secrets.GITHUB_TOKEN";
+            uses = "cachix/install-nix-action@v31";
+            with.github_access_token = mkWorkflowRef "secrets.GITHUB_TOKEN";
           };
         }
       '';
@@ -87,7 +87,10 @@ in
                   runs-on = "ubuntu-latest";
                   steps = [
                     { uses = "actions/checkout@v5"; }
-                    { uses = "shikanime-studio/setup-nix-action@v1"; }
+                    {
+                      uses = "cachix/install-nix-action@v31";
+                      with.github_access_token = mkWorkflowRef "secrets.GITHUB_TOKEN";
+                    }
                     {
                       name = "Check Nix Flake";
                       run = "nix flake check --accept-flake-config --all-systems --no-pure-eval";
