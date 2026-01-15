@@ -7,11 +7,10 @@ with lib;
     ./base.nix
   ];
 
-  github = {
+  github = with config.github.lib; {
     enable = true;
 
     actions =
-      with config.github.lib;
       let
         ghstackCondition = concatStringsSep " && " [
           "startsWith(github.head_ref, 'gh/')"
@@ -173,7 +172,7 @@ with lib;
         };
       };
 
-    workflows = with config.github.lib; {
+    workflows = {
       integration = {
         enable = true;
         settings = {
