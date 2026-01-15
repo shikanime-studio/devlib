@@ -51,12 +51,11 @@ in
   config = {
     perSystem =
       { config, system, ... }:
-      {
-        devenv.modules =
-          if cfg.devenv.enable then
-            [
-              ../devenv/profiles/default.nix
-              {
+      mkMerge [
+        (mkIf cfg.devenv.enable {
+          devenv.modules =
+            let
+              treefmt = {
                 treefmt.config.programs.prettier = withSystem system (
                   { config, pkgs, ... }:
                   {
@@ -75,22 +74,29 @@ in
                     ];
                   }
                 );
-              }
-            ]
-          else
-            [ ];
+              };
+            in
+            [
+              ../devenv/profiles/default.nix
+              treefmt
+            ];
+        })
 
-        pre-commit.settings =
-          if cfg.git-hooks.enable && builtins.hasAttr cfg.git-hooks.shell config.devenv.shells then
-            config.devenv.shells.${cfg.git-hooks.shell}.git-hooks
-          else
-            { };
+        (mkIf cfg.git-hooks.enable {
+          pre-commit.settings =
+            if builtins.hasAttr cfg.git-hooks.shell config.devenv.shells then
+              config.devenv.shells.${cfg.git-hooks.shell}.git-hooks
+            else
+              { };
+        })
 
-        treefmt =
-          if cfg.treefmt.enable && builtins.hasAttr cfg.treefmt.shell config.devenv.shells then
-            config.devenv.shells.${cfg.treefmt.shell}.treefmt.config
-          else
-            { };
-      };
+        (mkIf cfg.treefmt.enable {
+          treefmt =
+            if builtins.hasAttr cfg.treefmt.shell config.devenv.shells then
+              config.devenv.shells.${cfg.treefmt.shell}.treefmt.config
+            else
+              { };
+        })
+      ];
   };
 }
