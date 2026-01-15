@@ -2,23 +2,43 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
+    - continue-on-error: true
+      id: createGithubAppToken
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.OPERATOR_APP_ID }}
+        private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
     - uses: actions/checkout@v6
       with:
         fetch-depth: 0
+        token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
+          }}
     - uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
+          }}
     - run: nix flake check --accept-flake-config --no-pure-eval
-    - run: nix develop --no-pure-eval --command devenv test
   release-tag:
     if: startsWith(github.ref, 'refs/tags/v')
     needs:
     - check
+    - test
     runs-on: ubuntu-slim
     steps:
+    - continue-on-error: true
+      id: createGithubAppToken
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.OPERATOR_APP_ID }}
+        private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
     - uses: actions/checkout@v6
       with:
         fetch-depth: 0
+        token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
+          }}
     - env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
+          }}
         REF_NAME: ${{ github.ref_name }}
         REPO: ${{ github.repository }}
       run: gh release create "$REF_NAME" --repo "$REPO" --generate-notes
@@ -26,12 +46,40 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs:
     - check
+    - test
     runs-on: ubuntu-slim
     steps:
+    - continue-on-error: true
+      id: createGithubAppToken
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.OPERATOR_APP_ID }}
+        private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
     - uses: actions/checkout@v6
       with:
         fetch-depth: 0
+        token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
+          }}
     - run: git push origin HEAD:refs/heads/release-unstable --force
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - continue-on-error: true
+      id: createGithubAppToken
+      uses: actions/create-github-app-token@v2
+      with:
+        app-id: ${{ vars.OPERATOR_APP_ID }}
+        private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
+        token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
+          }}
+    - uses: cachix/install-nix-action@v31
+      with:
+        github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
+          }}
+    - run: nix develop --accept-flake-config --no-pure-eval --command devenv test
 name: Release
 'on':
   push:

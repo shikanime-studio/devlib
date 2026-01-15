@@ -17,12 +17,15 @@ with lib;
         mergeCondition =
           "github.event.pull_request.user.login == 'dependabot[bot]' || "
           + "github.event.pull_request.user.login == 'yorha-operator-6o[bot]'";
+
+        githubToken = mkWorkflowRef "steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN";
       in
       {
         automata = {
           uses = "shikanime-studio/automata-action@v1";
           "with" = {
             ghstack-username = "operator6o";
+            github-token = githubToken;
             gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
             gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
             sign-commits = true;
@@ -55,6 +58,7 @@ with lib;
         };
 
         create-github-app-token = {
+          continue-on-error = true;
           id = "createGithubAppToken";
           uses = "actions/create-github-app-token@v2";
           "with" = {
@@ -66,6 +70,7 @@ with lib;
         create-release = {
           env = {
             GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
+            GITHUB_TOKEN = githubToken;
             REF_NAME = mkWorkflowRef "github.ref_name";
             REPO = mkWorkflowRef "github.repository";
           };
@@ -74,12 +79,15 @@ with lib;
 
         checkout = {
           uses = "actions/checkout@v6";
-          "with".fetch-depth = 0;
+          "with" = {
+            fetch-depth = 0;
+            token = githubToken;
+          };
         };
 
         comment-land-ghstack = {
           env = {
-            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
+            GITHUB_TOKEN = githubToken;
             PR_HTML_URL = mkWorkflowRef "github.event.pull_request.html_url";
           };
           "if" = "(${mergeCondition}) && (${ghstackCondition})";
@@ -88,7 +96,7 @@ with lib;
 
         comment-land-pr = {
           env = {
-            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
+            GITHUB_TOKEN = githubToken;
             PR_HTML_URL = mkWorkflowRef "github.event.pull_request.html_url";
           };
           "if" = "(${mergeCondition}) && !(${ghstackCondition})";
@@ -96,6 +104,7 @@ with lib;
         };
 
         devenv-test.run = "nix develop --no-pure-eval --command devenv test";
+        devenv-test.run = "nix develop --accept-flake-config --no-pure-eval --command devenv test";
 
         docker-login = {
           env = {
@@ -113,6 +122,7 @@ with lib;
         sapling = {
           uses = "shikanime-studio/sapling-action@v6";
           "with" = {
+            github-token = githubToken;
             gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
             gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
             sign-commits = true;
@@ -122,11 +132,17 @@ with lib;
 
         setup-nix.uses = "cachix/install-nix-action@v31";
 
+        setup-nix = {
+          uses = "cachix/install-nix-action@v31";
+          "with".github_access_token = githubToken;
+        };
+
         stale = {
           uses = "actions/stale@v10";
           "with" = {
             days-before-close = 14;
             days-before-stale = 30;
+            repo-token = githubToken;
             stale-issue-label = "stale";
             stale-pr-label = "stale";
           };
@@ -135,6 +151,7 @@ with lib;
         triage-bot = {
           env = {
             GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
+            GITHUB_TOKEN = githubToken;
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = mergeCondition;
@@ -144,6 +161,7 @@ with lib;
         triage-ghstack = {
           env = {
             GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
+            GITHUB_TOKEN = githubToken;
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = ghstackCondition;
@@ -168,6 +186,25 @@ with lib;
               nix-flake-check
               devenv-test
             ];
+          jobs = {
+            check = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                nix-flake-check
+              ];
+            };
+            test = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                devenv-test
+              ];
+            };
           };
         };
       };
@@ -191,7 +228,19 @@ with lib;
               steps = with config.github.actions; [
                 checkout
                 setup-nix
+                create-github-app-token
+                checkout
+                setup-nix
                 nix-flake-check
+              ];
+            };
+
+            test = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
                 devenv-test
               ];
             };
@@ -202,6 +251,8 @@ with lib;
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 checkout
+                create-github-app-token
+                checkout
                 git-push-release-unstable
               ];
             };
@@ -211,6 +262,9 @@ with lib;
               "if" = "startsWith(github.ref, 'refs/tags/v')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
+                checkout
+                create-release
+                create-github-app-token
                 checkout
                 create-release
               ];
@@ -230,6 +284,8 @@ with lib;
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
               checkout
+              create-github-app-token
+              checkout
               cleanup-pr
               cleanup-ghstack
             ];
@@ -245,6 +301,10 @@ with lib;
           jobs.land = {
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
+              checkout
+              setup-nix
+              sapling
+              create-github-app-token
               checkout
               setup-nix
               sapling
@@ -272,6 +332,10 @@ with lib;
               setup-nix
               triage-bot
               triage-ghstack
+              create-github-app-token
+              checkout
+              triage-bot
+              triage-ghstack
             ];
           };
         };
@@ -292,6 +356,10 @@ with lib;
                 checkout
                 setup-nix
                 automata
+                create-github-app-token
+                checkout
+                setup-nix
+                automata
               ];
             };
 
@@ -299,6 +367,8 @@ with lib;
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 checkout
+                stale
+                create-github-app-token
                 stale
               ];
             };
