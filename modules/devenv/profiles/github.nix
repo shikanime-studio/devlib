@@ -102,6 +102,11 @@ with lib;
           run = ''gh pr comment "$PR_HTML_URL" --body .land | ghstack'';
         };
 
+        comment-land-ghstack-with-github-app-token = mkMerge [
+          comment-land-ghstack
+          { env.GITHUB_TOKEN = githubAppToken; }
+        ];
+
         comment-land-pr = {
           env = {
             GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
@@ -110,6 +115,11 @@ with lib;
           "if" = "(${mergeCondition}) && !(${ghstackCondition})";
           run = ''gh pr comment "$PR_HTML_URL" --body .land | pr'';
         };
+
+        comment-land-pr-with-github-app-token = mkMerge [
+          comment-land-pr
+          { env.GITHUB_TOKEN = githubAppToken; }
+        ];
 
         devenv-test.run = "nix develop --accept-flake-config --no-pure-eval --command devenv test";
 
@@ -247,8 +257,9 @@ with lib;
             test = {
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
-                checkout
-                setup-nix
+                create-github-app-token
+                checkout-with-github-app-token
+                setup-nix-with-github-app-token
                 devenv-test
               ];
             };
