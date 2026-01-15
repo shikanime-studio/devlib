@@ -95,7 +95,7 @@ with lib;
           run = ''gh pr comment "$PR_HTML_URL" --body .land | pr'';
         };
 
-        devenv-test.run = "nix develop --no-pure-eval --command devenv test";
+        devenv-test.run = "nix develop --accept-flake-config --no-pure-eval --command devenv test";
 
         docker-login = {
           env = {
@@ -160,14 +160,23 @@ with lib;
             "main"
             "gh/*/*/base"
           ];
-          jobs.check = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              checkout
-              setup-nix
-              nix-flake-check
-              devenv-test
-            ];
+          jobs = {
+            check = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                checkout
+                setup-nix
+                nix-flake-check
+              ];
+            };
+            test = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                checkout
+                setup-nix
+                devenv-test
+              ];
+            };
           };
         };
       };
@@ -192,12 +201,23 @@ with lib;
                 checkout
                 setup-nix
                 nix-flake-check
+              ];
+            };
+
+            test = {
+              runs-on = "ubuntu-latest";
+              steps = with config.github.actions; [
+                checkout
+                setup-nix
                 devenv-test
               ];
             };
 
             release-unstable = {
-              needs = [ "check" ];
+              needs = [
+                "check"
+                "test"
+              ];
               "if" = "github.event_name == 'push' && github.ref == 'refs/heads/main'";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
@@ -207,7 +227,10 @@ with lib;
             };
 
             release-tag = {
-              needs = [ "check" ];
+              needs = [
+                "check"
+                "test"
+              ];
               "if" = "startsWith(github.ref, 'refs/tags/v')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
