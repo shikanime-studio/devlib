@@ -143,8 +143,8 @@ with lib;
         };
 
         setup-nix = {
-          uses = "shikanime-studio/setup-nix-action@v1";
-          "with".github-token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
+          uses = "cachix/install-nix-action@v31";
+          "with".github_access_token = mkWorkflowRef "steps.createGithubAppToken.outputs.token";
         };
 
         stale = {
