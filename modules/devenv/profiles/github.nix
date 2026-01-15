@@ -69,7 +69,6 @@ with lib;
 
         create-release = {
           env = {
-            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             GITHUB_TOKEN = githubToken;
             REF_NAME = mkWorkflowRef "github.ref_name";
             REPO = mkWorkflowRef "github.repository";
@@ -103,7 +102,6 @@ with lib;
           run = ''gh pr comment "$PR_HTML_URL" --body .land | pr'';
         };
 
-        devenv-test.run = "nix develop --no-pure-eval --command devenv test";
         devenv-test.run = "nix develop --accept-flake-config --no-pure-eval --command devenv test";
 
         docker-login = {
@@ -130,8 +128,6 @@ with lib;
           };
         };
 
-        setup-nix.uses = "cachix/install-nix-action@v31";
-
         setup-nix = {
           uses = "cachix/install-nix-action@v31";
           "with".github_access_token = githubToken;
@@ -150,7 +146,6 @@ with lib;
 
         triage-bot = {
           env = {
-            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             GITHUB_TOKEN = githubToken;
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
@@ -160,7 +155,6 @@ with lib;
 
         triage-ghstack = {
           env = {
-            GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             GITHUB_TOKEN = githubToken;
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
@@ -178,14 +172,6 @@ with lib;
             "main"
             "gh/*/*/base"
           ];
-          jobs.check = {
-            runs-on = "ubuntu-latest";
-            steps = with config.github.actions; [
-              checkout
-              setup-nix
-              nix-flake-check
-              devenv-test
-            ];
           jobs = {
             check = {
               runs-on = "ubuntu-latest";
@@ -226,8 +212,6 @@ with lib;
             check = {
               runs-on = "ubuntu-latest";
               steps = with config.github.actions; [
-                checkout
-                setup-nix
                 create-github-app-token
                 checkout
                 setup-nix
@@ -246,11 +230,13 @@ with lib;
             };
 
             release-unstable = {
-              needs = [ "check" ];
+              needs = [
+                "check"
+                "test"
+              ];
               "if" = "github.event_name == 'push' && github.ref == 'refs/heads/main'";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
-                checkout
                 create-github-app-token
                 checkout
                 git-push-release-unstable
@@ -258,12 +244,13 @@ with lib;
             };
 
             release-tag = {
-              needs = [ "check" ];
+              needs = [
+                "check"
+                "test"
+              ];
               "if" = "startsWith(github.ref, 'refs/tags/v')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
-                checkout
-                create-release
                 create-github-app-token
                 checkout
                 create-release
@@ -283,7 +270,6 @@ with lib;
           jobs.cleanup = {
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
-              checkout
               create-github-app-token
               checkout
               cleanup-pr
@@ -301,9 +287,6 @@ with lib;
           jobs.land = {
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
-              checkout
-              setup-nix
-              sapling
               create-github-app-token
               checkout
               setup-nix
@@ -328,10 +311,6 @@ with lib;
           jobs.triage = {
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
-              checkout
-              setup-nix
-              triage-bot
-              triage-ghstack
               create-github-app-token
               checkout
               triage-bot
@@ -353,9 +332,6 @@ with lib;
             dependencies = {
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
-                checkout
-                setup-nix
-                automata
                 create-github-app-token
                 checkout
                 setup-nix
@@ -366,8 +342,6 @@ with lib;
             stale = {
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
-                checkout
-                stale
                 create-github-app-token
                 stale
               ];
