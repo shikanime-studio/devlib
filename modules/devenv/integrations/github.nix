@@ -93,7 +93,7 @@ in
                     }
                     {
                       name = "Check Nix Flake";
-                      run = "nix flake check --accept-flake-config --all-systems --no-pure-eval";
+                      run = "nix flake check --accept-flake-config --all-systems";
                     }
                   ];
                 };

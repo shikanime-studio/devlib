@@ -14,8 +14,8 @@ jobs:
     - uses: cachix/install-nix-action@v31
       with:
         github_access_token: ${{ steps.createGithubAppToken.outputs.token }}
-    - run: nix flake check --accept-flake-config --no-pure-eval
-    - run: nix develop --no-pure-eval --command devenv test
+    - run: nix flake check --accept-flake-config
+    - run: nix develop --command devenv test
 name: Integration
 'on':
   pull_request:

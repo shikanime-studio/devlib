@@ -111,7 +111,7 @@ with lib;
           run = ''gh pr comment "$PR_HTML_URL" --body .land | pr'';
         };
 
-        devenv-test.run = "nix develop --no-pure-eval --command devenv test";
+        devenv-test.run = "nix develop --command devenv test";
 
         docker-login = {
           env = {
@@ -124,7 +124,7 @@ with lib;
 
         git-push-release-unstable.run = "git push origin HEAD:refs/heads/release-unstable --force";
 
-        nix-flake-check.run = "nix flake check --accept-flake-config --no-pure-eval";
+        nix-flake-check.run = "nix flake check --accept-flake-config";
 
         sapling = {
           uses = "shikanime-studio/sapling-action@v6";

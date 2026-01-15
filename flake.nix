@@ -9,6 +9,11 @@
       };
     };
 
+    devenv-root = {
+      url = "file+file:///dev/null";
+      flake = false;
+    };
+
     flake-parts = {
       url = "github:hercules-ci/flake-parts";
       inputs.nixpkgs-lib.follows = "nixpkgs";
@@ -45,6 +50,7 @@
   outputs =
     inputs@{
       devenv,
+      devenv-root,
       flake-parts,
       git-hooks,
       treefmt-nix,
@@ -52,7 +58,11 @@
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } (
-      { flake-parts-lib, withSystem, ... }:
+      {
+        flake-parts-lib,
+        withSystem,
+        ...
+      }:
       with flake-parts-lib;
       let
         flakeModule = importApply ./modules/flake/default.nix { inherit withSystem; };
@@ -124,15 +134,18 @@
         perSystem =
           { pkgs, ... }:
           {
-            devenv.shells.default.imports = [
-              self.devenvModules.docs
-              self.devenvModules.formats
-              self.devenvModules.git
-              self.devenvModules.github
-              self.devenvModules.nix
-              self.devenvModules.shell
-              self.devenvModules.shikanime-studio
-            ];
+            devenv.shells.default = {
+              imports = [
+                self.devenvModules.docs
+                self.devenvModules.formats
+                self.devenvModules.git
+                self.devenvModules.github
+                self.devenvModules.nix
+                self.devenvModules.shell
+                self.devenvModules.shikanime-studio
+              ];
+              devenv.root = builtins.readFile devenv-root.outPath;
+            };
             packages = {
               fleet = pkgs.callPackage ./pkgs/fleet { };
               bootloose = pkgs.callPackage ./pkgs/bootloose { };
