@@ -25,7 +25,6 @@ with lib;
           uses = "shikanime-studio/automata-action@v1";
           "with" = {
             ghstack-username = "operator6o";
-            github-token = githubAppToken;
             gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
             gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
             sign-commits = true;
@@ -33,9 +32,13 @@ with lib;
           };
         };
 
+        automata-with-github-app-token = mkMerge [
+          automata
+          { "with".github-token = githubAppToken; }
+        ];
+
         cleanup-pr = {
           env = {
-            GITHUB_TOKEN = githubAppToken;
             BASE_REF = mkWorkflowRef "github.base_ref";
             HEAD_REF = mkWorkflowRef "github.head_ref";
             REPO = mkWorkflowRef "github.repository";
@@ -46,7 +49,6 @@ with lib;
 
         cleanup-ghstack = {
           env = {
-            GITHUB_TOKEN = githubAppToken;
             BASE_REF = mkWorkflowRef "github.base_ref";
             HEAD_REF = mkWorkflowRef "github.head_ref";
             REPO = mkWorkflowRef "github.repository";
@@ -70,12 +72,16 @@ with lib;
 
         create-release = {
           env = {
-            GITHUB_TOKEN = githubAppToken;
             REF_NAME = mkWorkflowRef "github.ref_name";
             REPO = mkWorkflowRef "github.repository";
           };
           run = ''gh release create "$REF_NAME" --repo "$REPO" --generate-notes'';
         };
+
+        create-release-with-github-app-token = mkMerge [
+          create-release
+          { env.GITHUB_TOKEN = githubAppToken; }
+        ];
 
         checkout = {
           uses = "actions/checkout@v6";
@@ -123,13 +129,17 @@ with lib;
         sapling = {
           uses = "shikanime-studio/sapling-action@v6";
           "with" = {
-            github-token = githubAppToken;
             gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
             gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
             sign-commits = true;
             username = "Operator 6O <operator6o@shikanime.studio>";
           };
         };
+
+        sapling-with-github-app-token = mkMerge [
+          sapling
+          { "with".github-token = githubAppToken; }
+        ];
 
         setup-nix.uses = "cachix/install-nix-action@v31";
 
@@ -155,21 +165,29 @@ with lib;
 
         triage-bot = {
           env = {
-            GITHUB_TOKEN = githubAppToken;
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = mergeCondition;
           run = ''gh pr edit "$PR_NUMBER" --add-label dependencies'';
         };
 
+        triage-bot-with-github-app-token = mkMerge [
+          triage-bot
+          { env.GITHUB_TOKEN = githubAppToken; }
+        ];
+
         triage-ghstack = {
           env = {
-            GITHUB_TOKEN = githubAppToken;
             PR_NUMBER = mkWorkflowRef "github.event.pull_request.number";
           };
           "if" = ghstackCondition;
           run = ''gh pr edit "$PR_NUMBER" --add-label ghstack'';
         };
+
+        triage-ghstack-with-github-app-token = mkMerge [
+          triage-ghstack
+          { env.GITHUB_TOKEN = githubAppToken; }
+        ];
       };
 
     workflows = {
@@ -236,7 +254,7 @@ with lib;
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout-with-github-app-token
-                create-release
+                create-release-with-github-app-token
               ];
             };
           };
@@ -273,7 +291,7 @@ with lib;
               create-github-app-token
               checkout-with-github-app-token
               setup-nix-with-github-app-token
-              sapling
+              sapling-with-github-app-token
             ];
           };
         };
@@ -296,8 +314,8 @@ with lib;
             steps = with config.github.actions; [
               create-github-app-token
               checkout-with-github-app-token
-              triage-bot
-              triage-ghstack
+              triage-bot-with-github-app-token
+              triage-ghstack-with-github-app-token
             ];
           };
         };
@@ -318,7 +336,7 @@ with lib;
                 create-github-app-token
                 checkout-with-github-app-token
                 setup-nix-with-github-app-token
-                automata
+                automata-with-github-app-token
               ];
             };
 
