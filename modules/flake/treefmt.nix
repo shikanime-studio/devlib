@@ -10,7 +10,20 @@ _:
           treefmt.config.programs.prettier = withSystem system (
             { config, pkgs, ... }:
             {
-              includes = [ "*.astro" ];
+              includes = [
+                "*.astro"
+                "*.cjs"
+                "*.css"
+                "*.html"
+                "*.js"
+                "*.jsx"
+                "*.mdx"
+                "*.mjs"
+                "*.scss"
+                "*.ts"
+                "*.tsx"
+                "*.vue"
+              ];
               package = pkgs.prettier.override {
                 plugins = [
                   config.packages.prettier-plugin-astro
