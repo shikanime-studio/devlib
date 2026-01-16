@@ -80,7 +80,7 @@
               enable = true;
               holder = "Shikanime Studio";
               package = config.devenv.shells.default.license.lib.pkgs.asl20;
-              year = "2025";
+              year = "2026";
             };
           };
         };
