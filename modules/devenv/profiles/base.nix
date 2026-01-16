@@ -22,7 +22,8 @@
         yamlfmt.enable = true;
       };
       settings.global.excludes = [
-        ".devenv/state/git-hooks/config.json"
+        ".devenv/*"
+        ".direnv/*"
         "*.assetsignore"
         "*.dockerignore"
         "*.gcloudignore"
