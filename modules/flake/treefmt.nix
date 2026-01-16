@@ -5,23 +5,28 @@ _:
   perSystem =
     { system, ... }:
     {
-      treefmt.config.programs.prettier = withSystem system (
-        { config, pkgs, ... }:
+      devenv.modules = [
         {
-          includes = [ "*.astro" ];
-          package = pkgs.prettier.override {
-            plugins = [
-              config.packages.prettier-plugin-astro
-              config.packages.prettier-plugin-tailwindcss
-            ];
-          };
-          settings.overrides = [
+          treefmt.config.programs.prettier = withSystem system (
+            { config, pkgs, ... }:
             {
-              files = "*.astro";
-              options.parser = "astro";
+              includes = [ "*.astro" ];
+              package = pkgs.prettier.override {
+                plugins = [
+                  config.packages.prettier-plugin-astro
+                  config.packages.prettier-plugin-tailwindcss
+                ];
+              };
+              settings.overrides = [
+                {
+                  files = "*.astro";
+                  options.parser = "astro";
+                }
+              ];
             }
-          ];
+          );
+
         }
-      );
+      ];
     };
 }
