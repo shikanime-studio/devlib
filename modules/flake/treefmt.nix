@@ -19,6 +19,7 @@ _:
                 "*.jsx"
                 "*.mdx"
                 "*.mjs"
+                "*.mts"
                 "*.scss"
                 "*.ts"
                 "*.tsx"
