@@ -66,6 +66,7 @@
           git-hooks.flakeModule
           treefmt-nix.flakeModule
         ];
+
         flake = {
           devenvModule = ./modules/devenv/profiles/default.nix;
           devenvModules = {
@@ -125,6 +126,7 @@
             };
           };
         };
+
         perSystem =
           { pkgs, ... }:
           {
@@ -145,6 +147,7 @@
               prettier-plugin-tailwindcss = pkgs.callPackage ./pkgs/prettier-plugin-tailwindcss { };
             };
           };
+
         systems = [
           "x86_64-linux"
           "x86_64-darwin"
