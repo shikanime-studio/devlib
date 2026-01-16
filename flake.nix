@@ -65,6 +65,7 @@
           flake-parts.flakeModules.easyOverlay
           git-hooks.flakeModule
           treefmt-nix.flakeModule
+          treefmtFlakeModule
         ];
 
         flake = {
