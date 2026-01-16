@@ -33,6 +33,12 @@ with lib;
           };
         };
 
+        cachix-push = {
+          continue-on-error = true;
+          uses = "cachix/cachix-action@v15";
+          "with".authToken = mkWorkflowRef "secrets.CACHIX_AUTH_TOKEN";
+        };
+
         cleanup-pr = {
           env = {
             BASE_REF = mkWorkflowRef "github.base_ref";
@@ -215,6 +221,7 @@ with lib;
                 create-github-app-token
                 checkout
                 setup-nix
+                cachix-push
                 nix-flake-check
               ];
             };
@@ -225,6 +232,7 @@ with lib;
                 create-github-app-token
                 checkout
                 setup-nix
+                cachix-push
                 devenv-test
               ];
             };
