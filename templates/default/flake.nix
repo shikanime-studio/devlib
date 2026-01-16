@@ -66,23 +66,15 @@
         treefmt-nix.flakeModule
       ];
       perSystem =
-        { config, ... }:
+        _:
         {
-          devenv.shells.default = {
-            imports = [
-              devlib.devenvModules.git
-              devlib.devenvModules.github
-              devlib.devenvModules.nix
-              devlib.devenvModules.shell
-              devlib.devenvModules.shikanime-studio
-            ];
-            license = {
-              enable = true;
-              holder = "Shikanime Studio";
-              package = config.devenv.shells.default.license.lib.pkgs.asl20;
-              year = "2026";
-            };
-          };
+          devenv.shells.default.imports = [
+            devlib.devenvModules.git
+            devlib.devenvModules.github
+            devlib.devenvModules.nix
+            devlib.devenvModules.shell
+            devlib.devenvModules.shikanime-studio
+          ];
         };
       systems = [
         "x86_64-linux"
