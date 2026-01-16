@@ -112,10 +112,7 @@ in
     packages = [ cfg.package ];
 
     tasks."devlib:github:workflows:install" = {
-      before = [
-        "devenv:enterShell"
-        "devenv:treefmt:run"
-      ];
+      before = [ "devenv:enterShell" ] ++ optional config.treefmt.enable "devenv:treefmt:run";
       description = "Install GitHub Actions workflow files";
       exec =
         let

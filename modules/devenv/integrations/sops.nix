@@ -51,20 +51,15 @@ in
   config = mkIf cfg.enable {
     packages = [ wrapped ];
 
-    tasks = {
-      "devlib:sops:updatekeys" = {
-        before = [
-          "devenv:enterShell"
-          "devenv:treefmt:run"
-        ];
-        description = "Run sops updatekeys";
-        exec = ''
-          ${getExe pkgs.findutils} . -type f -name "*.enc.*" -exec ${getExe wrapped} updatekeys --yes {} +
-        '';
-        execIfModified = [
-          "**/*.enc.*"
-        ];
-      };
+    tasks."devlib:sops:updatekeys" = {
+      before = [ "devenv:enterShell" ] ++ optional config.treefmt.enable "devenv:treefmt:run";
+      description = "Run sops updatekeys";
+      exec = ''
+        ${getExe pkgs.findutils} . -type f -name "*.enc.*" -exec ${getExe wrapped} updatekeys --yes {} +
+      '';
+      execIfModified = [
+        "**/*.enc.*"
+      ];
     };
   };
 }

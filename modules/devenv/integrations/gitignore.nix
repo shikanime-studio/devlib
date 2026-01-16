@@ -87,25 +87,23 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    tasks = {
-      "devlib:gitignore:install" = {
-        before = [ "devenv:enterShell" ];
-        description = "Generate .gitignore file";
-        exec =
-          let
-            templateArgs = optionalString (
-              templates != [ ]
-            ) "<(${getExe cfg.package} create ${concatStringsSep " " templates})";
+    tasks."devlib:gitignore:install" = {
+      before = [ "devenv:enterShell" ];
+      description = "Generate .gitignore file";
+      exec =
+        let
+          templateArgs = optionalString (
+            templates != [ ]
+          ) "<(${getExe cfg.package} create ${concatStringsSep " " templates})";
 
-            contentArg = optionalString (cfg.content != [ ]) "<(${pkgs.coreutils}/bin/echo \"${content}\")";
-          in
-          optionalString (templates != [ ] || cfg.content != [ ]) ''
-            ${pkgs.coreutils}/bin/cat \
-              ${templateArgs} \
-              ${contentArg} \
-              > "${config.env.DEVENV_ROOT}/.gitignore"
-          '';
-      };
+          contentArg = optionalString (cfg.content != [ ]) "<(${pkgs.coreutils}/bin/echo \"${content}\")";
+        in
+        optionalString (templates != [ ] || cfg.content != [ ]) ''
+          ${pkgs.coreutils}/bin/cat \
+            ${templateArgs} \
+            ${contentArg} \
+            > "${config.env.DEVENV_ROOT}/.gitignore"
+        '';
     };
   };
 }
