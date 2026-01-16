@@ -55,15 +55,16 @@
       { flake-parts-lib, withSystem, ... }:
       with flake-parts-lib;
       let
-        flakeModule = importApply ./modules/flake/default.nix { inherit withSystem; };
+        defaultFlakeModule = importApply ./modules/flake/default.nix { inherit withSystem; };
+        treefmtFlakeModule = importApply ./modules/flake/treefmt.nix { inherit withSystem; };
       in
       {
         imports = [
+          defaultFlakeModule
           devenv.flakeModule
           flake-parts.flakeModules.easyOverlay
           git-hooks.flakeModule
           treefmt-nix.flakeModule
-          flakeModule
         ];
         flake = {
           devenvModule = ./modules/devenv/profiles/default.nix;
@@ -107,8 +108,11 @@
             yaml = ./modules/home/yaml.nix;
           };
 
-          inherit flakeModule;
-          flakeModules.default = flakeModule;
+          flakeModule = defaultFlakeModule;
+          flakeModules = {
+            default = defaultFlakeModule;
+            treefmt = treefmtFlakeModule;
+          };
 
           templates = {
             default = {
