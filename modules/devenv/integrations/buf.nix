@@ -88,8 +88,8 @@ in
     tasks."devlib:buf:generate" = {
       before = [
         "devenv:enterShell"
-        "devenv:treefmt:run"
-      ];
+      ]
+      ++ optional config.treefmt.enable "devenv:treefmt:run";
       description = "Run buf generate with buf.gen.yaml";
       exec = ''
         ${getExe package} generate

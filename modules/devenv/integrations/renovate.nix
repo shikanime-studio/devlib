@@ -46,8 +46,8 @@ in
       "devlib:renovate:install" = {
         before = [
           "devenv:enterShell"
-          "devenv:treefmt:run"
-        ];
+        ]
+        ++ optional config.treefmt.enable "devenv:treefmt:run";
         description = "Install renovate configuration";
         exec =
           if config.github.enable then

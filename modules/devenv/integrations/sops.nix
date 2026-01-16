@@ -55,8 +55,8 @@ in
       "devlib:sops:updatekeys" = {
         before = [
           "devenv:enterShell"
-          "devenv:treefmt:run"
-        ];
+        ]
+        ++ optional config.treefmt.enable "devenv:treefmt:run";
         description = "Run sops updatekeys";
         exec = ''
           ${getExe pkgs.findutils} . -type f -name "*.enc.*" -exec ${getExe wrapped} updatekeys --yes {} +
