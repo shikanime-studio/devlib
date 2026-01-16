@@ -127,15 +127,24 @@
         };
 
         perSystem =
-          { pkgs, ... }:
+          { config, pkgs, ... }:
           {
-            devenv.shells.default.imports = [
-              self.devenvModules.git
-              self.devenvModules.github
-              self.devenvModules.nix
-              self.devenvModules.shell
-              self.devenvModules.shikanime-studio
-            ];
+            devenv.shells.default = {
+              imports = [
+                self.devenvModules.git
+                self.devenvModules.github
+                self.devenvModules.nix
+                self.devenvModules.shell
+                self.devenvModules.shikanime-studio
+              ];
+              license = {
+                enable = true;
+                holder = "Shikanime Studio";
+                package = config.devenv.shells.default.license.lib.pkgs.asl20;
+                year = "2025";
+              };
+            };
+
             packages = {
               fleet = pkgs.callPackage ./pkgs/fleet { };
               bootloose = pkgs.callPackage ./pkgs/bootloose { };
