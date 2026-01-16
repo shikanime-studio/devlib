@@ -65,11 +65,17 @@
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem = _: {
-        devenv.shells.default.imports = [
-          devlib.devenvModule
-        ];
-      };
+      perSystem =
+        _:
+        {
+          devenv.shells.default.imports = [
+            devlib.devenvModules.git
+            devlib.devenvModules.github
+            devlib.devenvModules.nix
+            devlib.devenvModules.shell
+            devlib.devenvModules.shikanime-studio
+          ];
+        };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"
