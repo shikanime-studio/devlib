@@ -1,4 +1,4 @@
-{ withSystem, ... }:
+_:
 {
   config,
   inputs,
@@ -50,36 +50,10 @@ in
 
   config = {
     perSystem =
-      { config, system, ... }:
+      { config, ... }:
       mkMerge [
         (mkIf cfg.devenv.enable {
-          devenv.modules =
-            let
-              treefmt = {
-                treefmt.config.programs.prettier = withSystem system (
-                  { config, pkgs, ... }:
-                  {
-                    includes = [ "*.astro" ];
-                    package = pkgs.prettier.override {
-                      plugins = [
-                        config.packages.prettier-plugin-astro
-                        config.packages.prettier-plugin-tailwindcss
-                      ];
-                    };
-                    settings.overrides = [
-                      {
-                        files = "*.astro";
-                        options.parser = "astro";
-                      }
-                    ];
-                  }
-                );
-              };
-            in
-            [
-              ../devenv/profiles/default.nix
-              treefmt
-            ];
+          devenv.modules = [ ../devenv/profiles/default.nix ];
         })
 
         (mkIf cfg.git-hooks.enable {

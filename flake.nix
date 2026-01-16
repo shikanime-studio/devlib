@@ -55,16 +55,19 @@
       { flake-parts-lib, withSystem, ... }:
       with flake-parts-lib;
       let
-        flakeModule = importApply ./modules/flake/default.nix { inherit withSystem; };
+        defaultFlakeModule = importApply ./modules/flake/default.nix { inherit withSystem; };
+        treefmtFlakeModule = importApply ./modules/flake/treefmt.nix { inherit withSystem; };
       in
       {
         imports = [
+          defaultFlakeModule
           devenv.flakeModule
           flake-parts.flakeModules.easyOverlay
           git-hooks.flakeModule
           treefmt-nix.flakeModule
-          flakeModule
+          treefmtFlakeModule
         ];
+
         flake = {
           devenvModule = ./modules/devenv/profiles/default.nix;
           devenvModules = {
@@ -107,8 +110,11 @@
             yaml = ./modules/home/yaml.nix;
           };
 
-          inherit flakeModule;
-          flakeModules.default = flakeModule;
+          flakeModule = defaultFlakeModule;
+          flakeModules = {
+            default = defaultFlakeModule;
+            treefmt = treefmtFlakeModule;
+          };
 
           templates = {
             default = {
@@ -121,6 +127,7 @@
             };
           };
         };
+
         perSystem =
           { pkgs, ... }:
           {
@@ -141,6 +148,7 @@
               prettier-plugin-tailwindcss = pkgs.callPackage ./pkgs/prettier-plugin-tailwindcss { };
             };
           };
+
         systems = [
           "x86_64-linux"
           "x86_64-darwin"
