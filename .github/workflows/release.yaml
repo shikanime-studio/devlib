@@ -44,9 +44,9 @@ jobs:
 
           BASE="${VERSION%.*}"
 
-          BRANCH="release-${BASE}"
+          BRANCH="release-$BASE"
 
-          git push origin "HEAD:refs/heads/${BRANCH}"
+          git push origin "HEAD:refs/heads/$BRANCH"
 
 '
   release-tag:
