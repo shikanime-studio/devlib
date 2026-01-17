@@ -128,8 +128,8 @@ with lib;
           run = ''
             VERSION="''${REF_NAME#v}"
             BASE="''${VERSION%.*}"
-            BRANCH="release-''${BASE}"
-            git push origin "HEAD:refs/heads/''${BRANCH}"
+            BRANCH="release-''$BASE"
+            git push origin "HEAD:refs/heads/''$BRANCH"
           '';
         };
 
