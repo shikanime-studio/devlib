@@ -121,6 +121,18 @@ with lib;
 
         git-push-release-unstable.run = "git push origin HEAD:refs/heads/release-unstable --force";
 
+        git-push-release-stable = {
+          env = {
+            REF_NAME = mkWorkflowRef "github.ref_name";
+          };
+          run = ''
+            VERSION="''${REF_NAME#v}"
+            BASE="''${VERSION%.*}"
+            BRANCH="release-''${BASE}"
+            git push origin "HEAD:refs/heads/''${BRANCH}"
+          '';
+        };
+
         nix-flake-check.run = "nix flake check --accept-flake-config --no-pure-eval";
 
         sapling = {
@@ -262,6 +274,21 @@ with lib;
                 create-github-app-token
                 checkout
                 create-release
+              ];
+            };
+
+            release-stable = {
+              needs = [
+                "check"
+                "test"
+              ];
+              "if" =
+                "github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')";
+              runs-on = "ubuntu-slim";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                git-push-release-stable
               ];
             };
           };
