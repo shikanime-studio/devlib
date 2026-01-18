@@ -138,8 +138,44 @@ with lib;
 
         backport = {
           uses = "shikanime-studio/actions/backport@v7";
+        backport = {
+          uses = "shikanime-studio/actions/backport@v7";
           "with" = {
             github-token = githubToken;
+            gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
+            gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
+            sign-commits = true;
+          };
+        };
+
+        close = {
+          uses = "shikanime-studio/actions/close@v7";
+          "with" = {
+            github-token = githubToken;
+            username = "operator6o";
+          };
+        };
+
+        land = {
+          uses = "shikanime-studio/actions/land@v7";
+          "with" = {
+            github-token = githubToken;
+            email = "operator6o@shikanime.studio";
+            fullname = "Operator 6O";
+            username = "operator6o";
+            gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
+            gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
+            sign-commits = true;
+          };
+        };
+
+        rebase = {
+          uses = "shikanime-studio/actions/rebase@v7";
+          "with" = {
+            github-token = githubToken;
+            email = "operator6o@shikanime.studio";
+            fullname = "Operator 6O";
+            username = "operator6o";
             gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
             gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
             sign-commits = true;
@@ -238,12 +274,10 @@ with lib;
       commands = {
         enable = true;
         settings = {
-          name = "Commands";
+          name = "Land";
           on.issue_comment.types = [ "created" ];
           jobs = {
             backport = {
-              "if" =
-                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.backport')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -254,8 +288,6 @@ with lib;
             };
 
             close = {
-              "if" =
-                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.close')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -266,8 +298,6 @@ with lib;
             };
 
             land = {
-              "if" =
-                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.land')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -278,8 +308,6 @@ with lib;
             };
 
             rebase = {
-              "if" =
-                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.rebase')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
