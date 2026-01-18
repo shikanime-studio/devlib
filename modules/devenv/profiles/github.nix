@@ -135,14 +135,47 @@ with lib;
 
         nix-flake-check.run = "nix flake check --accept-flake-config --no-pure-eval";
 
-        sapling = {
-          uses = "shikanime-studio/sapling-action@v6";
+        backport = {
+          uses = "shikanime-studio/actions/backport@v7";
           "with" = {
             github-token = githubToken;
             gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
             gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
             sign-commits = true;
-            username = "Operator 6O <operator6o@shikanime.studio>";
+          };
+        };
+
+        close = {
+          uses = "shikanime-studio/actions/close@v7";
+          "with" = {
+            github-token = githubToken;
+            username = "operator6o";
+          };
+        };
+
+        land = {
+          uses = "shikanime-studio/actions/land@v7";
+          "with" = {
+            github-token = githubToken;
+            email = "operator6o@shikanime.studio";
+            fullname = "Operator 6O";
+            username = "operator6o";
+            gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
+            gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
+            sign-commits = true;
+          };
+        };
+
+        rebase = {
+          uses = "shikanime-studio/actions/rebase@v7";
+          "with" = {
+            github-token = githubToken;
+            email = "operator6o@shikanime.studio";
+            fullname = "Operator 6O";
+            username = "operator6o";
+            gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
+            gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
+            sign-commits = true;
           };
         };
 
@@ -182,6 +215,82 @@ with lib;
       };
 
     workflows = {
+      cleanup = {
+        enable = true;
+        settings = {
+          name = "Cleanup";
+          on.pull_request.types = [
+            "closed"
+          ];
+          jobs.cleanup = {
+            runs-on = "ubuntu-slim";
+            steps = with config.github.actions; [
+              create-github-app-token
+              checkout
+              cleanup-pr
+              cleanup-ghstack
+            ];
+          };
+        };
+      };
+
+      commands = {
+        enable = true;
+        settings = {
+          name = "Commands";
+          on.issue_comment.types = [ "created" ];
+          jobs = {
+            backport = {
+              "if" =
+                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.backport')";
+              runs-on = "ubuntu-slim";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                backport
+              ];
+            };
+
+            close = {
+              "if" =
+                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.close')";
+              runs-on = "ubuntu-slim";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                close
+              ];
+            };
+
+            land = {
+              "if" =
+                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.land')";
+              runs-on = "ubuntu-slim";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                land
+              ];
+            };
+
+            rebase = {
+              "if" =
+                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.rebase')";
+              runs-on = "ubuntu-slim";
+              steps = with config.github.actions; [
+                create-github-app-token
+                checkout
+                setup-nix
+                rebase
+              ];
+            };
+          };
+        };
+      };
+
       integration = {
         enable = true;
         settings = {
@@ -291,42 +400,6 @@ with lib;
                 git-push-release-stable
               ];
             };
-          };
-        };
-      };
-
-      cleanup = {
-        enable = true;
-        settings = {
-          name = "Cleanup";
-          on.pull_request.types = [
-            "closed"
-          ];
-          jobs.cleanup = {
-            runs-on = "ubuntu-slim";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              cleanup-pr
-              cleanup-ghstack
-            ];
-          };
-        };
-      };
-
-      land = {
-        enable = true;
-        settings = {
-          name = "Land";
-          on.issue_comment.types = [ "created" ];
-          jobs.land = {
-            runs-on = "ubuntu-slim";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              setup-nix
-              sapling
-            ];
           };
         };
       };
