@@ -21,15 +21,16 @@ with lib;
         githubToken = mkWorkflowRef "steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN";
       in
       {
-        automata = {
-          uses = "shikanime-studio/automata-action@v1";
+        update = {
+          uses = "shikanime-studio/actions/update@v7";
           "with" = {
-            ghstack-username = "operator6o";
+            email = "operator6o@shikanime.studio";
+            fullname = "Operator 6O";
             github-token = githubToken;
             gpg-passphrase = mkWorkflowRef "secrets.GPG_PASSPHRASE";
             gpg-private-key = mkWorkflowRef "secrets.GPG_PRIVATE_KEY";
             sign-commits = true;
-            username = "Operator 6O <operator6o@shikanime.studio>";
+            username = "operator6o";
           };
         };
 
@@ -443,7 +444,7 @@ with lib;
                 create-github-app-token
                 checkout
                 setup-nix
-                automata
+                update
               ];
             };
 
