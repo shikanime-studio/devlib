@@ -237,10 +237,12 @@ with lib;
       commands = {
         enable = true;
         settings = {
-          name = "Land";
+          name = "Commands";
           on.issue_comment.types = [ "created" ];
           jobs = {
             backport = {
+              "if" =
+                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.backport')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -251,6 +253,8 @@ with lib;
             };
 
             close = {
+              "if" =
+                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.close')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -261,6 +265,8 @@ with lib;
             };
 
             land = {
+              "if" =
+                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.land')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -271,6 +277,8 @@ with lib;
             };
 
             rebase = {
+              "if" =
+                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.rebase')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
