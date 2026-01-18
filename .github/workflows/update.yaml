@@ -15,15 +15,14 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - uses: shikanime-studio/actions/update@v7
+      - uses: shikanime-studio/automata-action@v1
         with:
-          email: operator6o@shikanime.studio
-          fullname: Operator 6O
+          ghstack-username: operator6o
           github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           sign-commits: true
-          username: operator6o
+          username: Operator 6O <operator6o@shikanime.studio>
   stale:
     runs-on: ubuntu-slim
     steps:
