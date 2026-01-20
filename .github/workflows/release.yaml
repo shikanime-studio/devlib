@@ -80,7 +80,7 @@ jobs:
         with:
           fetch-depth: 0
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - run: git push origin HEAD:refs/heads/release-unstable --force
+      - run: git push origin HEAD:refs/heads/release-unstable
   test:
     runs-on: ubuntu-latest
     steps:
