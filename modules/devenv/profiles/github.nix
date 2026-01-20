@@ -120,7 +120,7 @@ with lib;
           run = ''nix run nixpkgs#docker -- login "$DOCKER_REGISTRY" --username "$USERNAME" --password "$GITHUB_TOKEN"'';
         };
 
-        git-push-release-unstable.run = "git push origin HEAD:refs/heads/release-unstable";
+        git-push-release-unstable.run = "git push origin HEAD:refs/heads/release-unstable --force";
 
         git-push-release-stable = {
           env = {
