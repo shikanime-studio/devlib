@@ -126,12 +126,7 @@ with lib;
           env = {
             REF_NAME = mkWorkflowRef "github.ref_name";
           };
-          run = ''
-            VERSION="''${REF_NAME#v}"
-            BASE="''${VERSION%.*}"
-            BRANCH="release-''$BASE"
-            git push origin "HEAD:refs/heads/''$BRANCH"
-          '';
+          run = "VERSION=\"\${REF_NAME#v}\"; BASE=\"\${VERSION%.*}\"; BRANCH=\"release-$BASE\"; git push origin \"HEAD:refs/heads/$BRANCH\"";
         };
 
         nix-flake-check.run = "nix flake check --accept-flake-config --no-pure-eval";
@@ -243,7 +238,7 @@ with lib;
           jobs = {
             backport = {
               "if" =
-                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.backport')";
+                "github.event.issue.pull_request != null && contains(github.event.comment.body, '.backport')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -254,8 +249,7 @@ with lib;
             };
 
             close = {
-              "if" =
-                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.close')";
+              "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.close')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -266,8 +260,7 @@ with lib;
             };
 
             land = {
-              "if" =
-                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.land')";
+              "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.land')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -278,8 +271,7 @@ with lib;
             };
 
             rebase = {
-              "if" =
-                "github.event.issue.pull_request != null && " + "contains(github.event.comment.body, '.rebase')";
+              "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.rebase')";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
