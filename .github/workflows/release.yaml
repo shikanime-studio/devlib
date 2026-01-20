@@ -40,15 +40,7 @@ jobs:
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - env:
           REF_NAME: ${{ github.ref_name }}
-        run: 'VERSION="${REF_NAME#v}"
-
-          BASE="${VERSION%.*}"
-
-          BRANCH="release-$BASE"
-
-          git push origin "HEAD:refs/heads/$BRANCH"
-
-'
+        run: VERSION="${REF_NAME#v}"; BASE="${VERSION%.*}"; BRANCH="release-$BASE"; git push origin "HEAD:refs/heads/$BRANCH"
   release-tag:
     if: startsWith(github.ref, 'refs/tags/v')
     needs:
