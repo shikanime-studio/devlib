@@ -120,9 +120,7 @@ with lib;
           run = ''nix run nixpkgs#docker -- login "$DOCKER_REGISTRY" --username "$USERNAME" --password "$GITHUB_TOKEN"'';
         };
 
-        git-push-release-unstable.run = "git push origin HEAD:refs/heads/release-unstable";
-
-        git-push-release-stable = {
+        git-push-release = {
           env = {
             REF_NAME = mkWorkflowRef "github.ref_name";
           };
@@ -351,20 +349,6 @@ with lib;
               ];
             };
 
-            release-unstable = {
-              needs = [
-                "check"
-                "test"
-              ];
-              "if" = "github.event_name == 'push' && github.ref == 'refs/heads/main'";
-              runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                git-push-release-unstable
-              ];
-            };
-
             release-tag = {
               needs = [
                 "check"
@@ -379,7 +363,7 @@ with lib;
               ];
             };
 
-            release-stable = {
+            release-branch = {
               needs = [
                 "check"
                 "test"
@@ -390,7 +374,7 @@ with lib;
               steps = with config.github.actions; [
                 create-github-app-token
                 checkout
-                git-push-release-stable
+                git-push-release
               ];
             };
           };
