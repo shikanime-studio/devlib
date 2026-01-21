@@ -77,10 +77,10 @@ with lib;
         create-release = {
           env = {
             GITHUB_TOKEN = githubToken;
-            REF_NAME = mkWorkflowRef "github.ref_name";
+            REF_NAME = mkWorkflowRef "github.ref_name || github.event.inputs.ref_name";
             REPO = mkWorkflowRef "github.repository";
           };
-          run = ''gh release create "$REF_NAME" --repo "$REPO" --generate-notes'';
+          run = ''gh release create "$REF_NAME" --repo "$REPO" --generate-notes || true'';
         };
 
         checkout = {
@@ -121,9 +121,7 @@ with lib;
         };
 
         git-push-release = {
-          env = {
-            REF_NAME = mkWorkflowRef "github.ref_name";
-          };
+          env.REF_NAME = mkWorkflowRef "github.ref_name || github.event.inputs.ref_name";
           run = "VERSION=\"\${REF_NAME#v}\"; BASE=\"\${VERSION%.*}\"; BRANCH=\"release-$BASE\"; git push origin \"HEAD:refs/heads/$BRANCH\"";
         };
 
@@ -325,6 +323,12 @@ with lib;
               ];
               tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
             };
+            workflow_dispatch = {
+              inputs.ref_name = {
+                description = "Tag or branch to release";
+                required = true;
+              };
+            };
           };
           jobs = {
             check = {
@@ -354,7 +358,12 @@ with lib;
                 "check"
                 "test"
               ];
-              "if" = "startsWith(github.ref, 'refs/tags/v')";
+              "if" =
+                let
+                  push_event = "startsWith(github.ref, 'refs/tags/v')";
+                  workflow_dispatch = "github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v')";
+                in
+                "(${push_event}) || (${workflow_dispatch})";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token
@@ -369,7 +378,14 @@ with lib;
                 "test"
               ];
               "if" =
-                "github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')";
+                let
+                  push_event = "startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')";
+                  workflow_dispatch =
+                    "github.event_name == 'workflow_dispatch' && "
+                    + "startsWith(github.event.inputs.ref_name, 'v') && "
+                    + "endsWith(github.event.inputs.ref_name, '.0')";
+                in
+                "(${push_event}) || (${workflow_dispatch})";
               runs-on = "ubuntu-slim";
               steps = with config.github.actions; [
                 create-github-app-token

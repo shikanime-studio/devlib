@@ -22,7 +22,7 @@ jobs:
           name: shikanime-studio
       - run: nix flake check --accept-flake-config --no-pure-eval
   release-branch:
-    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')
+    if: (startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v') && endsWith(github.event.inputs.ref_name, '.0'))
     needs:
       - check
       - test
@@ -39,10 +39,10 @@ jobs:
           fetch-depth: 0
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - env:
-          REF_NAME: ${{ github.ref_name }}
+          REF_NAME: ${{ github.ref_name || github.event.inputs.ref_name }}
         run: VERSION="${REF_NAME#v}"; BASE="${VERSION%.*}"; BRANCH="release-$BASE"; git push origin "HEAD:refs/heads/$BRANCH"
   release-tag:
-    if: startsWith(github.ref, 'refs/tags/v')
+    if: (startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v'))
     needs:
       - check
       - test
@@ -60,9 +60,9 @@ jobs:
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-          REF_NAME: ${{ github.ref_name }}
+          REF_NAME: ${{ github.ref_name || github.event.inputs.ref_name }}
           REPO: ${{ github.repository }}
-        run: gh release create "$REF_NAME" --repo "$REPO" --generate-notes
+        run: gh release create "$REF_NAME" --repo "$REPO" --generate-notes || true
   test:
     runs-on: ubuntu-latest
     steps:
@@ -93,3 +93,8 @@ name: Release
       - release-[0-9]+.[0-9]+
     tags:
       - v?[0-9]+.[0-9]+.[0-9]+*
+  workflow_dispatch:
+    inputs:
+      ref_name:
+        description: Tag or branch to release
+        required: true
