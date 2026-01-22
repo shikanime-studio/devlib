@@ -36,7 +36,7 @@ with lib;
 
         cachix-push = {
           continue-on-error = true;
-          uses = "cachix/cachix-action@v15";
+          uses = "cachix/cachix-action@v16";
           "with".authToken = mkWorkflowRef "secrets.CACHIX_AUTH_TOKEN";
         };
 
