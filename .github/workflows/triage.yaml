@@ -31,3 +31,6 @@ name: Triage
     types:
       - opened
       - reopened
+permissions:
+  contents: read
+  pull-requests: write

@@ -210,10 +210,6 @@ with lib;
       cleanup = {
         enable = true;
         settings = {
-          name = "Cleanup";
-          on.pull_request.types = [
-            "closed"
-          ];
           jobs.cleanup = {
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
@@ -223,14 +219,17 @@ with lib;
               cleanup-ghstack
             ];
           };
+          name = "Cleanup";
+          on.pull_request.types = [
+            "closed"
+          ];
+          permissions.contents = "write";
         };
       };
 
       commands = {
         enable = true;
         settings = {
-          name = "Commands";
-          on.issue_comment.types = [ "created" ];
           jobs = {
             backport = {
               "if" =
@@ -277,17 +276,19 @@ with lib;
               ];
             };
           };
+          name = "Commands";
+          on.issue_comment.types = [ "created" ];
+          permissions = {
+            contents = "write";
+            issues = "write";
+            pull-requests = "write";
+          };
         };
       };
 
       integration = {
         enable = true;
         settings = {
-          name = "Integration";
-          on.pull_request.branches = [
-            "main"
-            "gh/*/*/base"
-          ];
           jobs = {
             check = {
               runs-on = "ubuntu-latest";
@@ -308,28 +309,18 @@ with lib;
               ];
             };
           };
+          name = "Integration";
+          on.pull_request.branches = [
+            "main"
+            "gh/*/*/base"
+          ];
+          permissions.contents = "read";
         };
       };
 
       release = {
         enable = true;
         settings = {
-          name = "Release";
-          on = {
-            push = {
-              branches = [
-                "main"
-                "release-[0-9]+.[0-9]+"
-              ];
-              tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
-            };
-            workflow_dispatch = {
-              inputs.ref_name = {
-                description = "Tag or branch to release";
-                required = true;
-              };
-            };
-          };
           jobs = {
             check = {
               runs-on = "ubuntu-latest";
@@ -394,21 +385,29 @@ with lib;
               ];
             };
           };
+          name = "Release";
+          on = {
+            push = {
+              branches = [
+                "main"
+                "release-[0-9]+.[0-9]+"
+              ];
+              tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
+            };
+            workflow_dispatch = {
+              inputs.ref_name = {
+                description = "Tag or branch to release";
+                required = true;
+              };
+            };
+          };
+          permissions.contents = "write";
         };
       };
 
       triage = {
         enable = true;
         settings = {
-          name = "Triage";
-          on.pull_request.branches = [
-            "main"
-            "gh/*/*/base"
-          ];
-          on.pull_request.types = [
-            "opened"
-            "reopened"
-          ];
           jobs.triage = {
             runs-on = "ubuntu-slim";
             steps = with config.github.actions; [
@@ -418,17 +417,25 @@ with lib;
               triage-ghstack
             ];
           };
+          name = "Triage";
+          on.pull_request.branches = [
+            "main"
+            "gh/*/*/base"
+          ];
+          on.pull_request.types = [
+            "opened"
+            "reopened"
+          ];
+          permissions = {
+            contents = "read";
+            pull-requests = "write";
+          };
         };
       };
 
       update = {
         enable = true;
         settings = {
-          name = "Update";
-          on = {
-            schedule = [ { cron = "0 4 * * 0"; } ];
-            workflow_dispatch = null;
-          };
           jobs = {
             dependencies = {
               runs-on = "ubuntu-slim";
@@ -447,6 +454,16 @@ with lib;
                 stale
               ];
             };
+          };
+          name = "Update";
+          on = {
+            schedule = [ { cron = "0 4 * * 0"; } ];
+            workflow_dispatch = null;
+          };
+          permissions = {
+            contents = "write";
+            issues = "write";
+            pull-requests = "write";
           };
         };
       };

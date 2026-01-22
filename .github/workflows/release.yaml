@@ -98,3 +98,5 @@ name: Release
       ref_name:
         description: Tag or branch to release
         required: true
+permissions:
+  contents: write

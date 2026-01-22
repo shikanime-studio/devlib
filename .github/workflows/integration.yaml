@@ -39,3 +39,5 @@ name: Integration
     branches:
       - main
       - gh/*/*/base
+permissions:
+  contents: read

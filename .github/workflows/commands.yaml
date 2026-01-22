@@ -100,3 +100,7 @@ name: Commands
   issue_comment:
     types:
       - created
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write

@@ -45,3 +45,7 @@ name: Update
   schedule:
     - cron: 0 4 * * 0
   workflow_dispatch: null
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
