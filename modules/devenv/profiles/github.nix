@@ -210,72 +210,131 @@ with lib;
       cleanup = {
         enable = true;
         settings = {
+          jobs.cleanup = {
+            runs-on = "ubuntu-slim";
+            steps =
+              with config.github.actions;
+              let
+                create-github-app-token-with-permissions = create-github-app-token // {
+                  "with" = create-github-app-token."with" // {
+                    permission-contents = "write";
+                  };
+                };
+              in
+              [
+                create-github-app-token-with-permissions
+                checkout
+                cleanup-pr
+                cleanup-ghstack
+              ];
+          };
           name = "Cleanup";
           on.pull_request.types = [
             "closed"
           ];
-          jobs.cleanup = {
-            runs-on = "ubuntu-slim";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              cleanup-pr
-              cleanup-ghstack
-            ];
-          };
+          permissions.contents = "write";
         };
       };
 
       commands = {
         enable = true;
         settings = {
-          name = "Commands";
-          on.issue_comment.types = [ "created" ];
           jobs = {
             backport = {
               "if" =
                 "github.event.issue.pull_request != null && contains(github.event.comment.body, '.backport')";
               runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                backport
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                      permission-issues = "write";
+                      permission-pull-requests = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  setup-nix
+                  backport
+                ];
             };
 
             close = {
               "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.close')";
               runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                close
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                      permission-issues = "write";
+                      permission-pull-requests = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  setup-nix
+                  close
+                ];
             };
 
             land = {
               "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.land')";
               runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                land
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                      permission-issues = "write";
+                      permission-pull-requests = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  setup-nix
+                  land
+                ];
             };
 
             rebase = {
               "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.rebase')";
               runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                rebase
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                      permission-issues = "write";
+                      permission-pull-requests = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  setup-nix
+                  rebase
+                ];
             };
+          };
+          name = "Commands";
+          on.issue_comment.types = [ "created" ];
+          permissions = {
+            contents = "write";
+            issues = "write";
+            pull-requests = "write";
           };
         };
       };
@@ -283,74 +342,95 @@ with lib;
       integration = {
         enable = true;
         settings = {
+          jobs = {
+            check = {
+              runs-on = "ubuntu-latest";
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "read";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  setup-nix
+                  nix-flake-check
+                ];
+            };
+            test = {
+              runs-on = "ubuntu-latest";
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "read";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  setup-nix
+                  devenv-test
+                ];
+            };
+          };
           name = "Integration";
           on.pull_request.branches = [
             "main"
             "gh/*/*/base"
           ];
-          jobs = {
-            check = {
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                nix-flake-check
-              ];
-            };
-            test = {
-              runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                devenv-test
-              ];
-            };
-          };
+          permissions.contents = "read";
         };
       };
 
       release = {
         enable = true;
         settings = {
-          name = "Release";
-          on = {
-            push = {
-              branches = [
-                "main"
-                "release-[0-9]+.[0-9]+"
-              ];
-              tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
-            };
-            workflow_dispatch = {
-              inputs.ref_name = {
-                description = "Tag or branch to release";
-                required = true;
-              };
-            };
-          };
           jobs = {
             check = {
               runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                cachix-push
-                nix-flake-check
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  setup-nix
+                  cachix-push
+                  nix-flake-check
+                ];
             };
 
             test = {
               runs-on = "ubuntu-latest";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                cachix-push
-                devenv-test
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  setup-nix
+                  cachix-push
+                  devenv-test
+                ];
             };
 
             release-tag = {
@@ -365,11 +445,20 @@ with lib;
                 in
                 "(${push_event}) || (${workflow_dispatch})";
               runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                create-release
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  create-release
+                ];
             };
 
             release-branch = {
@@ -387,19 +476,65 @@ with lib;
                 in
                 "(${push_event}) || (${workflow_dispatch})";
               runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                git-push-release
-              ];
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  git-push-release
+                ];
             };
           };
+          name = "Release";
+          on = {
+            push = {
+              branches = [
+                "main"
+                "release-[0-9]+.[0-9]+"
+              ];
+              tags = [ "v?[0-9]+.[0-9]+.[0-9]+*" ];
+            };
+            workflow_dispatch = {
+              inputs.ref_name = {
+                description = "Tag or branch to release";
+                required = true;
+              };
+            };
+          };
+          permissions.contents = "write";
         };
       };
 
       triage = {
         enable = true;
         settings = {
+          jobs.triage = {
+            runs-on = "ubuntu-slim";
+            steps =
+              with config.github.actions;
+              let
+                create-github-app-token-with-permissions = create-github-app-token // {
+                  "with" = create-github-app-token."with" // {
+                    permission-contents = "read";
+                    permission-issues = "write";
+                    permission-pull-requests = "write";
+                  };
+                };
+              in
+              [
+                create-github-app-token-with-permissions
+                checkout
+                triage-bot
+                triage-ghstack
+              ];
+          };
           name = "Triage";
           on.pull_request.branches = [
             "main"
@@ -409,14 +544,9 @@ with lib;
             "opened"
             "reopened"
           ];
-          jobs.triage = {
-            runs-on = "ubuntu-slim";
-            steps = with config.github.actions; [
-              create-github-app-token
-              checkout
-              triage-bot
-              triage-ghstack
-            ];
+          permissions = {
+            contents = "read";
+            pull-requests = "write";
           };
         };
       };
@@ -424,29 +554,56 @@ with lib;
       update = {
         enable = true;
         settings = {
+          jobs = {
+            dependencies = {
+              runs-on = "ubuntu-slim";
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                      permission-issues = "write";
+                      permission-pull-requests = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  checkout
+                  setup-nix
+                  update
+                ];
+            };
+
+            stale = {
+              runs-on = "ubuntu-slim";
+              steps =
+                with config.github.actions;
+                let
+                  create-github-app-token-with-permissions = create-github-app-token // {
+                    "with" = create-github-app-token."with" // {
+                      permission-contents = "write";
+                      permission-issues = "write";
+                      permission-pull-requests = "write";
+                    };
+                  };
+                in
+                [
+                  create-github-app-token-with-permissions
+                  stale
+                ];
+            };
+          };
           name = "Update";
           on = {
             schedule = [ { cron = "0 4 * * 0"; } ];
             workflow_dispatch = null;
           };
-          jobs = {
-            dependencies = {
-              runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                checkout
-                setup-nix
-                update
-              ];
-            };
-
-            stale = {
-              runs-on = "ubuntu-slim";
-              steps = with config.github.actions; [
-                create-github-app-token
-                stale
-              ];
-            };
+          permissions = {
+            contents = "write";
+            issues = "write";
+            pull-requests = "write";
           };
         };
       };
