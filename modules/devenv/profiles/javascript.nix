@@ -14,6 +14,7 @@
   languages.javascript = {
     enable = true;
     corepack.enable = true;
+    npm.install.enable = true;
   };
 
   treefmt.config.programs.prettier.enable = true;
