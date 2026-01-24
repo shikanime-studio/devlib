@@ -3,8 +3,6 @@
     ./base.nix
   ];
 
-  git-hooks.hooks.eslint.enable = true;
-
   gitignore.templates = [
     "tt:node"
   ];
