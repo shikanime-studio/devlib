@@ -88,7 +88,9 @@ jobs:
         with:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           name: shikanime-studio
-      - run: nix develop --accept-flake-config --no-pure-eval --command devenv test
+      - run: nix run nixpkgs#direnv allow
+      - run: nix run nixpkgs#direnv export gha
+      - run: devenv test
 name: Release
 'on':
   push:
