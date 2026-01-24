@@ -109,11 +109,7 @@ with lib;
           run = ''gh pr comment "$PR_HTML_URL" --body .land | pr'';
         };
 
-        direnv-allow.run = "nix run nixpkgs#direnv allow";
-
-        direnv-export.run = "nix run nixpkgs#direnv export gha";
-
-        devenv-test.run = "devenv test";
+        devenv-test.run = "nix develop --accept-flake-config --no-pure-eval --command devenv test";
 
         docker-login = {
           env = {
@@ -380,8 +376,6 @@ with lib;
                   create-github-app-token-with-permissions
                   checkout
                   setup-nix
-                  direnv-allow
-                  direnv-export
                   devenv-test
                 ];
             };
@@ -435,8 +429,6 @@ with lib;
                   checkout
                   setup-nix
                   cachix-push
-                  direnv-allow
-                  direnv-export
                   devenv-test
                 ];
             };
