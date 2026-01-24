@@ -17,8 +17,5 @@
     npm.install.enable = true;
   };
 
-  treefmt.config = {
-    programs.prettier.enable = true;
-    settings.global.excludes = [ "node_modules/*" ];
-  };
+  treefmt.config.programs.prettier.enable = true;
 }
