@@ -55,8 +55,20 @@
       { flake-parts-lib, withSystem, ... }:
       with flake-parts-lib;
       let
-        defaultFlakeModule = importApply ./modules/flake/default.nix { inherit withSystem; };
-        treefmtFlakeModule = importApply ./modules/flake/treefmt.nix { inherit withSystem; };
+        defaultFlakeModule = importApply ./modules/flake/default.nix { inherit withSystem inputs; };
+        baseFlakeModule = importApply ./modules/flake/base.nix { inherit withSystem; };
+        dockerFlakeModule = importApply ./modules/flake/docker.nix { inherit withSystem; };
+        elixirFlakeModule = importApply ./modules/flake/elixir.nix { inherit withSystem; };
+        gitFlakeModule = importApply ./modules/flake/git.nix { inherit withSystem; };
+        goFlakeModule = importApply ./modules/flake/go.nix { inherit withSystem; };
+        javascriptFlakeModule = importApply ./modules/flake/javascript.nix { inherit withSystem; };
+        nixFlakeModule = importApply ./modules/flake/nix.nix { inherit withSystem; };
+        ocamlFlakeModule = importApply ./modules/flake/ocaml.nix { inherit withSystem; };
+        opentofuFlakeModule = importApply ./modules/flake/opentofu.nix { inherit withSystem; };
+        pythonFlakeModule = importApply ./modules/flake/python.nix { inherit withSystem; };
+        rustFlakeModule = importApply ./modules/flake/rust.nix { inherit withSystem; };
+        shellFlakeModule = importApply ./modules/flake/shell.nix { inherit withSystem; };
+        texliveFlakeModule = importApply ./modules/flake/texlive.nix { inherit withSystem; };
       in
       {
         imports = [
@@ -65,7 +77,19 @@
           flake-parts.flakeModules.easyOverlay
           git-hooks.flakeModule
           treefmt-nix.flakeModule
-          treefmtFlakeModule
+          baseFlakeModule
+          dockerFlakeModule
+          elixirFlakeModule
+          gitFlakeModule
+          goFlakeModule
+          javascriptFlakeModule
+          nixFlakeModule
+          ocamlFlakeModule
+          opentofuFlakeModule
+          pythonFlakeModule
+          rustFlakeModule
+          shellFlakeModule
+          texliveFlakeModule
         ];
 
         flake = {
@@ -74,7 +98,6 @@
             default = self.devenvModule;
             docker = ./modules/devenv/profiles/docker.nix;
             elixir = ./modules/devenv/profiles/elixir.nix;
-            git = ./modules/devenv/profiles/git.nix;
             github = ./modules/devenv/profiles/github.nix;
             go = ./modules/devenv/profiles/go.nix;
             javascript = ./modules/devenv/profiles/javascript.nix;
@@ -111,7 +134,19 @@
           flakeModule = defaultFlakeModule;
           flakeModules = {
             default = defaultFlakeModule;
-            treefmt = treefmtFlakeModule;
+            base = baseFlakeModule;
+            docker = dockerFlakeModule;
+            elixir = elixirFlakeModule;
+            git = gitFlakeModule;
+            go = goFlakeModule;
+            javascript = javascriptFlakeModule;
+            nix = nixFlakeModule;
+            ocaml = ocamlFlakeModule;
+            opentofu = opentofuFlakeModule;
+            python = pythonFlakeModule;
+            rust = rustFlakeModule;
+            shell = shellFlakeModule;
+            texlive = texliveFlakeModule;
           };
 
           templates = {
@@ -131,7 +166,6 @@
           {
             devenv.shells.default = {
               imports = [
-                self.devenvModules.git
                 self.devenvModules.github
                 self.devenvModules.nix
                 self.devenvModules.shell

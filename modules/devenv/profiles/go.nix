@@ -1,112 +1,17 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
-let
-  yamlFormat = pkgs.formats.yaml { };
-
-  golangciLintConfigFile = yamlFormat.generate "golangci-lint.yaml" {
-    version = 2;
-    formatters = {
-      enable = [
-        "gci"
-        "gofmt"
-        "gofumpt"
-        "goimports"
-      ];
-      settings.gci.sections = [
-        "standard"
-        "default"
-        "localmodule"
-      ];
-    };
-    linters = {
-      enable = [
-        "bodyclose"
-        "dogsled"
-        "dupl"
-        "durationcheck"
-        "exhaustive"
-        "gocritic"
-        "godot"
-        "gomoddirectives"
-        "goprintffuncname"
-        "govet"
-        "importas"
-        "ineffassign"
-        "makezero"
-        "misspell"
-        "nakedret"
-        "nilerr"
-        "noctx"
-        "nolintlint"
-        "prealloc"
-        "predeclared"
-        "revive"
-        "rowserrcheck"
-        "sqlclosecheck"
-        "staticcheck"
-        "tparallel"
-        "unconvert"
-        "unparam"
-        "unused"
-        "wastedassign"
-        "whitespace"
-      ];
-      settings = {
-        misspell.locale = "US";
-        gocritic.enabled-tags = [
-          "diagnostic"
-          "experimental"
-          "opinionated"
-          "style"
-        ];
-      };
-    };
-    run.modules-download-mode = "vendor";
-  };
-
-  golangciLint =
-    pkgs.runCommand "golangci-lint-wrapped"
-      {
-        buildInputs = [ pkgs.makeWrapper ];
-        meta.mainProgram = "golangci-lint";
-      }
-      ''
-        makeWrapper ${pkgs.golangci-lint}/bin/golangci-lint $out/bin/golangci-lint \
-          --prefix PATH : ${config.languages.go.package}/bin \
-          --add-flags "--config ${golangciLintConfigFile}"
-      '';
-in
 {
   imports = [
     ./base.nix
   ];
 
-  git-hooks = {
-    excludes = [ "^vendor/" ];
-
-    hooks.gotest = {
-      enable = true;
-      inherit (config.languages.go) package;
-    };
-
-    hooks.golangci-lint = {
-      enable = true;
-      package = golangciLint;
-    };
-  };
-
   gitignore = {
-    content = [
-      "__debug_bin*"
-    ];
-    templates = [
-      "tt:go"
-    ];
+    content = [ "__debug_bin*" ];
+    templates = [ "tt:go" ];
   };
 
   renovate.settings.gomod.enabled = true;
@@ -127,6 +32,4 @@ in
       execIfModified = [ "go.sum" ];
     };
   };
-
-  treefmt.config.settings.global.excludes = [ "vendor/*" ];
 }

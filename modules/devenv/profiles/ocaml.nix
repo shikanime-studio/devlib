@@ -1,8 +1,9 @@
 {
-  gitignore.templates = [
-    "tt:ocaml"
+  imports = [
+    ./base.nix
   ];
-  languages.ocaml.enable = true;
 
-  treefmt.config.programs.ocamlformat.enable = true;
+  gitignore.templates = [ "tt:ocaml" ];
+
+  languages.ocaml.enable = true;
 }

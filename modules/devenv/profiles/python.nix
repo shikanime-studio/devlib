@@ -3,9 +3,7 @@
     ./base.nix
   ];
 
-  gitignore.templates = [
-    "tt:python"
-  ];
+  gitignore.templates = [ "tt:python" ];
 
   renovate.settings.uv.enabled = true;
 
@@ -15,10 +13,5 @@
       enable = true;
       sync.enable = true;
     };
-  };
-
-  treefmt.config.programs = {
-    ruff-check.enable = true;
-    ruff-format.enable = true;
   };
 }

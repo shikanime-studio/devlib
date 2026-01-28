@@ -109,7 +109,9 @@ with lib;
           run = ''gh pr comment "$PR_HTML_URL" --body .land | pr'';
         };
 
-        devenv-test.run = "nix develop --accept-flake-config --no-pure-eval --command devenv test";
+        direnv-allow.run = "nix run nixpkgs#direnv allow";
+
+        direnv-export.run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\"";
 
         docker-login = {
           env = {
@@ -117,7 +119,7 @@ with lib;
             GITHUB_TOKEN = mkWorkflowRef "secrets.GITHUB_TOKEN";
             USERNAME = mkWorkflowRef "github.actor";
           };
-          run = ''nix run nixpkgs#docker -- login "$DOCKER_REGISTRY" --username "$USERNAME" --password "$GITHUB_TOKEN"'';
+          run = "nix run nixpkgs#docker -- login \"$DOCKER_REGISTRY\" --username \"$USERNAME\" --password \"$GITHUB_TOKEN\"";
         };
 
         git-push-release = {
@@ -342,43 +344,25 @@ with lib;
       integration = {
         enable = true;
         settings = {
-          jobs = {
-            check = {
-              runs-on = "ubuntu-latest";
-              steps =
-                with config.github.actions;
-                let
-                  create-github-app-token-with-permissions = create-github-app-token // {
-                    "with" = create-github-app-token."with" // {
-                      permission-contents = "read";
-                    };
+          jobs.check = {
+            runs-on = "ubuntu-latest";
+            steps =
+              with config.github.actions;
+              let
+                create-github-app-token-with-permissions = create-github-app-token // {
+                  "with" = create-github-app-token."with" // {
+                    permission-contents = "read";
                   };
-                in
-                [
-                  create-github-app-token-with-permissions
-                  checkout
-                  setup-nix
-                  nix-flake-check
-                ];
-            };
-            test = {
-              runs-on = "ubuntu-latest";
-              steps =
-                with config.github.actions;
-                let
-                  create-github-app-token-with-permissions = create-github-app-token // {
-                    "with" = create-github-app-token."with" // {
-                      permission-contents = "read";
-                    };
-                  };
-                in
-                [
-                  create-github-app-token-with-permissions
-                  checkout
-                  setup-nix
-                  devenv-test
-                ];
-            };
+                };
+              in
+              [
+                create-github-app-token-with-permissions
+                checkout
+                setup-nix
+                direnv-allow
+                direnv-export
+                nix-flake-check
+              ];
           };
           name = "Integration";
           on.pull_request.branches = [
@@ -409,35 +393,14 @@ with lib;
                   checkout
                   setup-nix
                   cachix-push
+                  direnv-allow
+                  direnv-export
                   nix-flake-check
                 ];
             };
 
-            test = {
-              runs-on = "ubuntu-latest";
-              steps =
-                with config.github.actions;
-                let
-                  create-github-app-token-with-permissions = create-github-app-token // {
-                    "with" = create-github-app-token."with" // {
-                      permission-contents = "write";
-                    };
-                  };
-                in
-                [
-                  create-github-app-token-with-permissions
-                  checkout
-                  setup-nix
-                  cachix-push
-                  devenv-test
-                ];
-            };
-
             release-tag = {
-              needs = [
-                "check"
-                "test"
-              ];
+              needs = [ "check" ];
               "if" =
                 let
                   push_event = "startsWith(github.ref, 'refs/tags/v')";
@@ -462,10 +425,7 @@ with lib;
             };
 
             release-branch = {
-              needs = [
-                "check"
-                "test"
-              ];
+              needs = [ "check" ];
               "if" =
                 let
                   push_event = "startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')";
