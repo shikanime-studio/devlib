@@ -15,7 +15,7 @@ with lib;
       integration.enable = true;
       release = {
         enable = true;
-        actions.cachix-push."with".name = "shikanime";
+        settings.cachix-push.name = "shikanime";
       };
       triage.enable = true;
       update.enable = true;
