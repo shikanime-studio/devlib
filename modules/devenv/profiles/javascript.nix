@@ -1,13 +1,9 @@
 {
-  imports = [
-    ./base.nix
-  ];
+  imports = [ ./base.nix ];
 
   git-hooks.hooks.eslint.enable = true;
 
-  gitignore.templates = [
-    "tt:node"
-  ];
+  gitignore.templates = [ "tt:node" ];
 
   renovate.settings.npm.enabled = true;
 

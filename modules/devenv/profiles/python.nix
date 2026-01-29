@@ -1,11 +1,7 @@
 {
-  imports = [
-    ./base.nix
-  ];
+  imports = [ ./base.nix ];
 
-  gitignore.templates = [
-    "tt:python"
-  ];
+  gitignore.templates = [ "tt:python" ];
 
   renovate.settings.uv.enabled = true;
 

@@ -7,5 +7,18 @@ with lib;
 
   ghstack.enable = true;
 
-  github.actions.cachix-push."with".name = "shikanime";
+  github = {
+    enable = true;
+    workflows = {
+      cleanup.enable = true;
+      commands.enable = true;
+      integration.enable = true;
+      release = {
+        enable = true;
+        settings.cachix-push.name = "shikanime";
+      };
+      triage.enable = true;
+      update.enable = true;
+    };
+  };
 }

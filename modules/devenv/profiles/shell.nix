@@ -1,7 +1,5 @@
 {
-  imports = [
-    ./base.nix
-  ];
+  imports = [ ./base.nix ];
 
   languages.shell.enable = true;
 
