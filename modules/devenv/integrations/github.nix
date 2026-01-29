@@ -9,16 +9,24 @@ with lib;
 
 let
   cfg = config.github;
-
   yamlFormat = pkgs.formats.yaml { };
+
+  configFiles = mapAttrs (
+    name: workflow: yamlFormat.generate "${name}.yaml" (removeAttrs workflow [ "actions" ])
+  ) cfg.settings.workflows;
 in
 {
+  imports = [
+    ./github/cleanup.nix
+    ./github/commands.nix
+    ./github/integration.nix
+    ./github/release.nix
+    ./github/triage.nix
+    ./github/update.nix
+  ];
+
   options.github = {
     enable = mkEnableOption "generation of GitHub Actions workflow files";
-
-    lib = lib.mkOption {
-      type = lib.types.attrsOf lib.types.anything;
-    };
 
     package = mkOption {
       type = types.package;
@@ -26,112 +34,42 @@ in
       description = "Package to use for GitHub Actions";
     };
 
-    actions = mkOption {
-      type = types.attrsOf (
-        types.submodule {
-          freeformType = yamlFormat.type;
-        }
-      );
-
-      default = { };
-
-      description = ''
-        GitHub Actions configuration. Each attribute name becomes the action identifier.
-      '';
-
-      example = literalExpression ''
-        {
-          setup-nix = {
-            uses = "cachix/install-nix-action@v31";
-            with.github_access_token = mkWorkflowRef "secrets.GITHUB_TOKEN";
-          };
-        }
-      '';
-    };
-
-    workflows = mkOption {
-      type = types.attrsOf (
-        types.submodule {
-          options = {
-            enable = mkEnableOption "enable this workflow";
-
-            settings = mkOption {
-              type = types.submodule {
-                freeformType = yamlFormat.type;
-              };
+    settings = {
+      global = {
+        workflows = mkOption {
+          description = "Global configuration merged into all workflows";
+          type = types.submodule {
+            options.actions = mkOption {
+              type = types.attrsOf (
+                types.submodule {
+                  freeformType = yamlFormat.type;
+                }
+              );
               default = { };
-              description = "Workflow YAML settings";
+              description = "Global actions configuration";
             };
           };
-        }
-      );
-
-      default = { };
-
-      description = ''
-        GitHub workflows configuration. Each attribute name becomes the workflow filename.
-      '';
-
-      example = literalExpression ''
-        {
-          check = {
-            enable = mkDefault true;
-            settings = {
-              name = "Check";
-              on = {
-                push.branches = [ "main" ];
-                pull_request.branches = [ "main" ];
-              };
-              jobs = {
-                check = {
-                  runs-on = "ubuntu-latest";
-                  steps = [
-                    { uses = "actions/checkout@v5"; }
-                    {
-                      uses = "cachix/install-nix-action@v31";
-                      with.github_access_token = mkWorkflowRef "secrets.GITHUB_TOKEN";
-                    }
-                    {
-                      name = "Check Nix Flake";
-                      run = "nix flake check --accept-flake-config --all-systems --no-pure-eval";
-                    }
-                  ];
-                };
-              };
-            };
-          };
-        }
-      '';
+          default = { };
+        };
+      };
+      workflows = mkOption {
+        description = "Workflows configuration";
+        type = types.attrsOf yamlFormat.type;
+        default = { };
+      };
     };
-
   };
 
   config = mkIf cfg.enable {
-    github.lib.mkWorkflowRef = name: "\${{ ${name} }}";
-
-    packages = [ cfg.package ];
-
     tasks."devlib:github:workflows:install" = {
       before = [ "devenv:enterShell" ] ++ optional config.treefmt.enable "devenv:treefmt:run";
       description = "Install GitHub Actions workflow files";
-      exec =
-        let
-          enabled = filterAttrs (_: w: w.enable) cfg.workflows;
-        in
-        concatStringsSep "\n" (
-          mapAttrsToList (
-            name: workflow:
-            let
-              file = yamlFormat.generate "${name}.yaml" workflow.settings;
-            in
-            ''
-              mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
-              cat ${file} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
-            ''
-          ) enabled
-        );
+      exec = concatStringsSep "\n" (
+        mapAttrsToList (name: workflow: ''
+          mkdir -p "${config.env.DEVENV_ROOT}/.github/workflows"
+          cat ${workflow} > "${config.env.DEVENV_ROOT}/.github/workflows/${name}.yaml"
+        '') configFiles
+      );
     };
-
-    treefmt.config.programs.actionlint.enable = mkDefault true;
   };
 }

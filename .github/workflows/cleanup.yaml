@@ -24,7 +24,7 @@ jobs:
           HEAD_REF: ${{ github.head_ref }}
           REPO: ${{ github.repository }}
         if: startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref, '/head')
-        run: "for role in base head orig; do\n  git push origin --delete \"${HEAD_REF%/head}/$role\" || true\ndone\n"
+        run: for role in base head orig; do git push origin --delete "${HEAD_REF%/head}/$role" || true; done
 name: Cleanup
 'on':
   pull_request:

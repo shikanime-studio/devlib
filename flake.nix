@@ -75,7 +75,6 @@
             docker = ./modules/devenv/profiles/docker.nix;
             elixir = ./modules/devenv/profiles/elixir.nix;
             git = ./modules/devenv/profiles/git.nix;
-            github = ./modules/devenv/profiles/github.nix;
             go = ./modules/devenv/profiles/go.nix;
             javascript = ./modules/devenv/profiles/javascript.nix;
             nix = ./modules/devenv/profiles/nix.nix;
@@ -132,7 +131,6 @@
             devenv.shells.default = {
               imports = [
                 self.devenvModules.git
-                self.devenvModules.github
                 self.devenvModules.nix
                 self.devenvModules.shell
                 self.devenvModules.shikanime-studio
