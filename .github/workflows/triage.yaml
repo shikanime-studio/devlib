@@ -8,7 +8,6 @@ jobs:
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
           permission-contents: read
-          permission-issues: write
           permission-pull-requests: write
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: actions/checkout@v6
@@ -28,12 +27,8 @@ jobs:
 name: Triage
 'on':
   pull_request:
-    branches:
-      - main
-      - gh/*/*/base
     types:
       - opened
-      - reopened
+      - synchronize
 permissions:
-  contents: read
   pull-requests: write

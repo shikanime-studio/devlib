@@ -82,9 +82,7 @@ let
       '';
 in
 {
-  imports = [
-    ./base.nix
-  ];
+  imports = [ ./base.nix ];
 
   git-hooks = {
     excludes = [ "^vendor/" ];
@@ -101,12 +99,8 @@ in
   };
 
   gitignore = {
-    content = [
-      "__debug_bin*"
-    ];
-    templates = [
-      "tt:go"
-    ];
+    content = [ "__debug_bin*" ];
+    templates = [ "tt:go" ];
   };
 
   renovate.settings.gomod.enabled = true;

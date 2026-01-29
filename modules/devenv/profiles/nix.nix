@@ -1,7 +1,5 @@
 {
-  imports = [
-    ./base.nix
-  ];
+  imports = [ ./base.nix ];
 
   git-hooks.hooks.flake-checker.enable = true;
 

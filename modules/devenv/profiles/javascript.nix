@@ -1,11 +1,7 @@
 {
-  imports = [
-    ./base.nix
-  ];
+  imports = [ ./base.nix ];
 
-  gitignore.templates = [
-    "tt:node"
-  ];
+  gitignore.templates = [ "tt:node" ];
 
   renovate.settings.npm.enabled = true;
 

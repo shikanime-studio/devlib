@@ -13,9 +13,7 @@ let
       '';
 in
 {
-  imports = [
-    ./base.nix
-  ];
+  imports = [ ./base.nix ];
 
   git-hooks.hooks.gitlint = {
     enable = true;
