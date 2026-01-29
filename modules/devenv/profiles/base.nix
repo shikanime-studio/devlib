@@ -18,8 +18,8 @@
         yamlfmt.enable = true;
       };
       settings.global.excludes = [
-        ".devenv"
-        ".direnv"
+        ".devenv/*"
+        ".direnv/*"
         "*.assetsignore"
         "*.dockerignore"
         "*.gcloudignore"
