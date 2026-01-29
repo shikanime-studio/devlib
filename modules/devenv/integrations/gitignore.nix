@@ -30,6 +30,12 @@ let
   content = concatStringsSep "\n" (
     optional (cfg.content != [ ]) ("\n" + contentHeader) ++ cfg.content
   );
+
+  templateArgs = optionalString (
+    templates != [ ]
+  ) "<(${getExe cfg.package} create ${concatStringsSep " " templates})";
+
+  contentArg = optionalString (cfg.content != [ ]) "<(${pkgs.coreutils}/bin/echo \"${content}\")";
 in
 {
   options.gitignore = {
@@ -90,20 +96,12 @@ in
     tasks."devlib:gitignore:install" = {
       before = [ "devenv:enterShell" ];
       description = "Generate .gitignore file";
-      exec =
-        let
-          templateArgs = optionalString (
-            templates != [ ]
-          ) "<(${getExe cfg.package} create ${concatStringsSep " " templates})";
-
-          contentArg = optionalString (cfg.content != [ ]) "<(${pkgs.coreutils}/bin/echo \"${content}\")";
-        in
-        optionalString (templates != [ ] || cfg.content != [ ]) ''
-          ${pkgs.coreutils}/bin/cat \
-            ${templateArgs} \
-            ${contentArg} \
-            > "${config.env.DEVENV_ROOT}/.gitignore"
-        '';
+      exec = optionalString (templates != [ ] || cfg.content != [ ]) ''
+        ${pkgs.coreutils}/bin/cat \
+          ${templateArgs} \
+          ${contentArg} \
+          > "${config.env.DEVENV_ROOT}/.gitignore"
+      '';
     };
   };
 }

@@ -1,13 +1,9 @@
 {
-  imports = [
-    ./default.nix
-  ];
+  imports = [ ./default.nix ];
 
   gitignore = {
     enable = true;
-    content = [
-      ".pre-commit-config.yaml"
-    ];
+    content = [ ".pre-commit-config.yaml" ];
   };
 
   treefmt = {
@@ -22,8 +18,6 @@
         yamlfmt.enable = true;
       };
       settings.global.excludes = [
-        ".devenv/*"
-        ".direnv/*"
         "*.assetsignore"
         "*.dockerignore"
         "*.gcloudignore"
