@@ -1,7 +1,5 @@
 {
-  imports = [
-    ./base.nix
-  ];
+  imports = [ ./base.nix ];
 
   gitignore.templates = [
     "tt:erlang"
