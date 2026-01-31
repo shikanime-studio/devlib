@@ -64,6 +64,12 @@ in
             // cfg.settings.setup-nix;
           }
           {
+            run = "nix run nixpkgs#direnv allow";
+          }
+          {
+            run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\"";
+          }
+          {
             run = "nix flake check --accept-flake-config --no-pure-eval";
           }
         ];
