@@ -16,14 +16,23 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - continue-on-error: true
+        uses: cachix/cachix-action@v16
+        with:
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          name: shikanime-studio
       - run: nix run nixpkgs#direnv allow
+        with: {}
       - run: nix run nixpkgs#direnv export gha >> "$GITHUB_ENV"
+        with: {}
       - run: nix flake check --accept-flake-config --no-pure-eval
+        with: {}
 name: Integration
 'on':
   pull_request:
     branches:
       - main
       - gh/*/*/base
+  workflow_call: {}
 permissions:
   contents: read
