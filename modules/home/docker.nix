@@ -10,9 +10,9 @@ with lib;
 let
   configDir =
     if pkgs.stdenv.hostPlatform.isDarwin then
-      "Library/Application Support"
+      "Library/Application Support/docker"
     else
-      removePrefix config.home.homeDirectory config.xdg.configHome;
+      "${removePrefix config.home.homeDirectory config.xdg.configHome}/docker";
 in
 {
   home.packages = [
@@ -22,8 +22,8 @@ in
 
   programs = {
     docker-cli = {
+      inherit configDir;
       enable = true;
-      configDir = "${configDir}/docker";
       settings.auths = {
         "asia.gcr.io" = { };
         "eu.gcr.io" = { };

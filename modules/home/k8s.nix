@@ -7,9 +7,9 @@
 let
   configDir =
     if pkgs.stdenv.hostPlatform.isDarwin then
-      "${config.home.homeDirectory}/Library/Application Support"
+      "${config.home.homeDirectory}/Library/Application Support/skaffold"
     else
-      config.xdg.configHome;
+      "${config.xdg.configHome}/skaffold";
 in
 {
   home = {
@@ -21,6 +21,6 @@ in
       pkgs.skaffold
     ];
 
-    sessionVariables.SKAFFOLD_CONFIG = "${configDir}/skaffold/config";
+    sessionVariables.SKAFFOLD_CONFIG = "${configDir}/config";
   };
 }

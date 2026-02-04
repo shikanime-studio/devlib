@@ -7,14 +7,14 @@
 let
   cacheDir =
     if pkgs.stdenv.hostPlatform.isDarwin then
-      "${config.home.homeDirectory}/Library/Caches"
+      "${config.home.homeDirectory}/Library/Caches/npm"
     else
-      config.xdg.cacheHome;
+      "${config.xdg.cacheHome}/npm";
   configDir =
     if pkgs.stdenv.hostPlatform.isDarwin then
-      "${config.home.homeDirectory}/Library/Application Support"
+      "${config.home.homeDirectory}/Library/Application Support/npm"
     else
-      config.xdg.configHome;
+      "${config.xdg.configHome}/npm";
 in
 {
   home.packages = [
@@ -25,8 +25,8 @@ in
   ];
 
   home.sessionVariables = {
-    NPM_CONFIG_CACHE = "${cacheDir}/npm";
-    NPM_CONFIG_USERCONFIG = "${configDir}/npm";
+    NPM_CONFIG_CACHE = cacheDir;
+    NPM_CONFIG_USERCONFIG = configDir;
   };
 
   programs.nushell.extraConfig = ''
