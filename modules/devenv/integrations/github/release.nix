@@ -29,6 +29,16 @@ in
         default = { };
         description = "Overrides for create-github-app-token";
       };
+      direnv = lib.mkOption {
+        type = lib.types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for direnv";
+      };
+      nix-flake-check = lib.mkOption {
+        type = lib.types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for nix-flake-check";
+      };
       setup-nix = lib.mkOption {
         type = lib.types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -79,12 +89,15 @@ in
               // cfg.settings.cachix-push;
             }
             {
+              env = cfg.settings.direnv;
               run = "nix run nixpkgs#direnv allow";
             }
             {
+              env = cfg.settings.direnv;
               run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\"";
             }
             {
+              env = cfg.settings.nix-flake-check;
               run = "nix flake check --accept-flake-config --no-pure-eval";
             }
           ];
