@@ -107,15 +107,15 @@ in
           }
           {
             run = "nix run nixpkgs#direnv allow";
-            "with" = cfg.settings.direnv;
+            "env" = cfg.settings.direnv;
           }
           {
             run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\"";
-            "with" = cfg.settings.direnv;
+            "env" = cfg.settings.direnv;
           }
           {
             run = "nix flake check --accept-flake-config --no-pure-eval";
-            "with" = cfg.settings.nix-flake-check;
+            "env" = cfg.settings.nix-flake-check;
           }
         ];
       };
