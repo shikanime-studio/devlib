@@ -14,6 +14,11 @@ in
     enable = lib.mkEnableOption "integration workflow";
 
     settings = {
+      cachix-push = lib.mkOption {
+        type = lib.types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for cachix-push";
+      };
       checkout = lib.mkOption {
         type = lib.types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -23,6 +28,16 @@ in
         type = lib.types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for create-github-app-token";
+      };
+      direnv = lib.mkOption {
+        type = lib.types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for direnv";
+      };
+      nix-flake-check = lib.mkOption {
+        type = lib.types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for nix-flake-check";
       };
       setup-nix = lib.mkOption {
         type = lib.types.submodule { freeformType = yamlFormat.type; };
@@ -64,21 +79,36 @@ in
             // cfg.settings.setup-nix;
           }
           {
+            continue-on-error = true;
+            uses = "cachix/cachix-action@v16";
+            "with" = {
+              authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+              name = "shikanime-studio";
+            }
+            // cfg.settings.cachix-push;
+          }
+          {
             run = "nix run nixpkgs#direnv allow";
+            "with" = cfg.settings.direnv;
           }
           {
             run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\"";
+            "with" = cfg.settings.direnv;
           }
           {
             run = "nix flake check --accept-flake-config --no-pure-eval";
+            "with" = cfg.settings.nix-flake-check;
           }
         ];
       };
       name = "Integration";
-      on.pull_request.branches = [
-        "main"
-        "gh/*/*/base"
-      ];
+      on = {
+        pull_request.branches = [
+          "main"
+          "gh/*/*/base"
+        ];
+        workflow_call = { };
+      };
       permissions.contents = "read";
     };
   };

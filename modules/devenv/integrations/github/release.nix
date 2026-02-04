@@ -14,11 +14,6 @@ in
     enable = lib.mkEnableOption "release";
 
     settings = {
-      cachix-push = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for cachix-push";
-      };
       checkout = lib.mkOption {
         type = lib.types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -29,70 +24,20 @@ in
         default = { };
         description = "Overrides for create-github-app-token";
       };
-      setup-nix = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for setup-nix";
-      };
     };
   };
 
   config = lib.mkIf config.github.workflows.release.enable {
     github.settings.workflows.release = {
       jobs = {
-        check = {
-          runs-on = "ubuntu-latest";
-          steps = [
-            {
-              continue-on-error = true;
-              id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v2";
-              "with" = {
-                app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                permission-contents = "write";
-                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-              }
-              // cfg.settings.create-github-app-token;
-            }
-            {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              }
-              // cfg.settings.checkout;
-            }
-            {
-              uses = "cachix/install-nix-action@v31";
-              "with" = {
-                github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              }
-              // cfg.settings.setup-nix;
-            }
-            {
-              continue-on-error = true;
-              uses = "cachix/cachix-action@v16";
-              "with" = {
-                authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-                name = "shikanime-studio";
-              }
-              // cfg.settings.cachix-push;
-            }
-            {
-              run = "nix run nixpkgs#direnv allow";
-            }
-            {
-              run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\"";
-            }
-            {
-              run = "nix flake check --accept-flake-config --no-pure-eval";
-            }
-          ];
+        integration = {
+          secrets = "inherit";
+          uses = "./.github/workflows/integration.yml";
         };
         release-branch = {
           "if" =
             "(startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v') && endsWith(github.event.inputs.ref_name, '.0'))";
-          needs = [ "check" ];
+          needs = [ "integration" ];
           runs-on = "ubuntu-slim";
           steps = [
             {
@@ -123,7 +68,7 @@ in
         release-tag = {
           "if" =
             "(startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v'))";
-          needs = [ "check" ];
+          needs = [ "integration" ];
           runs-on = "ubuntu-slim";
           steps = [
             {

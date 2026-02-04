@@ -12,11 +12,11 @@ with lib;
     workflows = {
       cleanup.enable = true;
       commands.enable = true;
-      integration.enable = true;
-      release = {
+      integration = {
         enable = true;
         settings.cachix-push.name = "shikanime";
       };
+      release.enable = true;
       triage.enable = true;
       update.enable = true;
     };
