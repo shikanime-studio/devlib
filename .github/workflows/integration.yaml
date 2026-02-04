@@ -7,29 +7,15 @@ jobs:
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
-          continue-on-error: true
-          id: createGithubAppToken
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-          uses: actions/create-github-app-token@v2
-          with:
-            app-id: ${{ vars.OPERATOR_APP_ID }}
-            permission-contents: read
-            private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-          uses: actions/checkout@v6
-          with:
-            fetch-depth: 0
-            token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-          uses: cachix/install-nix-action@v31
-          with:
-            github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - env: {}
         run: nix run nixpkgs#direnv allow
       - env: {}

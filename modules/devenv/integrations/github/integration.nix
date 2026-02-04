@@ -17,37 +17,25 @@ in
       cachix-push = lib.mkOption {
         type = lib.types.submodule { freeformType = yamlFormat.type; };
         default = {
-          continue-on-error = true;
-          uses = "cachix/cachix-action@v16";
-          "with" = {
-            authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-            name = "shikanime-studio";
-          };
+          authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+          name = "shikanime-studio";
         };
         description = "Overrides for cachix-push";
       };
       checkout = lib.mkOption {
         type = lib.types.submodule { freeformType = yamlFormat.type; };
         default = {
-          uses = "actions/checkout@v6";
-          "with" = {
-            fetch-depth = 0;
-            token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-          };
+          fetch-depth = 0;
+          token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
         };
         description = "Overrides for checkout";
       };
       create-github-app-token = lib.mkOption {
         type = lib.types.submodule { freeformType = yamlFormat.type; };
         default = {
-          continue-on-error = true;
-          id = "createGithubAppToken";
-          uses = "actions/create-github-app-token@v2";
-          "with" = {
-            app-id = "\${{ vars.OPERATOR_APP_ID }}";
-            private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-            permission-contents = "read";
-          };
+          app-id = "\${{ vars.OPERATOR_APP_ID }}";
+          private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+          permission-contents = "read";
         };
         description = "Overrides for create-github-app-token";
       };
@@ -63,12 +51,7 @@ in
       };
       setup-nix = lib.mkOption {
         type = lib.types.submodule { freeformType = yamlFormat.type; };
-        default = {
-          uses = "cachix/install-nix-action@v31";
-          "with" = {
-            github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-          };
-        };
+        default.github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
         description = "Overrides for setup-nix";
       };
     };
@@ -106,16 +89,16 @@ in
             // cfg.settings.setup-nix;
           }
           {
+            env = cfg.settings.direnv;
             run = "nix run nixpkgs#direnv allow";
-            "env" = cfg.settings.direnv;
           }
           {
+            env = cfg.settings.direnv;
             run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\"";
-            "env" = cfg.settings.direnv;
           }
           {
+            env = cfg.settings.nix-flake-check;
             run = "nix flake check --accept-flake-config --no-pure-eval";
-            "env" = cfg.settings.nix-flake-check;
           }
         ];
       };
