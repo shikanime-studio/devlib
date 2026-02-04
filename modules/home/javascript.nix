@@ -4,6 +4,13 @@
   ...
 }:
 
+let
+  configDir =
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      "${config.home.homeDirectory}/Library/Application Support"
+    else
+      config.xdg.configHome;
+in
 {
   home.packages = [
     pkgs.deno
@@ -14,7 +21,7 @@
 
   home.sessionVariables = {
     NPM_CONFIG_CACHE = "${config.xdg.cacheHome}/npm";
-    NPM_CONFIG_USERCONFIG = "${config.xdg.configHome}/npm";
+    NPM_CONFIG_USERCONFIG = "${configDir}/npm";
   };
 
   programs.nushell.extraConfig = ''
