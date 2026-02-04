@@ -13,7 +13,10 @@ with lib;
       cleanup.enable = true;
       commands.enable = true;
       integration.enable = true;
-      release.enable = true;
+      release = {
+        enable = true;
+        settings.cachix-push.name = "shikanime-studio";
+      };
       triage.enable = true;
       update.enable = true;
     };
