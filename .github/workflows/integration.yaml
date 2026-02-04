@@ -30,12 +30,12 @@ jobs:
           uses: cachix/install-nix-action@v31
           with:
             github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - run: nix run nixpkgs#direnv allow
-        with: {}
-      - run: nix run nixpkgs#direnv export gha >> "$GITHUB_ENV"
-        with: {}
-      - run: nix flake check --accept-flake-config --no-pure-eval
-        with: {}
+      - env: {}
+        run: nix run nixpkgs#direnv allow
+      - env: {}
+        run: nix run nixpkgs#direnv export gha >> "$GITHUB_ENV"
+      - env: {}
+        run: nix flake check --accept-flake-config --no-pure-eval
 name: Integration
 'on':
   pull_request:
