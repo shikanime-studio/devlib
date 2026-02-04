@@ -4,17 +4,24 @@
   ...
 }:
 
+let
+  configDir =
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      "${config.home.homeDirectory}/Library/Application Support"
+    else
+      config.xdg.configHome;
+in
 {
   home = {
     packages = [ pkgs.rustup ];
 
     sessionPath = [
-      "${config.xdg.configHome}/cargo/bin"
+      "${configDir}/cargo/bin"
     ];
 
     sessionVariables = {
-      CARGO_HOME = "${config.xdg.configHome}/cargo";
-      RUSTUP_HOME = "${config.xdg.configHome}/rustup";
+      CARGO_HOME = "${configDir}/cargo";
+      RUSTUP_HOME = "${configDir}/rustup";
     };
   };
 

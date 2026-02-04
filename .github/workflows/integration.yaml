@@ -22,11 +22,8 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           name: shikanime-studio
       - run: nix run nixpkgs#direnv allow
-        with: {}
       - run: nix run nixpkgs#direnv export gha >> "$GITHUB_ENV"
-        with: {}
       - run: nix flake check --accept-flake-config --no-pure-eval
-        with: {}
 name: Integration
 'on':
   pull_request:
