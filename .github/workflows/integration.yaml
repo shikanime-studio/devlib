@@ -7,29 +7,40 @@ jobs:
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
+          continue-on-error: true
+          id: createGithubAppToken
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          uses: actions/create-github-app-token@v2
+          with:
+            app-id: ${{ vars.OPERATOR_APP_ID }}
+            permission-contents: read
+            private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+          uses: actions/checkout@v6
+          with:
+            fetch-depth: 0
+            token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - continue-on-error: true
-        uses: cachix/cachix-action@v16
-        with:
-          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
-          name: shikanime-studio
+          uses: cachix/install-nix-action@v31
+          with:
+            github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - run: nix run nixpkgs#direnv allow
+        with: {}
       - run: nix run nixpkgs#direnv export gha >> "$GITHUB_ENV"
+        with: {}
       - run: nix flake check --accept-flake-config --no-pure-eval
+        with: {}
 name: Integration
 'on':
   pull_request:
     branches:
       - main
       - gh/*/*/base
-  workflow_call: {}
 permissions:
   contents: read
