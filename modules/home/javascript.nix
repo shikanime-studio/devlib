@@ -5,6 +5,11 @@
 }:
 
 let
+  cacheDir =
+    if pkgs.stdenv.hostPlatform.isDarwin then
+      "${config.home.homeDirectory}/Library/Caches"
+    else
+      config.xdg.cacheHome;
   configDir =
     if pkgs.stdenv.hostPlatform.isDarwin then
       "${config.home.homeDirectory}/Library/Application Support"
@@ -20,7 +25,7 @@ in
   ];
 
   home.sessionVariables = {
-    NPM_CONFIG_CACHE = "${config.xdg.cacheHome}/npm";
+    NPM_CONFIG_CACHE = "${cacheDir}/npm";
     NPM_CONFIG_USERCONFIG = "${configDir}/npm";
   };
 
