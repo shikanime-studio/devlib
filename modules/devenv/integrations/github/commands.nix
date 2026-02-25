@@ -69,7 +69,6 @@ in
               "with" = {
                 app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                permission-administration = "read";
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
@@ -156,6 +155,7 @@ in
               "with" = {
                 app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                permission-administration = "read";
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
