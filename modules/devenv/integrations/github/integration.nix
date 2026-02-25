@@ -35,7 +35,6 @@ in
         default = {
           app-id = "\${{ vars.OPERATOR_APP_ID }}";
           private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-          permission-contents = "read";
         };
         description = "Overrides for create-github-app-token";
       };
@@ -69,7 +68,6 @@ in
             "with" = {
               app-id = "\${{ vars.OPERATOR_APP_ID }}";
               private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-              permission-contents = "read";
             }
             // cfg.settings.create-github-app-token;
           }

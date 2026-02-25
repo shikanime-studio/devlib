@@ -47,8 +47,6 @@ in
             "with" = {
               app-id = "\${{ vars.OPERATOR_APP_ID }}";
               private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-              permission-contents = "read";
-              permission-pull-requests = "write";
             }
             // cfg.settings.create-github-app-token;
           }

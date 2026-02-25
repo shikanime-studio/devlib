@@ -59,7 +59,6 @@ in
               uses = "actions/create-github-app-token@v2";
               "with" = {
                 app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                permission-contents = "write";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               }
               // cfg.settings.create-github-app-token;
@@ -114,7 +113,6 @@ in
               uses = "actions/create-github-app-token@v2";
               "with" = {
                 app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                permission-contents = "write";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               }
               // cfg.settings.create-github-app-token;
@@ -145,7 +143,6 @@ in
               uses = "actions/create-github-app-token@v2";
               "with" = {
                 app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                permission-contents = "write";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               }
               // cfg.settings.create-github-app-token;
