@@ -69,6 +69,7 @@ in
               "with" = {
                 app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                permission-administration = "read";
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
@@ -242,6 +243,7 @@ in
       name = "Commands";
       on.issue_comment.types = [ "created" ];
       permissions = {
+        administration = "read";
         contents = "write";
         issues = "write";
         pull-requests = "write";

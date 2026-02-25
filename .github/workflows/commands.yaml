@@ -8,6 +8,7 @@ jobs:
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
+          permission-administration: read
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -113,6 +114,7 @@ name: Commands
     types:
       - created
 permissions:
+  administration: read
   contents: write
   issues: write
   pull-requests: write
