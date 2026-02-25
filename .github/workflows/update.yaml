@@ -7,6 +7,8 @@ jobs:
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
+          permission-contents: write
+          permission-pull-requests: write
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
@@ -32,6 +34,8 @@ jobs:
         uses: actions/create-github-app-token@v2
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
+          permission-issues: write
+          permission-pull-requests: write
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: actions/stale@v10
         with:
