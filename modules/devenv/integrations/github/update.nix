@@ -57,8 +57,6 @@ in
               "with" = {
                 app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                permission-contents = "write";
-                permission-pull-requests = "write";
               }
               // cfg.settings.create-github-app-token;
             }
@@ -102,8 +100,6 @@ in
               "with" = {
                 app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                permission-issues = "write";
-                permission-pull-requests = "write";
               }
               // cfg.settings.create-github-app-token;
             }
