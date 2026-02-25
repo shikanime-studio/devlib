@@ -243,7 +243,6 @@ in
       name = "Commands";
       on.issue_comment.types = [ "created" ];
       permissions = {
-        administration = "read";
         contents = "write";
         issues = "write";
         pull-requests = "write";
