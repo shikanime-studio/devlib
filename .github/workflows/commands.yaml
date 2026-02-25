@@ -114,7 +114,6 @@ name: Commands
     types:
       - created
 permissions:
-  administration: read
   contents: write
   issues: write
   pull-requests: write
