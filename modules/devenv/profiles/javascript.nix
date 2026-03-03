@@ -11,8 +11,8 @@
     enable = true;
     corepack.enable = true;
 
-    npm.install = {
-      enable = true;
+    npm = {
+      install.enable = true;
       # FIXES: https://github.com/cachix/devenv/issues/2538
       package = pkgs.nodejs-slim;
     };
