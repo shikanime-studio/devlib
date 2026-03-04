@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+
+with lib;
+
 let
   cfg = config.github.workflows.triage;
 
@@ -19,23 +22,23 @@ let
 in
 {
   options.github.workflows.triage = {
-    enable = lib.mkEnableOption "triage";
+    enable = mkEnableOption "triage";
 
     settings = {
-      checkout = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      checkout = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for checkout";
       };
-      create-github-app-token = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      create-github-app-token = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for create-github-app-token";
       };
     };
   };
 
-  config = lib.mkIf config.github.workflows.triage.enable {
+  config = mkIf config.github.workflows.triage.enable {
     github.settings.workflows.triage = {
       jobs.triage = {
         runs-on = "ubuntu-slim";

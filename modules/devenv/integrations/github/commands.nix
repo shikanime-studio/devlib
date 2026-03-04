@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+
+with lib;
+
 let
   cfg = config.github.workflows.commands;
 
@@ -13,48 +16,48 @@ let
 in
 {
   options.github.workflows.commands = {
-    enable = lib.mkEnableOption "commands workflow";
+    enable = mkEnableOption "commands workflow";
 
     settings = {
-      backport = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      backport = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for backport";
       };
-      checkout = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      checkout = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for checkout";
       };
-      close = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      close = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for close";
       };
-      create-github-app-token = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      create-github-app-token = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for create-github-app-token";
       };
-      land = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      land = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for land";
       };
-      rebase = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      rebase = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for rebase";
       };
-      setup-nix = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      setup-nix = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for setup-nix";
       };
     };
   };
 
-  config = lib.mkIf (config.github.enable && cfg.enable) {
+  config = mkIf (config.github.enable && cfg.enable) {
     github.settings.workflows.commands = {
       jobs = {
         backport = {

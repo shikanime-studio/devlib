@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+
+with lib;
+
 let
   cfg = config.github.workflows.update;
 
@@ -13,38 +16,38 @@ let
 in
 {
   options.github.workflows.update = {
-    enable = lib.mkEnableOption "update";
+    enable = mkEnableOption "update";
 
     settings = {
-      checkout = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      checkout = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for checkout 'with' section";
       };
-      create-github-app-token = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      create-github-app-token = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for create-github-app-token 'with' section";
       };
-      setup-nix = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      setup-nix = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for setup-nix 'with' section";
       };
-      stale = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      stale = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for stale 'with' section";
       };
-      update = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      update = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for update 'with' section";
       };
     };
   };
 
-  config = lib.mkIf config.github.workflows.update.enable {
+  config = mkIf config.github.workflows.update.enable {
     github.settings.workflows.update = {
       jobs = {
         dependencies = {
