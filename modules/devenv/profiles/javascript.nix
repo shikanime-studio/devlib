@@ -13,7 +13,7 @@
     npm = {
       install.enable = true;
       # FIXES: https://github.com/cachix/devenv/issues/2538
-      package = config.languages.javascript.package;
+      inherit (config.languages.javascript) package;
     };
     package = pkgs.nodejs;
   };
