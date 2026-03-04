@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+
+with lib;
+
 let
   cfg = config.github.workflows.release;
 
@@ -11,43 +14,43 @@ let
 in
 {
   options.github.workflows.release = {
-    enable = lib.mkEnableOption "release";
+    enable = mkEnableOption "release";
 
     settings = {
-      cachix-push = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      cachix-push = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for cachix-push";
       };
-      checkout = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      checkout = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for checkout";
       };
-      create-github-app-token = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      create-github-app-token = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for create-github-app-token";
       };
-      direnv = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      direnv = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for direnv";
       };
-      nix-flake-check = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      nix-flake-check = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for nix-flake-check";
       };
-      setup-nix = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      setup-nix = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for setup-nix";
       };
     };
   };
 
-  config = lib.mkIf config.github.workflows.release.enable {
+  config = mkIf config.github.workflows.release.enable {
     github.settings.workflows.release = {
       jobs = {
         check = {
@@ -88,18 +91,18 @@ in
               }
               // cfg.settings.cachix-push;
             }
-            {
-              env = cfg.settings.direnv;
-              run = "nix run nixpkgs#direnv allow";
-            }
-            {
-              env = cfg.settings.direnv;
-              run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\"";
-            }
-            {
-              env = cfg.settings.nix-flake-check;
-              run = "nix flake check --accept-flake-config --no-pure-eval";
-            }
+            (mkMerge [
+              { run = "nix run nixpkgs#direnv allow"; }
+              (optionalAttrs (cfg.settings.direnv != { }) { env = cfg.settings.direnv; })
+            ])
+            (mkMerge [
+              { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+              (optionalAttrs (cfg.settings.direnv != { }) { env = cfg.settings.direnv; })
+            ])
+            (mkMerge [
+              { run = "nix flake check --accept-flake-config --no-pure-eval"; }
+              (optionalAttrs (cfg.settings.nix-flake-check != { }) { env = cfg.settings.nix-flake-check; })
+            ])
           ];
         };
         release-branch = {

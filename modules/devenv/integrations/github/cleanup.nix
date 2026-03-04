@@ -5,6 +5,8 @@
   ...
 }:
 
+with lib;
+
 let
   cfg = config.github.workflows.cleanup;
 
@@ -14,23 +16,23 @@ let
 in
 {
   options.github.workflows.cleanup = {
-    enable = lib.mkEnableOption "cleanup workflow";
+    enable = mkEnableOption "cleanup workflow";
 
     settings = {
-      checkout = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      checkout = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for checkout";
       };
-      create-github-app-token = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      create-github-app-token = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for create-github-app-token";
       };
     };
   };
 
-  config = lib.mkIf (config.github.enable && cfg.enable) {
+  config = mkIf (config.github.enable && cfg.enable) {
     github.settings.workflows.cleanup = {
       jobs.cleanup = {
         runs-on = "ubuntu-slim";

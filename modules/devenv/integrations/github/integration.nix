@@ -4,6 +4,9 @@
   pkgs,
   ...
 }:
+
+with lib;
+
 let
   cfg = config.github.workflows.integration;
 
@@ -11,27 +14,27 @@ let
 in
 {
   options.github.workflows.integration = {
-    enable = lib.mkEnableOption "integration workflow";
+    enable = mkEnableOption "integration workflow";
 
     settings = {
-      cachix-push = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      cachix-push = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = {
           authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
           name = "shikanime-studio";
         };
         description = "Overrides for cachix-push";
       };
-      checkout = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      checkout = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = {
           fetch-depth = 0;
           token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
         };
         description = "Overrides for checkout";
       };
-      create-github-app-token = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      create-github-app-token = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = {
           app-id = "\${{ vars.OPERATOR_APP_ID }}";
           private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
@@ -39,25 +42,25 @@ in
         };
         description = "Overrides for create-github-app-token";
       };
-      direnv = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      direnv = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for direnv";
       };
-      nix-flake-check = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      nix-flake-check = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for nix-flake-check";
       };
-      setup-nix = lib.mkOption {
-        type = lib.types.submodule { freeformType = yamlFormat.type; };
+      setup-nix = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
         default.github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
         description = "Overrides for setup-nix";
       };
     };
   };
 
-  config = lib.mkIf (config.github.enable && cfg.enable) {
+  config = mkIf (config.github.enable && cfg.enable) {
     github.settings.workflows.integration = {
       jobs.check = {
         runs-on = "ubuntu-latest";
