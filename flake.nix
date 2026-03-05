@@ -52,10 +52,10 @@
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } (
-      { flake-parts-lib, withSystem, ... }:
+      { flake-parts-lib, ... }:
       with flake-parts-lib;
       let
-        defaultFlakeModule = importApply ./modules/flake/default.nix { inherit withSystem; };
+        defaultFlakeModule = importApply ./modules/flake/default.nix { };
       in
       {
         imports = [
@@ -109,6 +109,11 @@
           flakeModules = {
             default = defaultFlakeModule;
             treefmt = treefmtFlakeModule;
+          };
+
+          nixosModule = ./modules/nixos/default.nix;
+          nixosModules = {
+            default = self.nixosModule;
           };
 
           templates = {
