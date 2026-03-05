@@ -111,11 +111,6 @@
             treefmt = treefmtFlakeModule;
           };
 
-          nixosModule = ./modules/nixos/default.nix;
-          nixosModules = {
-            default = self.nixosModule;
-          };
-
           templates = {
             default = {
               path = ./templates/default;
