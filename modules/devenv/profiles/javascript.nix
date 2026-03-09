@@ -1,5 +1,3 @@
-{ config, pkgs, ... }:
-
 {
   imports = [ ./base.nix ];
 
@@ -10,12 +8,10 @@
   languages.javascript = {
     enable = true;
     corepack.enable = true;
-    npm = {
+    pnpm = {
+      enable = true;
       install.enable = true;
-      # FIXES: https://github.com/cachix/devenv/issues/2538
-      inherit (config.languages.javascript) package;
     };
-    package = pkgs.nodejs;
   };
 
   treefmt.config.settings.global.excludes = [ "node_modules/*" ];
