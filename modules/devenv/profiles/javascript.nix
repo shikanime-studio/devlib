@@ -1,3 +1,5 @@
+{ pkgs, ... }:
+
 {
   imports = [ ./base.nix ];
 
@@ -8,6 +10,7 @@
   languages.javascript = {
     enable = true;
     corepack.enable = true;
+    package = pkgs.nodejs;
     pnpm = {
       enable = true;
       install.enable = true;
