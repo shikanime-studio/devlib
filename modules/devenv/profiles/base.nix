@@ -14,6 +14,7 @@
         jsonfmt.enable = true;
         mdformat.enable = true;
         taplo.enable = true;
+        trufflehog.enable = true;
         xmllint.enable = true;
         yamlfmt.enable = true;
       };
