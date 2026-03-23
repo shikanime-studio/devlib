@@ -58,8 +58,15 @@ with lib;
               token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             };
           }
-          { run = "pnpm install --frozen-lockfile"; }
-          { run = "pnpm run check"; }
+          {
+            uses = "cachix/install-nix-action@v31";
+            "with".github_access_token =
+              "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+          }
+          { run = "nix run nixpkgs#direnv allow"; }
+          { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+          { run = "corepack pnpm install --frozen-lockfile"; }
+          { run = "corepack pnpm run check"; }
         ];
       };
 
@@ -85,20 +92,14 @@ with lib;
             };
           }
           {
-            uses = "actions/setup-node@v4";
-            "with" = {
-              node-version = "\${{ inputs['node-version'] }}";
-              cache = "pnpm";
-            };
+            uses = "cachix/install-nix-action@v31";
+            "with".github_access_token =
+              "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
           }
-          {
-            uses = "pnpm/action-setup@v4";
-            "with" = {
-              version = "latest";
-            };
-          }
-          { run = "pnpm install --frozen-lockfile"; }
-          { run = "pnpm run build"; }
+          { run = "nix run nixpkgs#direnv allow"; }
+          { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+          { run = "corepack pnpm install --frozen-lockfile"; }
+          { run = "corepack pnpm run build"; }
         ];
       };
     };
