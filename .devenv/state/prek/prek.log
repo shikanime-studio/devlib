@@ -1,9 +1,0 @@
-2026-03-23T20:13:38.499411Z DEBUG prek: 0.3.0
-2026-03-23T20:13:38.499438Z DEBUG Args: ["/nix/store/8gfprnf9zzxf0ap7pxww1bnw0mp5p1vq-pre-commit-bin/bin/prek", "install", "-c", ".pre-commit-config.yaml", "-t", "commit-msg"]
-2026-03-23T20:13:38.499658Z TRACE Executing `/etc/profiles/per-user/shikanimedeva/bin/git config --get core.hooksPath`
-2026-03-23T20:13:38.511830Z TRACE get_root: close time.busy=6.03ms time.idle=2.58µs
-2026-03-23T20:13:38.511865Z DEBUG Git root: /Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/devlib
-2026-03-23T20:13:38.511876Z DEBUG Loading project configuration path=.pre-commit-config.yaml
-2026-03-23T20:13:38.512532Z TRACE Executing `/etc/profiles/per-user/shikanimedeva/bin/git rev-parse --git-common-dir`
-2026-03-23T20:13:38.519687Z TRACE Include selectors: ``
-2026-03-23T20:13:38.519732Z TRACE Skip selectors: ``
