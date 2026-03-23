@@ -124,7 +124,7 @@
         };
 
         perSystem =
-          { config, pkgs, ... }:
+          { config, ... }:
           {
             devenv.shells.default = {
               imports = [
@@ -139,12 +139,6 @@
                 package = config.devenv.shells.default.license.lib.pkgs.asl20;
                 year = "2025";
               };
-            };
-
-            packages = {
-              fleet = pkgs.callPackage ./pkgs/fleet { };
-              bootloose = pkgs.callPackage ./pkgs/bootloose { };
-              longhornctl = pkgs.callPackage ./pkgs/longhornctl { };
             };
           };
 

@@ -57,7 +57,7 @@ in
     };
   };
 
-  config = mkIf (config.github.enable && cfg.enable) {
+  config = mkIf cfg.enable {
     github.settings.workflows.commands = {
       jobs = {
         backport = {
