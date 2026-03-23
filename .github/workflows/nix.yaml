@@ -73,6 +73,12 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - continue-on-error: true
+        if: ${{ inputs['cachix-name'] != '' }}
+        uses: cachix/cachix-action@v16
+        with:
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          name: ${{ inputs['cachix-name'] }}
       - run: "packages=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -r --arg system \"${{ matrix.system }}\" '.packages[$system] | keys[]'\n)\"\nfor package in $packages; do\n  nix build -L --accept-flake-config --no-pure-eval \".#packages.${{ matrix.system }}.$package\"\ndone\n"
     strategy:
       matrix:

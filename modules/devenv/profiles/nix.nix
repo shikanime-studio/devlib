@@ -202,6 +202,15 @@
                 "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
             {
+              "if" = "\${{ inputs['cachix-name'] != '' }}";
+              continue-on-error = true;
+              uses = "cachix/cachix-action@v16";
+              "with" = {
+                authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+                name = "\${{ inputs['cachix-name'] }}";
+              };
+            }
+            {
               run = ''
                 packages="$(
                   nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
