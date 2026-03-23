@@ -163,7 +163,7 @@
                       | map(select(.key | test("linux$")))
                       | reduce .[] as $entry ([];
                           . + (
-                            ($entry.value | keys)
+                            ($entry.value | keys | map(select(. != "devenv-up" and . != "devenv-test")))
                             | map({
                                 system: $entry.key,
                                 os: (if ($entry.key|test("^(aarch64|armv6l|armv7l)-linux$")) then "ubuntu-24.04-arm" else "ubuntu-latest" end),
