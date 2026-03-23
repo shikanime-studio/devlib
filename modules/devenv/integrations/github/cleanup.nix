@@ -12,7 +12,7 @@ let
 
   yamlFormat = pkgs.formats.yaml { };
 
-  ghstackCondition = "startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref, '/head')";
+  githubToken = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
 in
 {
   options.github.workflows.cleanup = {
@@ -28,6 +28,11 @@ in
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for create-github-app-token";
+      };
+      cleanup = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for cleanup";
       };
     };
   };
@@ -52,27 +57,18 @@ in
             uses = "actions/checkout@v6";
             "with" = {
               fetch-depth = 0;
+              ref = "main";
               token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
             // cfg.settings.checkout;
           }
           {
-            env = {
-              BASE_REF = "\${{ github.base_ref }}";
-              HEAD_REF = "\${{ github.head_ref }}";
-              REPO = "\${{ github.repository }}";
-            };
-            "if" = "!(${ghstackCondition})";
-            run = "git push origin --delete \"$HEAD_REF\" || true";
-          }
-          {
-            env = {
-              BASE_REF = "\${{ github.base_ref }}";
-              HEAD_REF = "\${{ github.head_ref }}";
-              REPO = "\${{ github.repository }}";
-            };
-            "if" = ghstackCondition;
-            run = "for role in base head orig; do git push origin --delete \"\${HEAD_REF%/head}/$role\" || true; done";
+            uses = "shikanime-studio/actions/cleanup@v7";
+            "with" = {
+              github-token = githubToken;
+              pull-request-url = "\${{ github.event.pull_request.html_url }}";
+            }
+            // cfg.settings.cleanup;
           }
         ];
       };
