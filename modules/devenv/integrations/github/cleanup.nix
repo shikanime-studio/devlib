@@ -32,7 +32,7 @@ in
     };
   };
 
-  config = mkIf (config.github.enable && cfg.enable) {
+  config = mkIf cfg.enable {
     github.settings.workflows.cleanup = {
       jobs.cleanup = {
         runs-on = "ubuntu-slim";

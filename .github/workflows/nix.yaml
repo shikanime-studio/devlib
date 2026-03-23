@@ -1,0 +1,113 @@
+jobs:
+  check:
+    name: Check
+    needs:
+      - check-systems
+    runs-on: ${{ matrix.os }}
+    steps:
+      - continue-on-error: true
+        id: createGithubAppToken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          permission-contents: read
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - continue-on-error: true
+        if: ${{ secrets.CACHIX_AUTH_TOKEN != '' && inputs['cachix-name'] != '' }}
+        uses: cachix/cachix-action@v16
+        with:
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          name: ${{ inputs['cachix-name'] }}
+      - run: nix run nixpkgs#direnv allow
+      - run: nix run nixpkgs#direnv export gha >> "$GITHUB_ENV"
+      - run: nix flake check --accept-flake-config --no-pure-eval --system "${{ matrix.system }}"
+    strategy:
+      matrix: ${{ fromJSON(needs['check-systems'].outputs.matrix) }}
+  check-systems:
+    name: Check Systems
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - continue-on-error: true
+        id: createGithubAppToken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          permission-contents: read
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - id: matrix
+        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c '\n      (.checks // .packages)\n      | keys\n      | map(select(test(\"linux$\")))\n      | map({\n          system: .,\n          os: (if test(\"^(aarch64|armv6l|armv7l)-linux$\") then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),\n          name: .\n        })\n    '\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\n"
+  packages:
+    name: Packages
+    needs:
+      - packages-systems
+    runs-on: ${{ matrix.os }}
+    steps:
+      - continue-on-error: true
+        id: createGithubAppToken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          permission-contents: read
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - run: "packages=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -r --arg system \"${{ matrix.system }}\" '.packages[$system] | keys[]'\n)\"\nfor package in $packages; do\n  nix build -L --accept-flake-config --no-pure-eval \".#packages.${{ matrix.system }}.$package\"\ndone\n"
+    strategy:
+      matrix: ${{ fromJSON(needs['packages-systems'].outputs.matrix) }}
+  packages-systems:
+    name: Packages Systems
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - continue-on-error: true
+        id: createGithubAppToken
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          permission-contents: read
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - id: matrix
+        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c '\n      .packages\n      | keys\n      | map(select(test(\"linux$\")))\n      | map({\n          system: .,\n          os: (if test(\"^(aarch64|armv6l|armv7l)-linux$\") then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),\n          name: .\n        })\n    '\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\n"
+name: Nix
+'on':
+  workflow_call:
+    inputs:
+      cachix-name:
+        default: ''
+        type: string
+    secrets:
+      CACHIX_AUTH_TOKEN:
+        required: false
+      OPERATOR_PRIVATE_KEY:
+        required: true
+permissions:
+  contents: read

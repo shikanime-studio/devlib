@@ -50,65 +50,12 @@ in
     };
   };
 
-  config = mkIf config.github.workflows.release.enable {
+  config = mkIf cfg.enable {
     github.settings.workflows.release = {
       jobs = {
-        check = {
-          runs-on = "ubuntu-latest";
-          steps = [
-            {
-              continue-on-error = true;
-              id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v2";
-              "with" = {
-                app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                permission-contents = "write";
-                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-              }
-              // cfg.settings.create-github-app-token;
-            }
-            {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              }
-              // cfg.settings.checkout;
-            }
-            {
-              uses = "cachix/install-nix-action@v31";
-              "with" = {
-                github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              }
-              // cfg.settings.setup-nix;
-            }
-            {
-              continue-on-error = true;
-              uses = "cachix/cachix-action@v16";
-              "with" = {
-                authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-                name = "shikanime-studio";
-              }
-              // cfg.settings.cachix-push;
-            }
-            (mkMerge [
-              { run = "nix run nixpkgs#direnv allow"; }
-              (optionalAttrs (cfg.settings.direnv != { }) { env = cfg.settings.direnv; })
-            ])
-            (mkMerge [
-              { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
-              (optionalAttrs (cfg.settings.direnv != { }) { env = cfg.settings.direnv; })
-            ])
-            (mkMerge [
-              { run = "nix flake check --accept-flake-config --no-pure-eval"; }
-              (optionalAttrs (cfg.settings.nix-flake-check != { }) { env = cfg.settings.nix-flake-check; })
-            ])
-          ];
-        };
         release-branch = {
           "if" =
             "(startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v') && endsWith(github.event.inputs.ref_name, '.0'))";
-          needs = [ "check" ];
           runs-on = "ubuntu-slim";
           steps = [
             {
@@ -139,7 +86,6 @@ in
         release-tag = {
           "if" =
             "(startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v'))";
-          needs = [ "check" ];
           runs-on = "ubuntu-slim";
           steps = [
             {

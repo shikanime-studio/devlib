@@ -20,5 +20,8 @@ with lib;
       triage.enable = true;
       update.enable = true;
     };
+
+    settings.workflows.integration.jobs.nix."with"."cachix-name" = "shikanime";
+    settings.workflows.release.jobs.nix."with"."cachix-name" = "shikanime";
   };
 }
