@@ -161,7 +161,7 @@
                 "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
             {
-              "if" = "\${{ secrets.CACHIX_AUTH_TOKEN != '' && inputs['cachix-name'] != '' }}";
+              "if" = "\${{ inputs['cachix-name'] != '' }}";
               continue-on-error = true;
               uses = "cachix/cachix-action@v16";
               "with" = {
