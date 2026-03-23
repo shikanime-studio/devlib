@@ -79,7 +79,7 @@ jobs:
         with:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           name: ${{ inputs['cachix-name'] }}
-      - run: "packages=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -r --arg system \"${{ matrix.system }}\" '.packages[$system] | keys[]'\n)\"\nfor package in $packages; do\n  nix build -L --accept-flake-config --no-pure-eval \".#packages.${{ matrix.system }}.$package\"\ndone\n"
+      - run: nix build --accept-flake-config --no-pure-eval ".#packages.${{ matrix.system }}.${{ matrix.name }}"
     strategy:
       matrix:
         include: ${{ fromJSON(needs['packages-systems'].outputs.matrix) }}
@@ -104,7 +104,7 @@ jobs:
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - id: matrix
-        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c '\n      .packages\n      | keys\n      | map(select(test(\"linux$\")))\n      | map({\n          system: .,\n          os: (if test(\"^(aarch64|armv6l|armv7l)-linux$\") then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),\n        })\n    '\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\n"
+        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c '\n      .packages\n      | to_entries\n      | map(select(.key | test(\"linux$\")))\n      | reduce .[] as $entry ([];\n          . + (\n            ($entry.value | keys | map(select(. != \"devenv-up\" and . != \"devenv-test\")))\n            | map({\n                system: $entry.key,\n                os: (if ($entry.key|test(\"^(aarch64|armv6l|armv7l)-linux$\")) then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),\n                name: .\n              })\n          )\n        )\n    '\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\n"
 name: Nix
 'on':
   workflow_call:
