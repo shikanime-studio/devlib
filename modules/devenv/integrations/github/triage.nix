@@ -46,7 +46,7 @@ in
           {
             continue-on-error = true;
             id = "createGithubAppToken";
-            uses = "actions/create-github-app-token@v2";
+            uses = "actions/create-github-app-token@v3";
             "with" = {
               app-id = "\${{ vars.OPERATOR_APP_ID }}";
               private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
