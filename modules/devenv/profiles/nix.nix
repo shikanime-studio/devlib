@@ -136,7 +136,7 @@
           name = "Check";
           needs = [ "check-systems" ];
           runs-on = "\${{ matrix.os }}";
-          strategy.matrix = "\${{ fromJSON(needs['check-systems'].outputs.matrix) }}";
+          strategy.matrix.include = "\${{ fromJSON(needs['check-systems'].outputs.matrix) }}";
           steps = [
             {
               continue-on-error = true;
@@ -179,7 +179,7 @@
           name = "Packages";
           needs = [ "packages-systems" ];
           runs-on = "\${{ matrix.os }}";
-          strategy.matrix = "\${{ fromJSON(needs['packages-systems'].outputs.matrix) }}";
+          strategy.matrix.include = "\${{ fromJSON(needs['packages-systems'].outputs.matrix) }}";
           steps = [
             {
               continue-on-error = true;

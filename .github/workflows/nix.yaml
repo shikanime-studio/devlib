@@ -29,7 +29,8 @@ jobs:
       - run: nix run nixpkgs#direnv export gha >> "$GITHUB_ENV"
       - run: nix flake check --accept-flake-config --no-pure-eval --system "${{ matrix.system }}"
     strategy:
-      matrix: ${{ fromJSON(needs['check-systems'].outputs.matrix) }}
+      matrix:
+        include: ${{ fromJSON(needs['check-systems'].outputs.matrix) }}
   check-systems:
     name: Check Systems
     outputs:
@@ -74,7 +75,8 @@ jobs:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - run: "packages=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -r --arg system \"${{ matrix.system }}\" '.packages[$system] | keys[]'\n)\"\nfor package in $packages; do\n  nix build -L --accept-flake-config --no-pure-eval \".#packages.${{ matrix.system }}.$package\"\ndone\n"
     strategy:
-      matrix: ${{ fromJSON(needs['packages-systems'].outputs.matrix) }}
+      matrix:
+        include: ${{ fromJSON(needs['packages-systems'].outputs.matrix) }}
   packages-systems:
     name: Packages Systems
     outputs:
