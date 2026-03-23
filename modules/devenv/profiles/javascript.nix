@@ -21,87 +21,104 @@ with lib;
 
   treefmt.config.settings.global.excludes = [ "node_modules/*" ];
 
-  github.settings.workflows.javascript = {
-    name = "JavaScript";
-    on.workflow_call = {
-      inputs = {
-        "node-version" = {
-          type = "string";
-          default = "lts/*";
+  github.settings.workflows = {
+    javascript = {
+      name = "JavaScript";
+      on.workflow_call = {
+        inputs = {
+          "node-version" = {
+            type = "string";
+            default = "lts/*";
+          };
+        };
+        secrets = {
+          OPERATOR_PRIVATE_KEY.required = true;
         };
       };
-      secrets = {
-        OPERATOR_PRIVATE_KEY.required = true;
+
+      permissions.contents = "read";
+
+      jobs = {
+        check = {
+          runs-on = "ubuntu-latest";
+          steps = [
+            {
+              continue-on-error = true;
+              id = "createGithubAppToken";
+              uses = "actions/create-github-app-token@v3";
+              "with" = {
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                permission-contents = "read";
+              };
+            }
+            {
+              uses = "actions/checkout@v6";
+              "with" = {
+                fetch-depth = 0;
+                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              };
+            }
+            {
+              uses = "cachix/install-nix-action@v31";
+              "with".github_access_token =
+                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+            }
+            { run = "nix run nixpkgs#direnv allow"; }
+            { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+            { run = "corepack pnpm install --frozen-lockfile"; }
+            { run = "corepack pnpm run check"; }
+          ];
+        };
+
+        build = {
+          needs = [ "check" ];
+          runs-on = "ubuntu-latest";
+          steps = [
+            {
+              continue-on-error = true;
+              id = "createGithubAppToken";
+              uses = "actions/create-github-app-token@v3";
+              "with" = {
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                permission-contents = "read";
+              };
+            }
+            {
+              uses = "actions/checkout@v6";
+              "with" = {
+                fetch-depth = 0;
+                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              };
+            }
+            {
+              uses = "cachix/install-nix-action@v31";
+              "with".github_access_token =
+                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+            }
+            { run = "nix run nixpkgs#direnv allow"; }
+            { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+            { run = "corepack pnpm install --frozen-lockfile"; }
+            { run = "corepack pnpm run build"; }
+          ];
+        };
       };
     };
 
-    permissions.contents = "read";
+    integration.jobs.javascript = {
+      uses = "./.github/workflows/javascript.yaml";
+      secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+    };
 
-    jobs = {
-      check = {
-        runs-on = "ubuntu-latest";
-        steps = [
-          {
-            continue-on-error = true;
-            id = "createGithubAppToken";
-            uses = "actions/create-github-app-token@v3";
-            "with" = {
-              app-id = "\${{ vars.OPERATOR_APP_ID }}";
-              private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-              permission-contents = "read";
-            };
-          }
-          {
-            uses = "actions/checkout@v6";
-            "with" = {
-              fetch-depth = 0;
-              token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-            };
-          }
-          {
-            uses = "cachix/install-nix-action@v31";
-            "with".github_access_token =
-              "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-          }
-          { run = "nix run nixpkgs#direnv allow"; }
-          { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
-          { run = "corepack pnpm install --frozen-lockfile"; }
-          { run = "corepack pnpm run check"; }
-        ];
+    release.jobs = {
+      javascript = {
+        uses = "./.github/workflows/javascript.yaml";
+        secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
       };
 
-      build = {
-        needs = [ "check" ];
-        runs-on = "ubuntu-latest";
-        steps = [
-          {
-            continue-on-error = true;
-            id = "createGithubAppToken";
-            uses = "actions/create-github-app-token@v3";
-            "with" = {
-              app-id = "\${{ vars.OPERATOR_APP_ID }}";
-              private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-              permission-contents = "read";
-            };
-          }
-          {
-            uses = "actions/checkout@v6";
-            "with" = {
-              fetch-depth = 0;
-              token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-            };
-          }
-          {
-            uses = "cachix/install-nix-action@v31";
-            "with".github_access_token =
-              "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-          }
-          { run = "nix run nixpkgs#direnv allow"; }
-          { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
-          { run = "corepack pnpm install --frozen-lockfile"; }
-          { run = "corepack pnpm run build"; }
-        ];
-      };
+      release-branch.needs = [ "javascript" ];
+      release-tag.needs = [ "javascript" ];
     };
   };
 }

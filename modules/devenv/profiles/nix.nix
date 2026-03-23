@@ -230,13 +230,11 @@
       };
     };
 
-    integration.jobs = {
-      nix = {
-        uses = "./.github/workflows/nix.yaml";
-        secrets = {
-          OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-          CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-        };
+    integration.jobs.nix = {
+      uses = "./.github/workflows/nix.yaml";
+      secrets = {
+        OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+        CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
       };
     };
 
