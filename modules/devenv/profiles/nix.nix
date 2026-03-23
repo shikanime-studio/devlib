@@ -73,7 +73,6 @@
                       | map({
                           system: .,
                           os: (if test("^(aarch64|armv6l|armv7l)-linux$") then "ubuntu-24.04-arm" else "ubuntu-latest" end),
-                          name: .
                         })
                     '
                 )"
@@ -122,7 +121,6 @@
                       | map({
                           system: .,
                           os: (if test("^(aarch64|armv6l|armv7l)-linux$") then "ubuntu-24.04-arm" else "ubuntu-latest" end),
-                          name: .
                         })
                     '
                 )"
@@ -207,10 +205,10 @@
               run = ''
                 packages="$(
                   nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
-                    | nix run nixpkgs#jq -- -r --arg system "${"$"}{{ matrix.system }}" '.packages[$system] | keys[]'
+                    | nix run nixpkgs#jq -- -r --arg system "''${{ matrix.system }}" '.packages[$system] | keys[]'
                 )"
                 for package in $packages; do
-                  nix build -L --accept-flake-config --no-pure-eval ".#packages.${"$"}{{ matrix.system }}.$package"
+                  nix build -L --accept-flake-config --no-pure-eval ".#packages.''${{ matrix.system }}.$package"
                 done
               '';
             }
