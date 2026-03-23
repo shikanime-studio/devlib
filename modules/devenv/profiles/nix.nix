@@ -34,55 +34,7 @@
       permissions.contents = "read";
 
       jobs = {
-        "packages-systems" = {
-          name = "Packages Systems";
-          runs-on = "ubuntu-latest";
-          outputs.matrix = "\${{ steps.matrix.outputs.matrix }}";
-          steps = [
-            {
-              continue-on-error = true;
-              id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
-              "with" = {
-                app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                permission-contents = "read";
-              };
-            }
-            {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              };
-            }
-            {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-            }
-            {
-              id = "matrix";
-              run = ''
-                matrix="$(
-                  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
-                    | nix run nixpkgs#jq -- -c '
-                      .packages
-                      | keys
-                      | map(select(test("linux$")))
-                      | map({
-                          system: .,
-                          os: (if test("^(aarch64|armv6l|armv7l)-linux$") then "ubuntu-24.04-arm" else "ubuntu-latest" end),
-                        })
-                    '
-                )"
-                echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
-              '';
-            }
-          ];
-        };
-
-        "check-systems" = {
+        check-systems = {
           name = "Check Systems";
           runs-on = "ubuntu-latest";
           outputs.matrix = "\${{ steps.matrix.outputs.matrix }}";
@@ -173,6 +125,60 @@
           ];
         };
 
+        packages-systems = {
+          name = "Packages Systems";
+          runs-on = "ubuntu-latest";
+          outputs.matrix = "\${{ steps.matrix.outputs.matrix }}";
+          steps = [
+            {
+              continue-on-error = true;
+              id = "createGithubAppToken";
+              uses = "actions/create-github-app-token@v3";
+              "with" = {
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                permission-contents = "read";
+              };
+            }
+            {
+              uses = "actions/checkout@v6";
+              "with" = {
+                fetch-depth = 0;
+                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              };
+            }
+            {
+              uses = "cachix/install-nix-action@v31";
+              "with".github_access_token =
+                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+            }
+            {
+              id = "matrix";
+              run = ''
+                matrix="$(
+                  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
+                    | nix run nixpkgs#jq -- -c '
+                      .packages
+                      | to_entries
+                      | map(select(.key | test("linux$")))
+                      | reduce .[] as $entry ([];
+                          . + (
+                            ($entry.value | keys)
+                            | map({
+                                system: $entry.key,
+                                os: (if ($entry.key|test("^(aarch64|armv6l|armv7l)-linux$")) then "ubuntu-24.04-arm" else "ubuntu-latest" end),
+                                name: .
+                              })
+                          )
+                        )
+                    '
+                )"
+                echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+              '';
+            }
+          ];
+        };
+
         packages = {
           name = "Packages";
           needs = [ "packages-systems" ];
@@ -211,15 +217,7 @@
               };
             }
             {
-              run = ''
-                packages="$(
-                  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
-                    | nix run nixpkgs#jq -- -r --arg system "''${{ matrix.system }}" '.packages[$system] | keys[]'
-                )"
-                for package in $packages; do
-                  nix build -L --accept-flake-config --no-pure-eval ".#packages.''${{ matrix.system }}.$package"
-                done
-              '';
+              run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
             }
           ];
         };
