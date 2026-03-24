@@ -160,21 +160,19 @@
               run = ''
                 matrix="$(
                   nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
-                    | nix run nixpkgs#jq -- -c '
+                    | nix run nixpkgs#jq -- -c "
                       .packages
                       | to_entries
-                      | map(select(.key | test("linux$")))
-                      | reduce .[] as $entry ([];
-                          . + (
-                            ($entry.value | keys | map(select(. != "devenv-up" and . != "devenv-test")))
+                      | map(select(.key | test(\"linux$\")))
+                      | reduce .[] as \$entry ([]; . += (
+                            (\$entry.value | keys | map(select(. != \"devenv-up\" and . != \"devenv-test\")))
                             | map({
-                                system: $entry.key,
-                                os: (if ($entry.key|test("^(aarch64|armv6l|armv7l)-linux$")) then "ubuntu-24.04-arm" else "ubuntu-latest" end),
+                                system: \$entry.key,
+                                os: (if (\$entry.key|test(\"^(aarch64|armv6l|armv7l)-linux$\")) then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),
                                 name: .
                               })
-                          )
-                        )
-                    '
+                          ))
+                    "
                 )"
                 echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
               '';

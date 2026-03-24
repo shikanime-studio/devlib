@@ -106,7 +106,7 @@ jobs:
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - id: matrix
-        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c '\n      .packages\n      | to_entries\n      | map(select(.key | test(\"linux$\")))\n      | reduce .[] as $entry ([];\n          . + (\n            ($entry.value | keys | map(select(. != \"devenv-up\" and . != \"devenv-test\")))\n            | map({\n                system: $entry.key,\n                os: (if ($entry.key|test(\"^(aarch64|armv6l|armv7l)-linux$\")) then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),\n                name: .\n              })\n          )\n        )\n    '\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\n"
+        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c \"\n      .packages\n      | to_entries\n      | map(select(.key | test(\\\"linux$\\\")))\n      | reduce .[] as \\$entry ([]; . += (\n            (\\$entry.value | keys | map(select(. != \\\"devenv-up\\\" and . != \\\"devenv-test\\\")))\n            | map({\n                system: \\$entry.key,\n                os: (if (\\$entry.key|test(\\\"^(aarch64|armv6l|armv7l)-linux$\\\")) then \\\"ubuntu-24.04-arm\\\" else \\\"ubuntu-latest\\\" end),\n                name: .\n              })\n          ))\n    \"\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\n"
 name: Nix
 'on':
   workflow_call:
