@@ -41,7 +41,6 @@ with lib;
       jobs = {
         build = {
           name = "Build";
-          needs = [ "check" ];
           runs-on = "ubuntu-latest";
           steps = [
             {
@@ -108,7 +107,6 @@ with lib;
 
         lint = {
           name = "Lint";
-          needs = [ "check" ];
           runs-on = "ubuntu-latest";
           steps = [
             {
