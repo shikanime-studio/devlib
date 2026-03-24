@@ -34,8 +34,100 @@
       permissions.contents = "read";
 
       jobs = {
-        check-systems = {
-          name = "Check Systems";
+        checks = {
+          name = "Checks";
+          needs = [ "setup-checks" ];
+          runs-on = "\${{ matrix.os }}";
+          strategy = {
+            fail-fast = false;
+            matrix.include = "\${{ fromJSON(needs['setup-checks'].outputs.matrix) }}";
+          };
+          steps = [
+            {
+              continue-on-error = true;
+              id = "createGithubAppToken";
+              uses = "actions/create-github-app-token@v3";
+              "with" = {
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                permission-contents = "read";
+              };
+            }
+            {
+              uses = "actions/checkout@v6";
+              "with" = {
+                fetch-depth = 0;
+                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              };
+            }
+            {
+              uses = "cachix/install-nix-action@v31";
+              "with".github_access_token =
+                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+            }
+            {
+              "if" = "\${{ inputs['cachix-name'] != '' }}";
+              continue-on-error = true;
+              uses = "cachix/cachix-action@v17";
+              "with" = {
+                authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+                name = "\${{ inputs['cachix-name'] }}";
+              };
+            }
+            { run = "nix run nixpkgs#direnv allow"; }
+            { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+            { run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\""; }
+          ];
+        };
+
+        packages = {
+          name = "Packages";
+          needs = [ "setup-packages" ];
+          runs-on = "\${{ matrix.os }}";
+          strategy = {
+            fail-fast = false;
+            matrix.include = "\${{ fromJSON(needs['setup-packages'].outputs.matrix) }}";
+          };
+          steps = [
+            {
+              continue-on-error = true;
+              id = "createGithubAppToken";
+              uses = "actions/create-github-app-token@v3";
+              "with" = {
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                permission-contents = "read";
+              };
+            }
+            {
+              uses = "actions/checkout@v6";
+              "with" = {
+                fetch-depth = 0;
+                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              };
+            }
+            {
+              uses = "cachix/install-nix-action@v31";
+              "with".github_access_token =
+                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+            }
+            {
+              "if" = "\${{ inputs['cachix-name'] != '' }}";
+              continue-on-error = true;
+              uses = "cachix/cachix-action@v17";
+              "with" = {
+                authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+                name = "\${{ inputs['cachix-name'] }}";
+              };
+            }
+            {
+              run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
+            }
+          ];
+        };
+
+        setup-checks = {
+          name = "Setup Checks";
           runs-on = "ubuntu-latest";
           outputs.matrix = "\${{ steps.matrix.outputs.matrix }}";
           steps = [
@@ -82,54 +174,8 @@
           ];
         };
 
-        check = {
-          name = "Check";
-          needs = [ "check-systems" ];
-          runs-on = "\${{ matrix.os }}";
-          strategy = {
-            fail-fast = false;
-            matrix.include = "\${{ fromJSON(needs['check-systems'].outputs.matrix) }}";
-          };
-          steps = [
-            {
-              continue-on-error = true;
-              id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
-              "with" = {
-                app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                permission-contents = "read";
-              };
-            }
-            {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              };
-            }
-            {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-            }
-            {
-              "if" = "\${{ inputs['cachix-name'] != '' }}";
-              continue-on-error = true;
-              uses = "cachix/cachix-action@v17";
-              "with" = {
-                authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-                name = "\${{ inputs['cachix-name'] }}";
-              };
-            }
-            { run = "nix run nixpkgs#direnv allow"; }
-            { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
-            { run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\""; }
-          ];
-        };
-
-        packages-systems = {
-          name = "Packages Systems";
+        setup-packages = {
+          name = "Setup Packages";
           runs-on = "ubuntu-latest";
           outputs.matrix = "\${{ steps.matrix.outputs.matrix }}";
           steps = [
@@ -176,52 +222,6 @@
                 )"
                 echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
               '';
-            }
-          ];
-        };
-
-        packages = {
-          name = "Packages";
-          needs = [ "packages-systems" ];
-          runs-on = "\${{ matrix.os }}";
-          strategy = {
-            fail-fast = false;
-            matrix.include = "\${{ fromJSON(needs['packages-systems'].outputs.matrix) }}";
-          };
-          steps = [
-            {
-              continue-on-error = true;
-              id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
-              "with" = {
-                app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                permission-contents = "read";
-              };
-            }
-            {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              };
-            }
-            {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-            }
-            {
-              "if" = "\${{ inputs['cachix-name'] != '' }}";
-              continue-on-error = true;
-              uses = "cachix/cachix-action@v17";
-              "with" = {
-                authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-                name = "\${{ inputs['cachix-name'] }}";
-              };
-            }
-            {
-              run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
             }
           ];
         };
