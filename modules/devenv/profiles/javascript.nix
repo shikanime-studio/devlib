@@ -39,7 +39,6 @@ with lib;
       permissions.contents = "read";
 
       jobs = {
-
         build = {
           name = "Build";
           needs = [ "check" ];
