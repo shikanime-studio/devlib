@@ -67,7 +67,7 @@ with lib;
             { run = "nix run nixpkgs#direnv allow"; }
             { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
             { run = "corepack pnpm install --frozen-lockfile"; }
-            { run = "corepack pnpm run check"; }
+            { run = "corepack pnpm --recursive check"; }
           ];
         };
 
@@ -100,7 +100,7 @@ with lib;
             { run = "nix run nixpkgs#direnv allow"; }
             { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
             { run = "corepack pnpm install --frozen-lockfile"; }
-            { run = "corepack pnpm run build"; }
+            { run = "corepack pnpm --recursive build"; }
           ];
         };
       };
