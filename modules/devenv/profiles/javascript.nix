@@ -39,6 +39,41 @@ with lib;
       permissions.contents = "read";
 
       jobs = {
+
+        build = {
+          name = "Build";
+          needs = [ "check" ];
+          runs-on = "ubuntu-latest";
+          steps = [
+            {
+              continue-on-error = true;
+              id = "createGithubAppToken";
+              uses = "actions/create-github-app-token@v3";
+              "with" = {
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                permission-contents = "read";
+              };
+            }
+            {
+              uses = "actions/checkout@v6";
+              "with" = {
+                fetch-depth = 0;
+                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              };
+            }
+            {
+              uses = "cachix/install-nix-action@v31";
+              "with".github_access_token =
+                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+            }
+            { run = "nix run nixpkgs#direnv allow"; }
+            { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+            { run = "corepack pnpm install --frozen-lockfile"; }
+            { run = "corepack pnpm --recursive build"; }
+          ];
+        };
+
         check = {
           name = "Check";
           runs-on = "ubuntu-latest";
@@ -72,8 +107,8 @@ with lib;
           ];
         };
 
-        build = {
-          name = "Build";
+        lint = {
+          name = "Lint";
           needs = [ "check" ];
           runs-on = "ubuntu-latest";
           steps = [
@@ -102,7 +137,7 @@ with lib;
             { run = "nix run nixpkgs#direnv allow"; }
             { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
             { run = "corepack pnpm install --frozen-lockfile"; }
-            { run = "corepack pnpm --recursive build"; }
+            { run = "corepack pnpm --recursive lint"; }
           ];
         };
       };
