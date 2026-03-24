@@ -116,7 +116,7 @@
             {
               "if" = "\${{ inputs['cachix-name'] != '' }}";
               continue-on-error = true;
-              uses = "cachix/cachix-action@v16";
+              uses = "cachix/cachix-action@v17";
               "with" = {
                 authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
                 name = "\${{ inputs['cachix-name'] }}";
@@ -214,7 +214,7 @@
             {
               "if" = "\${{ inputs['cachix-name'] != '' }}";
               continue-on-error = true;
-              uses = "cachix/cachix-action@v16";
+              uses = "cachix/cachix-action@v17";
               "with" = {
                 authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
                 name = "\${{ inputs['cachix-name'] }}";
