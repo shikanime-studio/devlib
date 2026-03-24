@@ -40,6 +40,7 @@ with lib;
 
       jobs = {
         check = {
+          name = "Check";
           runs-on = "ubuntu-latest";
           steps = [
             {
@@ -72,6 +73,7 @@ with lib;
         };
 
         build = {
+          name = "Build";
           needs = [ "check" ];
           runs-on = "ubuntu-latest";
           steps = [
