@@ -74,6 +74,7 @@
                           system: .,
                           os: (if test("^(aarch64|armv6l|armv7l)-linux$") then "ubuntu-24.04-arm" else "ubuntu-latest" end),
                         })
+                      | { include: . }
                     '
                 )"
                 echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
@@ -88,7 +89,7 @@
           runs-on = "\${{ matrix.os }}";
           strategy = {
             fail-fast = false;
-            matrix.include = "\${{ fromJSON(needs['check-systems'].outputs.matrix) }}";
+            matrix = "\${{ fromJSON(needs['check-systems'].outputs.matrix) }}";
           };
           steps = [
             {
@@ -160,21 +161,21 @@
               run = ''
                 matrix="$(
                   nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
-                    | nix run nixpkgs#jq -- -c '
+                    | nix run nixpkgs#jq -- -c "
                       .packages
                       | to_entries
-                      | map(select(.key | test("linux$")))
-                      | reduce .[] as $entry ([];
-                          . + (
-                            ($entry.value | keys | map(select(. != "devenv-up" and . != "devenv-test")))
+                      | map(select(.key | test(\"linux$\")))
+                      | reduce .[] as \$entry ({ include: [] };
+                          .include += (
+                            (\$entry.value | keys | map(select(. != \"devenv-up\" and . != \"devenv-test\")))
                             | map({
-                                system: $entry.key,
-                                os: (if ($entry.key|test("^(aarch64|armv6l|armv7l)-linux$")) then "ubuntu-24.04-arm" else "ubuntu-latest" end),
+                                system: \$entry.key,
+                                os: (if (\$entry.key|test(\"^(aarch64|armv6l|armv7l)-linux$\")) then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),
                                 name: .
                               })
                           )
                         )
-                    '
+                    "
                 )"
                 echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
               '';
@@ -188,7 +189,7 @@
           runs-on = "\${{ matrix.os }}";
           strategy = {
             fail-fast = false;
-            matrix.include = "\${{ fromJSON(needs['packages-systems'].outputs.matrix) }}";
+            matrix = "\${{ fromJSON(needs['packages-systems'].outputs.matrix) }}";
           };
           steps = [
             {
