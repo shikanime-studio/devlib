@@ -61,7 +61,12 @@ in
   };
 
   config = mkIf cfg.enable {
-    git-hooks.hooks.actionlint.enable = true;
+    packages = [ cfg.package ];
+
+    git-hooks.hooks = {
+      actionlint.enable = true;
+      action-validator.enable = true;
+    };
 
     tasks."devlib:github:workflows:install" = {
       before = [ "devenv:enterShell" ] ++ optional config.treefmt.enable "devenv:treefmt:run";
