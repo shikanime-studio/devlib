@@ -61,6 +61,8 @@ in
   };
 
   config = mkIf cfg.enable {
+    git-hooks.hooks.actionlint.enable = true;
+
     tasks."devlib:github:workflows:install" = {
       before = [ "devenv:enterShell" ] ++ optional config.treefmt.enable "devenv:treefmt:run";
       description = "Install GitHub Actions workflow files";
