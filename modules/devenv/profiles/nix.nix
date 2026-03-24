@@ -74,7 +74,6 @@
                           system: .,
                           os: (if test("^(aarch64|armv6l|armv7l)-linux$") then "ubuntu-24.04-arm" else "ubuntu-latest" end),
                         })
-                      | { include: . }
                     '
                 )"
                 echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
@@ -89,7 +88,7 @@
           runs-on = "\${{ matrix.os }}";
           strategy = {
             fail-fast = false;
-            matrix = "\${{ fromJSON(needs['check-systems'].outputs.matrix) }}";
+            matrix.include = "\${{ fromJSON(needs['check-systems'].outputs.matrix) }}";
           };
           steps = [
             {
@@ -165,16 +164,14 @@
                       .packages
                       | to_entries
                       | map(select(.key | test(\"linux$\")))
-                      | reduce .[] as \$entry ({ include: [] };
-                          .include += (
+                      | reduce .[] as \$entry ([]; . += (
                             (\$entry.value | keys | map(select(. != \"devenv-up\" and . != \"devenv-test\")))
                             | map({
                                 system: \$entry.key,
                                 os: (if (\$entry.key|test(\"^(aarch64|armv6l|armv7l)-linux$\")) then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),
                                 name: .
                               })
-                          )
-                        )
+                          ))
                     "
                 )"
                 echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
@@ -189,7 +186,9 @@
           runs-on = "\${{ matrix.os }}";
           strategy = {
             fail-fast = false;
-            matrix = "\${{ fromJSON(needs['packages-systems'].outputs.matrix) }}";
+            matrix = {
+              include = "\${{ fromJSON(needs['packages-systems'].outputs.matrix) }}";
+            };
           };
           steps = [
             {
