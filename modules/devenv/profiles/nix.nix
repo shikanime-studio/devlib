@@ -186,9 +186,7 @@
           runs-on = "\${{ matrix.os }}";
           strategy = {
             fail-fast = false;
-            matrix = {
-              include = "\${{ fromJSON(needs['packages-systems'].outputs.matrix) }}";
-            };
+            matrix.include = "\${{ fromJSON(needs['packages-systems'].outputs.matrix) }}";
           };
           steps = [
             {
