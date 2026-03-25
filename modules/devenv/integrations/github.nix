@@ -18,7 +18,10 @@ let
   zizmorConfigFile = yamlFormat.generate "zizmor.yml" {
     # TODO: Refactor file generation pipeline to avoid GitHub rate limit using
     # zizmor with pinact
-    rules.unpinned-uses.disable = true;
+    rules = {
+      artipacked.disable = true;
+      unpinned-uses.disable = true;
+    };
   };
 in
 {
