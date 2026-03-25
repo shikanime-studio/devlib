@@ -38,7 +38,7 @@
           name = "Checks";
           needs = [ "setup-checks" ];
           "if" = "\${{ needs['setup-checks'].outputs.continue == 'true' }}";
-          runs-on = "\${{ matrix.os }}";
+          runs-on = "\${{ matrix.runner }}";
           strategy = {
             fail-fast = false;
             matrix.include = "\${{ fromJSON(needs['setup-checks'].outputs.matrix) }}";
@@ -86,7 +86,7 @@
           name = "Packages";
           needs = [ "setup-packages" ];
           "if" = "\${{ needs['setup-packages'].outputs.continue == 'true' }}";
-          runs-on = "\${{ matrix.os }}";
+          runs-on = "\${{ matrix.runner }}";
           strategy = {
             fail-fast = false;
             matrix.include = "\${{ fromJSON(needs['setup-packages'].outputs.matrix) }}";
