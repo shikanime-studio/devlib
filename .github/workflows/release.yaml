@@ -24,7 +24,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          persist-credentials: false
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - env:
           REF_NAME: ${{ github.ref_name || github.event.inputs.ref_name }}
@@ -47,7 +46,6 @@ jobs:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          persist-credentials: false
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - env:
           GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
