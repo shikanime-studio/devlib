@@ -4,7 +4,7 @@ jobs:
     name: Checks
     needs:
       - setup-checks
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     steps:
       - continue-on-error: true
         id: createGithubAppToken
@@ -39,7 +39,7 @@ jobs:
     name: Packages
     needs:
       - setup-packages
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.runner }}
     steps:
       - continue-on-error: true
         id: createGithubAppToken
