@@ -1,0 +1,168 @@
+jobs:
+  checks:
+    if: ${{ needs['setup-checks'].outputs.continue == 'true' }}
+    name: Checks
+    needs:
+      - setup-checks
+    runs-on: ${{ matrix.os }}
+    steps:
+      - continue-on-error: true
+        id: createGithubAppToken
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ inputs['app-id'] }}
+          permission-contents: read
+          private-key: ${{ secrets.PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - continue-on-error: true
+        if: ${{ inputs['cachix-name'] != '' }}
+        uses: cachix/cachix-action@v17
+        with:
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          name: ${{ inputs['cachix-name'] }}
+      - run: nix run nixpkgs#direnv allow
+      - run: nix run nixpkgs#direnv export gha >> "$GITHUB_ENV"
+      - run: nix flake check --accept-flake-config --no-pure-eval --system "${{ matrix.system }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs['setup-checks'].outputs.matrix) }}
+  packages:
+    if: ${{ needs['setup-packages'].outputs.continue == 'true' }}
+    name: Packages
+    needs:
+      - setup-packages
+    runs-on: ${{ matrix.os }}
+    steps:
+      - continue-on-error: true
+        id: createGithubAppToken
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ inputs['app-id'] }}
+          permission-contents: read
+          private-key: ${{ secrets.PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - continue-on-error: true
+        if: ${{ inputs['cachix-name'] != '' }}
+        uses: cachix/cachix-action@v17
+        with:
+          authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
+          name: ${{ inputs['cachix-name'] }}
+      - run: nix build --accept-flake-config --no-pure-eval ".#packages.${{ matrix.system }}.${{ matrix.name }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs['setup-packages'].outputs.matrix) }}
+  setup-checks:
+    name: Setup Checks
+    outputs:
+      continue: ${{ steps.matrix.outputs.continue }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - continue-on-error: true
+        id: createGithubAppToken
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ inputs['app-id'] }}
+          permission-contents: read
+          private-key: ${{ secrets.PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - id: matrix
+        run: |
+          matrix="$(
+            nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
+              | nix run nixpkgs#jq -- -c '
+                (.checks // .packages)
+                | keys
+                | map(select(test("linux$")))
+                | map({
+                    system: .,
+                    os: (if test("^(aarch64|armv6l|armv7l)-linux$") then "ubuntu-24.04-arm" else "ubuntu-latest" end),
+                  })
+              '
+          )"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          continue=$([ "$matrix" = "[]" ] && echo "false" || echo "true")
+          echo "continue=$continue" >> "$GITHUB_OUTPUT"
+  setup-packages:
+    name: Setup Packages
+    outputs:
+      continue: ${{ steps.matrix.outputs.continue }}
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    runs-on: ubuntu-latest
+    steps:
+      - continue-on-error: true
+        id: createGithubAppToken
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ inputs['app-id'] }}
+          permission-contents: read
+          private-key: ${{ secrets.PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - id: matrix
+        run: |
+          matrix="$(
+            nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
+              | nix run nixpkgs#jq -- -c '
+                .packages
+                | to_entries
+                | map(select(.key | test("linux$")))
+                | reduce .[] as $entry ([]; . += (
+                      ($entry.value | keys | map(select(. != "devenv-up" and . != "devenv-test")))
+                      | map({
+                          system: $entry.key,
+                          os: (if ($entry.key|test("^(aarch64|armv6l|armv7l)-linux$")) then "ubuntu-24.04-arm" else "ubuntu-latest" end),
+                          name: .
+                        })
+                    ))
+              '
+          )"
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          continue=$([ "$matrix" = "[]" ] && echo "false" || echo "true")
+          echo "continue=$continue" >> "$GITHUB_OUTPUT"
+name: Nix
+'on':
+  workflow_call:
+    inputs:
+      app-id:
+        required: true
+        type: string
+      cachix-name:
+        default: ''
+        type: string
+    secrets:
+      CACHIX_AUTH_TOKEN:
+        required: false
+      PRIVATE_KEY:
+        required: true
+permissions:
+  contents: read
