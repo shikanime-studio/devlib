@@ -22,14 +22,14 @@
   github.settings.workflows = {
     integration.jobs.javascript = {
       uses = "shikanime-studio/devlib/workflows/javascript.yaml@main";
-      secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+      secrets.PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
       "with".app-id = "\${{ vars.OPERATOR_APP_ID }}";
     };
 
     release.jobs = {
       javascript = {
         uses = "shikanime-studio/devlib/workflows/javascript.yaml@main";
-        secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+        secrets.PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
         "with".app-id = "\${{ vars.OPERATOR_APP_ID }}";
       };
 

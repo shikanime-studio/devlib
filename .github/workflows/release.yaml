@@ -2,7 +2,7 @@ jobs:
   nix:
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
-      OPERATOR_PRIVATE_KEY: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
     uses: shikanime-studio/devlib/workflows/nix.yaml@main
     with:
       app-id: ${{ vars.OPERATOR_APP_ID }}
@@ -21,7 +21,7 @@ jobs:
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
           permission-contents: write
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -44,7 +44,7 @@ jobs:
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
           permission-contents: write
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0

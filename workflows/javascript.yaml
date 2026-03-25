@@ -9,7 +9,7 @@ jobs:
         with:
           app-id: ${{ inputs['app-id'] }}
           permission-contents: read
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -32,7 +32,7 @@ jobs:
         with:
           app-id: ${{ inputs['app-id'] }}
           permission-contents: read
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -55,7 +55,7 @@ jobs:
         with:
           app-id: ${{ inputs['app-id'] }}
           permission-contents: read
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -76,7 +76,7 @@ name: JavaScript
         required: true
         type: string
     secrets:
-      OPERATOR_PRIVATE_KEY:
+      PRIVATE_KEY:
         required: true
 permissions:
   contents: read

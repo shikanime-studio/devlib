@@ -21,8 +21,8 @@
     integration.jobs.nix = {
       uses = "shikanime-studio/devlib/workflows/nix.yaml@main";
       secrets = {
-        OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
         CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+        PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
       };
     };
 
@@ -30,8 +30,8 @@
       nix = {
         uses = "shikanime-studio/devlib/workflows/nix.yaml@main";
         secrets = {
-          OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
           CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+          PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
         };
       };
 
