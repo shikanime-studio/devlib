@@ -21,7 +21,15 @@ with lib;
       update.enable = true;
     };
 
-    settings.workflows.integration.jobs.nix."with"."cachix-name" = "shikanime-studio";
-    settings.workflows.release.jobs.nix."with"."cachix-name" = "shikanime-studio";
+    settings.workflows = {
+      integration.jobs.nix."with" = {
+        cachix-name = "shikanime-studio";
+        app-id = "\${{ vars.OPERATOR_APP_ID }}";
+      };
+      release.jobs.nix."with" = {
+        cachix-name = "shikanime-studio";
+        app-id = "\${{ vars.OPERATOR_APP_ID }}";
+      };
+    };
   };
 }
