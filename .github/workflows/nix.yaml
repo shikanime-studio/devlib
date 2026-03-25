@@ -70,8 +70,8 @@ jobs:
   setup-checks:
     name: Setup Checks
     outputs:
-      continue: ${{ steps.matrix.outputs.continue }}
-      matrix: ${{ steps.matrix.outputs.matrix }}
+      continue: ${{ steps.setup-checks.outputs.continue }}
+      matrix: ${{ steps.setup-checks.outputs.matrix }}
     runs-on: ubuntu-latest
     steps:
       - continue-on-error: true
@@ -89,13 +89,13 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - id: matrix
-        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c '\n      (.checks // .packages)\n      | keys\n      | map(select(test(\"linux$\")))\n      | map({\n          system: .,\n          os: (if test(\"^(aarch64|armv6l|armv7l)-linux$\") then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),\n        })\n    '\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\ncontinue=$([ \"$matrix\" = \"[]\" ] && echo \"false\" || echo \"true\")\necho \"continue=$continue\" >> \"$GITHUB_OUTPUT\"\n"
+      - id: setup-checks
+        uses: shikanime-studio/actions/nix/setup-checks@main
   setup-packages:
     name: Setup Packages
     outputs:
-      continue: ${{ steps.matrix.outputs.continue }}
-      matrix: ${{ steps.matrix.outputs.matrix }}
+      continue: ${{ steps.setup-packages.outputs.continue }}
+      matrix: ${{ steps.setup-packages.outputs.matrix }}
     runs-on: ubuntu-latest
     steps:
       - continue-on-error: true
@@ -113,8 +113,8 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - id: matrix
-        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c \"\n      .packages\n      | to_entries\n      | map(select(.key | test(\\\"linux$\\\")))\n      | reduce .[] as \\$entry ([]; . += (\n            (\\$entry.value | keys | map(select(. != \\\"devenv-up\\\" and . != \\\"devenv-test\\\")))\n            | map({\n                system: \\$entry.key,\n                os: (if (\\$entry.key|test(\\\"^(aarch64|armv6l|armv7l)-linux$\\\")) then \\\"ubuntu-24.04-arm\\\" else \\\"ubuntu-latest\\\" end),\n                name: .\n              })\n          ))\n    \"\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\ncontinue=$([ \"$matrix\" = \"[]\" ] && echo \"false\" || echo \"true\")\necho \"continue=$continue\" >> \"$GITHUB_OUTPUT\"\n"
+      - id: setup-packages
+        uses: shikanime-studio/actions/nix/setup-packages@main
 name: Nix
 'on':
   workflow_call:
