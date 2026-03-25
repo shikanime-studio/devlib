@@ -59,6 +59,7 @@ in
             uses = "actions/checkout@v6";
             "with" = {
               fetch-depth = 0;
+              persist-credentials = false;
               token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
             // cfg.settings.checkout;

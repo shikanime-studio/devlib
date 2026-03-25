@@ -52,6 +52,10 @@ in
       jobs = {
         dependencies = {
           runs-on = "ubuntu-slim";
+          permissions = {
+            contents = "write";
+            pull-requests = "write";
+          };
           steps = [
             {
               continue-on-error = true;
@@ -69,6 +73,7 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 ref = "main";
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
@@ -98,6 +103,10 @@ in
         };
         stale = {
           runs-on = "ubuntu-slim";
+          permissions = {
+            issues = "write";
+            pull-requests = "write";
+          };
           steps = [
             {
               continue-on-error = true;
@@ -132,11 +141,7 @@ in
         ];
         workflow_dispatch = { };
       };
-      permissions = {
-        contents = "write";
-        issues = "write";
-        pull-requests = "write";
-      };
+      permissions.contents = "read";
     };
   };
 }

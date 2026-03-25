@@ -64,6 +64,11 @@ in
           "if" =
             "github.event.issue.pull_request != null && contains(github.event.comment.body, '.backport')";
           runs-on = "ubuntu-slim";
+          permissions = {
+            contents = "write";
+            issues = "write";
+            pull-requests = "write";
+          };
           steps = [
             {
               continue-on-error = true;
@@ -82,6 +87,7 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 ref = "main";
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
@@ -109,6 +115,11 @@ in
         close = {
           "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.close')";
           runs-on = "ubuntu-slim";
+          permissions = {
+            contents = "write";
+            issues = "write";
+            pull-requests = "write";
+          };
           steps = [
             {
               continue-on-error = true;
@@ -127,6 +138,7 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 ref = "main";
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
@@ -152,6 +164,11 @@ in
         land = {
           "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.land')";
           runs-on = "ubuntu-slim";
+          permissions = {
+            contents = "write";
+            issues = "write";
+            pull-requests = "write";
+          };
           steps = [
             {
               continue-on-error = true;
@@ -171,6 +188,7 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 ref = "main";
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
@@ -201,6 +219,11 @@ in
         rebase = {
           "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.rebase')";
           runs-on = "ubuntu-slim";
+          permissions = {
+            contents = "write";
+            issues = "write";
+            pull-requests = "write";
+          };
           steps = [
             {
               continue-on-error = true;
@@ -219,6 +242,7 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 ref = "main";
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
@@ -249,11 +273,7 @@ in
       };
       name = "Commands";
       on.issue_comment.types = [ "created" ];
-      permissions = {
-        contents = "write";
-        issues = "write";
-        pull-requests = "write";
-      };
+      permissions.contents = "read";
     };
   };
 }
