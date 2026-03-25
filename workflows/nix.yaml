@@ -12,7 +12,7 @@ jobs:
         with:
           app-id: ${{ inputs['app-id'] }}
           permission-contents: read
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -47,7 +47,7 @@ jobs:
         with:
           app-id: ${{ inputs['app-id'] }}
           permission-contents: read
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -80,7 +80,7 @@ jobs:
         with:
           app-id: ${{ inputs['app-id'] }}
           permission-contents: read
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -119,7 +119,7 @@ jobs:
         with:
           app-id: ${{ inputs['app-id'] }}
           permission-contents: read
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
@@ -132,19 +132,19 @@ jobs:
         run: |
           matrix="$(
             nix flake show --json --all-systems --accept-flake-config --no-pure-eval \
-              | nix run nixpkgs#jq -- -c "
+              | nix run nixpkgs#jq -- -c '
                 .packages
                 | to_entries
-                | map(select(.key | test(\"linux$\")))
-                | reduce .[] as \$entry ([]; . += (
-                      (\$entry.value | keys | map(select(. != \"devenv-up\" and . != \"devenv-test\")))
+                | map(select(.key | test("linux$")))
+                | reduce .[] as $entry ([]; . += (
+                      ($entry.value | keys | map(select(. != "devenv-up" and . != "devenv-test")))
                       | map({
-                          system: \$entry.key,
-                          os: (if (\$entry.key|test(\"^(aarch64|armv6l|armv7l)-linux$\")) then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),
+                          system: $entry.key,
+                          os: (if ($entry.key|test("^(aarch64|armv6l|armv7l)-linux$")) then "ubuntu-24.04-arm" else "ubuntu-latest" end),
                           name: .
                         })
                     ))
-              "
+              '
           )"
           echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
           continue=$([ "$matrix" = "[]" ] && echo "false" || echo "true")
@@ -162,7 +162,7 @@ name: Nix
     secrets:
       CACHIX_AUTH_TOKEN:
         required: false
-      OPERATOR_PRIVATE_KEY:
+      PRIVATE_KEY:
         required: true
 permissions:
   contents: read
