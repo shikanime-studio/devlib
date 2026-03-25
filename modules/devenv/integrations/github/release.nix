@@ -57,6 +57,7 @@ in
           "if" =
             "(startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v') && endsWith(github.event.inputs.ref_name, '.0'))";
           runs-on = "ubuntu-slim";
+          permissions.contents = "write";
           steps = [
             {
               continue-on-error = true;
@@ -73,6 +74,7 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
               // cfg.settings.checkout;
@@ -87,6 +89,7 @@ in
           "if" =
             "(startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v'))";
           runs-on = "ubuntu-slim";
+          permissions.contents = "write";
           steps = [
             {
               continue-on-error = true;
@@ -103,6 +106,7 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
               // cfg.settings.checkout;
@@ -132,7 +136,7 @@ in
           required = true;
         };
       };
-      permissions.contents = "write";
+      permissions.contents = "read";
     };
   };
 }

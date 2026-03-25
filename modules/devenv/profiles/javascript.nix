@@ -1,6 +1,4 @@
-{ lib, pkgs, ... }:
-
-with lib;
+{ pkgs, ... }:
 
 {
   imports = [ ./base.nix ];
@@ -57,6 +55,7 @@ with lib;
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               };
             }
@@ -90,6 +89,7 @@ with lib;
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               };
             }
@@ -123,6 +123,7 @@ with lib;
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
+                persist-credentials = false;
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               };
             }

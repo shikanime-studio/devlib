@@ -13,9 +13,6 @@ let
     formatters = {
       enable = [
         "gci"
-        "gofmt"
-        "gofumpt"
-        "goimports"
       ];
       settings.gci.sections = [
         "standard"
@@ -35,7 +32,7 @@ let
         "gomoddirectives"
         "goprintffuncname"
         "govet"
-        "importas"
+        "imports"
         "ineffassign"
         "makezero"
         "misspell"
@@ -120,6 +117,13 @@ in
       exec = "${lib.getExe config.languages.go.package} mod vendor";
       execIfModified = [ "go.sum" ];
     };
+  };
+
+  treefmt.config.programs = {
+    gofmt.enable = true;
+    gofumpt.enable = true;
+    goimports.enable = true;
+    golines.enable = true;
   };
 
   treefmt.config.settings.global.excludes = [ "vendor/*" ];

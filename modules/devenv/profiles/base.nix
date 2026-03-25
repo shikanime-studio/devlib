@@ -14,8 +14,11 @@
       programs = {
         autocorrect.enable = true;
         jsonfmt.enable = true;
-        mdformat.enable = true;
+        rumdl-check.enable = true;
+        rumdl-format.enable = true;
         taplo.enable = true;
+        toml-sort.enable = true;
+        typos.enable = true;
         xmllint.enable = true;
         yamlfmt.enable = true;
       };

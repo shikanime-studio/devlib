@@ -14,6 +14,12 @@ let
   configFiles = mapAttrs (
     name: workflow: yamlFormat.generate "${name}.yaml" (removeAttrs workflow [ "actions" ])
   ) cfg.settings.workflows;
+
+  zizmorConfigFile = yamlFormat.generate "zizmor.yml" {
+    # TODO: Refactor file generation pipeline to avoid GitHub rate limit using
+    # zizmor with pinact
+    rules.unpinned-uses.disable = true;
+  };
 in
 {
   imports = [
@@ -63,10 +69,7 @@ in
   config = mkIf cfg.enable {
     packages = [ cfg.package ];
 
-    git-hooks.hooks = {
-      actionlint.enable = true;
-      action-validator.enable = true;
-    };
+    git-hooks.hooks.action-validator.enable = true;
 
     tasks."devlib:github:workflows:install" = {
       before = [ "devenv:enterShell" ] ++ optional config.treefmt.enable "devenv:treefmt:run";
@@ -78,5 +81,15 @@ in
         '') configFiles
       );
     };
+
+    treefmt.config.programs = {
+      actionlint.enable = true;
+      zizmor.enable = true;
+    };
+
+    treefmt.config.settings.formatter.zizmor.options = [
+      "--config"
+      "${zizmorConfigFile}"
+    ];
   };
 }
