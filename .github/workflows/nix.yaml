@@ -1,5 +1,6 @@
 jobs:
   checks:
+    if: ${{ needs['setup-checks'].outputs.continue == 'true' }}
     name: Checks
     needs:
       - setup-checks
@@ -34,6 +35,7 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs['setup-checks'].outputs.matrix) }}
   packages:
+    if: ${{ needs['setup-packages'].outputs.continue == 'true' }}
     name: Packages
     needs:
       - setup-packages
@@ -68,6 +70,7 @@ jobs:
   setup-checks:
     name: Setup Checks
     outputs:
+      continue: ${{ steps.matrix.outputs.continue }}
       matrix: ${{ steps.matrix.outputs.matrix }}
     runs-on: ubuntu-latest
     steps:
@@ -87,10 +90,11 @@ jobs:
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - id: matrix
-        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c '\n      (.checks // .packages)\n      | keys\n      | map(select(test(\"linux$\")))\n      | map({\n          system: .,\n          os: (if test(\"^(aarch64|armv6l|armv7l)-linux$\") then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),\n        })\n    '\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\n"
+        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c '\n      (.checks // .packages)\n      | keys\n      | map(select(test(\"linux$\")))\n      | map({\n          system: .,\n          os: (if test(\"^(aarch64|armv6l|armv7l)-linux$\") then \"ubuntu-24.04-arm\" else \"ubuntu-latest\" end),\n        })\n    '\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\ncontinue=$([ \"$matrix\" = \"[]\" ] && echo \"false\" || echo \"true\")\necho \"continue=$continue\" >> \"$GITHUB_OUTPUT\"\n"
   setup-packages:
     name: Setup Packages
     outputs:
+      continue: ${{ steps.matrix.outputs.continue }}
       matrix: ${{ steps.matrix.outputs.matrix }}
     runs-on: ubuntu-latest
     steps:
@@ -110,7 +114,7 @@ jobs:
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - id: matrix
-        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c \"\n      .packages\n      | to_entries\n      | map(select(.key | test(\\\"linux$\\\")))\n      | reduce .[] as \\$entry ([]; . += (\n            (\\$entry.value | keys | map(select(. != \\\"devenv-up\\\" and . != \\\"devenv-test\\\")))\n            | map({\n                system: \\$entry.key,\n                os: (if (\\$entry.key|test(\\\"^(aarch64|armv6l|armv7l)-linux$\\\")) then \\\"ubuntu-24.04-arm\\\" else \\\"ubuntu-latest\\\" end),\n                name: .\n              })\n          ))\n    \"\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\n"
+        run: "matrix=\"$(\n  nix flake show --json --all-systems --accept-flake-config --no-pure-eval \\\n    | nix run nixpkgs#jq -- -c \"\n      .packages\n      | to_entries\n      | map(select(.key | test(\\\"linux$\\\")))\n      | reduce .[] as \\$entry ([]; . += (\n            (\\$entry.value | keys | map(select(. != \\\"devenv-up\\\" and . != \\\"devenv-test\\\")))\n            | map({\n                system: \\$entry.key,\n                os: (if (\\$entry.key|test(\\\"^(aarch64|armv6l|armv7l)-linux$\\\")) then \\\"ubuntu-24.04-arm\\\" else \\\"ubuntu-latest\\\" end),\n                name: .\n              })\n          ))\n    \"\n)\"\necho \"matrix=$matrix\" >> \"$GITHUB_OUTPUT\"\ncontinue=$([ \"$matrix\" = \"[]\" ] && echo \"false\" || echo \"true\")\necho \"continue=$continue\" >> \"$GITHUB_OUTPUT\"\n"
 name: Nix
 'on':
   workflow_call:
