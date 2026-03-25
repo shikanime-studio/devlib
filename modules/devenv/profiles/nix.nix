@@ -37,6 +37,7 @@
         checks = {
           name = "Checks";
           needs = [ "setup-checks" ];
+          "if" = "\${{ needs['setup-checks'].outputs.continue == 'true' }}";
           runs-on = "\${{ matrix.os }}";
           strategy = {
             fail-fast = false;
@@ -84,6 +85,7 @@
         packages = {
           name = "Packages";
           needs = [ "setup-packages" ];
+          "if" = "\${{ needs['setup-packages'].outputs.continue == 'true' }}";
           runs-on = "\${{ matrix.os }}";
           strategy = {
             fail-fast = false;
@@ -131,7 +133,10 @@
         setup-checks = {
           name = "Setup Checks";
           runs-on = "ubuntu-latest";
-          outputs.matrix = "\${{ steps.matrix.outputs.matrix }}";
+          outputs = {
+            continue = "\${{ steps.matrix.outputs.continue }}";
+            matrix = "\${{ steps.matrix.outputs.matrix }}";
+          };
           steps = [
             {
               continue-on-error = true;
@@ -172,6 +177,8 @@
                     '
                 )"
                 echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+                continue=$([ "$matrix" = "[]" ] && echo "false" || echo "true")
+                echo "continue=$continue" >> "$GITHUB_OUTPUT"
               '';
             }
           ];
@@ -180,7 +187,10 @@
         setup-packages = {
           name = "Setup Packages";
           runs-on = "ubuntu-latest";
-          outputs.matrix = "\${{ steps.matrix.outputs.matrix }}";
+          outputs = {
+            continue = "\${{ steps.matrix.outputs.continue }}";
+            matrix = "\${{ steps.matrix.outputs.matrix }}";
+          };
           steps = [
             {
               continue-on-error = true;
@@ -225,6 +235,8 @@
                     "
                 )"
                 echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+                continue=$([ "$matrix" = "[]" ] && echo "false" || echo "true")
+                echo "continue=$continue" >> "$GITHUB_OUTPUT"
               '';
             }
           ];
