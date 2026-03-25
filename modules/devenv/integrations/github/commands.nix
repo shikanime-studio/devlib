@@ -87,7 +87,6 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
-                persist-credentials = false;
                 ref = "main";
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
@@ -138,7 +137,6 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
-                persist-credentials = false;
                 ref = "main";
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
@@ -188,7 +186,6 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
-                persist-credentials = false;
                 ref = "main";
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
@@ -242,7 +239,6 @@ in
               uses = "actions/checkout@v6";
               "with" = {
                 fetch-depth = 0;
-                persist-credentials = false;
                 ref = "main";
                 token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               }
