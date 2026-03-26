@@ -209,6 +209,7 @@
     };
 
     integration.jobs.nix = {
+      "if" = "\${{ github.event.pull_request.draft == false }}";
       uses = "./.github/workflows/nix.yaml";
       secrets = {
         OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";

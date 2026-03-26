@@ -17,10 +17,18 @@ in
   config = mkIf cfg.enable {
     github.settings.workflows.integration = {
       name = "Integration";
-      on.pull_request.branches = [
-        "main"
-        "gh/*/*/base"
-      ];
+      on.pull_request = {
+        branches = [
+          "main"
+          "gh/*/*/base"
+        ];
+        types = [
+          "opened"
+          "reopened"
+          "synchronize"
+          "ready_for_review"
+        ];
+      };
       permissions.contents = "read";
     };
   };
