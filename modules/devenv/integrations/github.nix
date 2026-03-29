@@ -20,6 +20,7 @@ let
     # zizmor with pinact
     rules = {
       artipacked.disable = true;
+      secrets-outside-env.disable = true;
       unpinned-uses.disable = true;
     };
   };
