@@ -36,12 +36,12 @@
       jobs = {
         checks = {
           name = "Checks";
-          needs = [ "setup-checks" ];
-          "if" = "\${{ needs['setup-checks'].outputs.continue == 'true' }}";
+          needs = [ "setup-checks-jobs" ];
+          "if" = "\${{ needs['setup-checks-jobs'].outputs.continue == 'true' }}";
           runs-on = "\${{ matrix.runner }}";
           strategy = {
             fail-fast = false;
-            matrix.include = "\${{ fromJSON(needs['setup-checks'].outputs.matrix) }}";
+            matrix.include = "\${{ fromJSON(needs['setup-checks-jobs'].outputs.matrix) }}";
           };
           steps = [
             {
@@ -76,20 +76,22 @@
                 name = "\${{ inputs['cachix-name'] }}";
               };
             }
-            { run = "nix run nixpkgs#direnv allow"; }
-            { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
-            { run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\""; }
+            {
+              env.SYSTEM = "\${{ matrix.system }}";
+              run = "nix flake check --accept-flake-config --no-pure-eval --system \"$SYSTEM\"";
+              shell = "bash";
+            }
           ];
         };
 
         packages = {
           name = "Packages";
-          needs = [ "setup-packages" ];
-          "if" = "\${{ needs['setup-packages'].outputs.continue == 'true' }}";
+          needs = [ "setup-packages-jobs" ];
+          "if" = "\${{ needs['setup-packages-jobs'].outputs.continue == 'true' }}";
           runs-on = "\${{ matrix.runner }}";
           strategy = {
             fail-fast = false;
-            matrix.include = "\${{ fromJSON(needs['setup-packages'].outputs.matrix) }}";
+            matrix.include = "\${{ fromJSON(needs['setup-packages-jobs'].outputs.matrix) }}";
           };
           steps = [
             {
@@ -125,13 +127,18 @@
               };
             }
             {
-              run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
+              env = {
+                NAME = "\${{ matrix.name }}";
+                SYSTEM = "\${{ matrix.system }}";
+              };
+              run = "nix build --accept-flake-config --no-pure-eval \".#packages.$SYSTEM.$NAME\"";
+              shell = "bash";
             }
           ];
         };
 
-        setup-checks = {
-          name = "Setup Checks";
+        setup-checks-jobs = {
+          name = "Setup Checks Jobs";
           runs-on = "ubuntu-latest";
           outputs = {
             continue = "\${{ steps.setup-checks.outputs.continue }}";
@@ -163,13 +170,13 @@
             }
             {
               id = "setup-checks";
-              uses = "shikanime-studio/actions/nix/setup-checks@main";
+              uses = "shikanime-studio/actions/nix/setup-checks-jobs@v8";
             }
           ];
         };
 
-        setup-packages = {
-          name = "Setup Packages";
+        setup-packages-jobs = {
+          name = "Setup Packages Jobs";
           runs-on = "ubuntu-latest";
           outputs = {
             continue = "\${{ steps.setup-packages.outputs.continue }}";
@@ -201,7 +208,7 @@
             }
             {
               id = "setup-packages";
-              uses = "shikanime-studio/actions/nix/setup-packages@main";
+              uses = "shikanime-studio/actions/nix/setup-packages-jobs@v8";
             }
           ];
         };

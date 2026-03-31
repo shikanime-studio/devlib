@@ -86,7 +86,7 @@ in
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/update@v7";
+              uses = "shikanime-studio/actions/update@v8";
               "with" = {
                 email = "operator6o@shikanime.studio";
                 fullname = "Operator 6O";
