@@ -128,6 +128,40 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           sign-commits: true
           username: operator6o
+  run:
+    if: github.event.issue.pull_request != null && contains(github.event.comment.body, '.run')
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    runs-on: ubuntu-slim
+    steps:
+      - continue-on-error: true
+        id: createGithubAppToken
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.OPERATOR_APP_ID }}
+          permission-contents: write
+          permission-issues: write
+          permission-pull-requests: write
+          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+          ref: main
+          token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+      - uses: shikanime-studio/actions/command/run@v8
+        with:
+          email: operator6o@shikanime.studio
+          fullname: Operator 6O
+          github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          sign-commits: true
+          username: operator6o
 name: Commands
 'on':
   issue_comment:
