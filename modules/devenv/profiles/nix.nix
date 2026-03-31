@@ -138,7 +138,7 @@
         };
 
         setup-checks-jobs = {
-          name = "Setup Checks";
+          name = "Setup Checks Jobs";
           runs-on = "ubuntu-latest";
           outputs = {
             continue = "\${{ steps.setup-checks.outputs.continue }}";
@@ -176,7 +176,7 @@
         };
 
         setup-packages-jobs = {
-          name = "Setup Packages";
+          name = "Setup Packages Jobs";
           runs-on = "ubuntu-latest";
           outputs = {
             continue = "\${{ steps.setup-packages.outputs.continue }}";

@@ -73,7 +73,7 @@ jobs:
       matrix:
         include: ${{ fromJSON(needs['setup-packages-jobs'].outputs.matrix) }}
   setup-checks-jobs:
-    name: Setup Checks
+    name: Setup Checks Jobs
     outputs:
       continue: ${{ steps.setup-checks.outputs.continue }}
       matrix: ${{ steps.setup-checks.outputs.matrix }}
@@ -97,7 +97,7 @@ jobs:
       - id: setup-checks
         uses: shikanime-studio/actions/nix/setup-checks-jobs@v8
   setup-packages-jobs:
-    name: Setup Packages
+    name: Setup Packages Jobs
     outputs:
       continue: ${{ steps.setup-packages.outputs.continue }}
       matrix: ${{ steps.setup-packages.outputs.matrix }}
