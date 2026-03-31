@@ -100,7 +100,7 @@ in
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/backport@v7";
+              uses = "shikanime-studio/actions/command/backport@v8";
               "with" = {
                 github-token = githubToken;
                 gpg-passphrase = "\${{ secrets.GPG_PASSPHRASE }}";
@@ -150,7 +150,7 @@ in
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/close@v7";
+              uses = "shikanime-studio/actions/command/close@v8";
               "with" = {
                 github-token = githubToken;
                 username = "operator6o";
@@ -199,7 +199,7 @@ in
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/land@v7";
+              uses = "shikanime-studio/actions/command/land@v8";
               "with" = {
                 github-token = githubToken;
                 email = "operator6o@shikanime.studio";
@@ -252,7 +252,60 @@ in
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/rebase@v7";
+              uses = "shikanime-studio/actions/command/rebase@v8";
+              "with" = {
+                github-token = githubToken;
+                email = "operator6o@shikanime.studio";
+                fullname = "Operator 6O";
+                username = "operator6o";
+                gpg-passphrase = "\${{ secrets.GPG_PASSPHRASE }}";
+                gpg-private-key = "\${{ secrets.GPG_PRIVATE_KEY }}";
+                sign-commits = true;
+              }
+              // cfg.settings.rebase;
+            }
+          ];
+        };
+        run = {
+          "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.run')";
+          runs-on = "ubuntu-slim";
+          permissions = {
+            contents = "write";
+            issues = "write";
+            pull-requests = "write";
+          };
+          steps = [
+            {
+              continue-on-error = true;
+              id = "createGithubAppToken";
+              uses = "actions/create-github-app-token@v3";
+              "with" = {
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                permission-contents = "write";
+                permission-issues = "write";
+                permission-pull-requests = "write";
+              }
+              // cfg.settings.create-github-app-token;
+            }
+            {
+              uses = "actions/checkout@v6";
+              "with" = {
+                fetch-depth = 0;
+                ref = "main";
+                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              }
+              // cfg.settings.checkout;
+            }
+            {
+              uses = "cachix/install-nix-action@v31";
+              "with" = {
+                github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              }
+              // cfg.settings.setup-nix;
+            }
+            {
+              uses = "shikanime-studio/actions/command/run@v8";
               "with" = {
                 github-token = githubToken;
                 email = "operator6o@shikanime.studio";

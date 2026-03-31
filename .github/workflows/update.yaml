@@ -21,7 +21,7 @@ jobs:
       - uses: cachix/install-nix-action@v31
         with:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - uses: shikanime-studio/actions/update@v7
+      - uses: shikanime-studio/actions/update@v8
         with:
           email: operator6o@shikanime.studio
           fullname: Operator 6O

@@ -63,7 +63,7 @@ in
             // cfg.settings.checkout;
           }
           {
-            uses = "shikanime-studio/actions/cleanup@v7";
+            uses = "shikanime-studio/actions/cleanup@v8";
             "with" = {
               github-token = githubToken;
               pull-request-url = "\${{ github.event.pull_request.html_url }}";
