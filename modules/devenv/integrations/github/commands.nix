@@ -93,9 +93,9 @@ in
               // cfg.settings.checkout;
             }
             {
-              uses = "cachix/install-nix-action@v31";
+              uses = "shikanime-studio/actions/nix/setup@v8";
               "with" = {
-                github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
@@ -143,9 +143,9 @@ in
               // cfg.settings.checkout;
             }
             {
-              uses = "cachix/install-nix-action@v31";
+              uses = "shikanime-studio/actions/nix/setup@v8";
               "with" = {
-                github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
@@ -192,9 +192,9 @@ in
               // cfg.settings.checkout;
             }
             {
-              uses = "cachix/install-nix-action@v31";
+              uses = "shikanime-studio/actions/nix/setup@v8";
               "with" = {
-                github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
@@ -245,9 +245,9 @@ in
               // cfg.settings.checkout;
             }
             {
-              uses = "cachix/install-nix-action@v31";
+              uses = "shikanime-studio/actions/nix/setup@v8";
               "with" = {
-                github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
@@ -298,9 +298,9 @@ in
               // cfg.settings.checkout;
             }
             {
-              uses = "cachix/install-nix-action@v31";
+              uses = "shikanime-studio/actions/nix/setup@v8";
               "with" = {
-                github_access_token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }

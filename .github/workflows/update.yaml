@@ -18,9 +18,9 @@ jobs:
           fetch-depth: 0
           ref: main
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - uses: cachix/install-nix-action@v31
+      - uses: shikanime-studio/actions/nix/setup@v8
         with:
-          github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - uses: shikanime-studio/actions/update@v8
         with:
           email: operator6o@shikanime.studio
