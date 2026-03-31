@@ -22,17 +22,7 @@
   github.settings.workflows = {
     javascript = {
       name = "JavaScript";
-      on.workflow_call = {
-        inputs = {
-          "node-version" = {
-            type = "string";
-            default = "lts/*";
-          };
-        };
-        secrets = {
-          OPERATOR_PRIVATE_KEY.required = true;
-        };
-      };
+      on.workflow_call.secrets.OPERATOR_PRIVATE_KEY.required = true;
 
       permissions.contents = "read";
 
@@ -60,12 +50,10 @@
               };
             }
             {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              uses = "shikanime-studio/actions/nix/setup@v8";
+              "with".github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
-            { run = "nix run nixpkgs#direnv allow"; }
-            { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+            { uses = "shikanime-studio/actions/direnv@v8"; }
             { run = "corepack pnpm install --frozen-lockfile"; }
             { run = "corepack pnpm --recursive build"; }
           ];
@@ -94,12 +82,10 @@
               };
             }
             {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              uses = "shikanime-studio/actions/nix/setup@v8";
+              "with".github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
-            { run = "nix run nixpkgs#direnv allow"; }
-            { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+            { uses = "shikanime-studio/actions/direnv@v8"; }
             { run = "corepack pnpm install --frozen-lockfile"; }
             { run = "corepack pnpm --recursive check"; }
           ];
@@ -128,12 +114,10 @@
               };
             }
             {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              uses = "shikanime-studio/actions/nix/setup@v8";
+              "with".github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
-            { run = "nix run nixpkgs#direnv allow"; }
-            { run = "nix run nixpkgs#direnv export gha >> \"$GITHUB_ENV\""; }
+            { uses = "shikanime-studio/actions/direnv@v8"; }
             { run = "corepack pnpm install --frozen-lockfile"; }
             { run = "corepack pnpm --recursive lint"; }
           ];

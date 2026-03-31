@@ -63,17 +63,11 @@
               };
             }
             {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-            }
-            {
-              "if" = "\${{ inputs['cachix-name'] != '' }}";
-              continue-on-error = true;
-              uses = "cachix/cachix-action@v17";
+              uses = "shikanime-studio/actions/nix/setup@v8";
               "with" = {
-                authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-                name = "\${{ inputs['cachix-name'] }}";
+                cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+                cachix-name = "\${{ inputs['cachix-name'] }}";
+                github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               };
             }
             {
@@ -113,17 +107,11 @@
               };
             }
             {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-            }
-            {
-              "if" = "\${{ inputs['cachix-name'] != '' }}";
-              continue-on-error = true;
-              uses = "cachix/cachix-action@v17";
+              uses = "shikanime-studio/actions/nix/setup@v8";
               "with" = {
-                authToken = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-                name = "\${{ inputs['cachix-name'] }}";
+                cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+                cachix-name = "\${{ inputs['cachix-name'] }}";
+                github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
               };
             }
             {
@@ -164,9 +152,8 @@
               };
             }
             {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              uses = "shikanime-studio/actions/nix/setup@v8";
+              "with".github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
             {
               id = "setup-checks";
@@ -202,9 +189,8 @@
               };
             }
             {
-              uses = "cachix/install-nix-action@v31";
-              "with".github_access_token =
-                "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              uses = "shikanime-studio/actions/nix/setup@v8";
+              "with".github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
             {
               id = "setup-packages";
