@@ -163,7 +163,7 @@
             }
             {
               id = "setup-checks";
-              uses = "shikanime-studio/actions/nix/setup-checks@v8";
+              uses = "shikanime-studio/actions/nix/setup-check-jobs@v8";
             }
           ];
         };
@@ -201,7 +201,7 @@
             }
             {
               id = "setup-packages";
-              uses = "shikanime-studio/actions/nix/setup-packages@v8";
+              uses = "shikanime-studio/actions/nix/setup-packages-jobs@v8";
             }
           ];
         };
