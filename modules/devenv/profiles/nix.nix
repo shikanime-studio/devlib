@@ -129,8 +129,8 @@
           name = "Setup Checks Jobs";
           runs-on = "ubuntu-latest";
           outputs = {
-            continue = "\${{ steps.setup-checks.outputs.continue }}";
-            matrix = "\${{ steps.setup-checks.outputs.matrix }}";
+            continue = "\${{ steps.setup-checks-jobs.outputs.continue }}";
+            matrix = "\${{ steps.setup-checks-jobs.outputs.matrix }}";
           };
           steps = [
             {
@@ -156,7 +156,7 @@
               "with".github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
             {
-              id = "setup-checks";
+              id = "setup-checks-jobs";
               uses = "shikanime-studio/actions/nix/setup-checks-jobs@v8";
             }
           ];
@@ -166,8 +166,8 @@
           name = "Setup Packages Jobs";
           runs-on = "ubuntu-latest";
           outputs = {
-            continue = "\${{ steps.setup-packages.outputs.continue }}";
-            matrix = "\${{ steps.setup-packages.outputs.matrix }}";
+            continue = "\${{ steps.setup-packages-jobs.outputs.continue }}";
+            matrix = "\${{ steps.setup-packages-jobs.outputs.matrix }}";
           };
           steps = [
             {
@@ -193,7 +193,7 @@
               "with".github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
             }
             {
-              id = "setup-packages";
+              id = "setup-packages-jobs";
               uses = "shikanime-studio/actions/nix/setup-packages-jobs@v8";
             }
           ];
