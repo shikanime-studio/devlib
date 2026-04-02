@@ -32,7 +32,7 @@ let
         "gomoddirectives"
         "goprintffuncname"
         "govet"
-        "imports"
+        "importas"
         "ineffassign"
         "makezero"
         "misspell"
