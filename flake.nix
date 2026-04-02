@@ -143,7 +143,7 @@
                 let
                   format = pkgs.formats.toml { };
                   settings = {
-                    default.extend-words.imports = "imports";
+                    default.extend-words.importas = "importas";
                   };
                   configFile = format.generate "typos.toml" settings;
                 in
