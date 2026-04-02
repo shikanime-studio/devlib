@@ -124,7 +124,7 @@
         };
 
         perSystem =
-          { config, ... }:
+          { config, pkgs, ... }:
           {
             devenv.shells.default = {
               imports = [
@@ -139,6 +139,15 @@
                 package = config.devenv.shells.default.license.lib.pkgs.asl20;
                 year = "2025";
               };
+              treefmt.config.programs.typos.configFile =
+                let
+                  format = pkgs.formats.toml { };
+                  settings = {
+                    default.extend-words.imports = "imports";
+                  };
+                  configFile = format.generate "typos.toml" settings;
+                in
+                "${configFile}";
             };
           };
 
