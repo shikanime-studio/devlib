@@ -18,7 +18,6 @@
         rumdl-format.enable = true;
         taplo.enable = true;
         toml-sort.enable = true;
-        typos.enable = true;
         xmllint.enable = true;
         yamlfmt.enable = true;
       };
