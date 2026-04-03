@@ -175,21 +175,31 @@ in
     })
 
     (mkIf (cfg.enable && config.github.workflows.integration.enable) {
-      github.settings.workflows.integration.jobs.skaffold = {
-        "if" = "\${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}";
-        uses = "./.github/workflows/skaffold.yaml";
-        secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+      github.settings.workflows.integration = {
+        jobs = {
+          skaffold = {
+            "if" = "\${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}";
+            uses = "./.github/workflows/skaffold.yaml";
+            secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+          };
+        };
+        on.workflow_call.secrets.OPERATOR_PRIVATE_KEY.required = mkDefault true;
       };
     })
 
     (mkIf (cfg.enable && config.github.workflows.release.enable) {
-      github.settings.workflows.release.jobs.skaffold = {
-        uses = "./.github/workflows/skaffold.yaml";
-        secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-      };
+      github.settings.workflows.release = {
+        jobs = {
+          skaffold = {
+            uses = "./.github/workflows/skaffold.yaml";
+            secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+          };
 
-      github.settings.workflows.release.jobs.release-branch.needs = [ "skaffold" ];
-      github.settings.workflows.release.jobs.release-tag.needs = [ "skaffold" ];
+          release-branch.needs = [ "skaffold" ];
+          release-tag.needs = [ "skaffold" ];
+        };
+        on.workflow_call.secrets.OPERATOR_PRIVATE_KEY.required = mkDefault true;
+      };
     })
   ];
 }

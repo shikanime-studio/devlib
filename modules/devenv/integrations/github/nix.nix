@@ -274,27 +274,43 @@ in
     })
 
     (mkIf (cfg.enable && config.github.workflows.integration.enable) {
-      github.settings.workflows.integration.jobs.nix = {
-        "if" = "\${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}";
-        uses = "./.github/workflows/nix.yaml";
-        secrets = {
-          OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-          CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+      github.settings.workflows.integration = {
+        jobs = {
+          nix = {
+            "if" = "\${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}";
+            uses = "./.github/workflows/nix.yaml";
+            secrets = {
+              OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+              CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+            };
+          };
+        };
+        on.workflow_call.secrets = {
+          CACHIX_AUTH_TOKEN.required = mkDefault true;
+          OPERATOR_PRIVATE_KEY.required = mkDefault true;
         };
       };
     })
 
     (mkIf (cfg.enable && config.github.workflows.release.enable) {
-      github.settings.workflows.release.jobs.nix = {
-        uses = "./.github/workflows/nix.yaml";
-        secrets = {
-          OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-          CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+      github.settings.workflows.release = {
+        jobs = {
+          nix = {
+            uses = "./.github/workflows/nix.yaml";
+            secrets = {
+              OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+              CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+            };
+          };
+
+          release-branch.needs = [ "nix" ];
+          release-tag.needs = [ "nix" ];
+        };
+        on.workflow_call.secrets = {
+          CACHIX_AUTH_TOKEN.required = mkDefault true;
+          OPERATOR_PRIVATE_KEY.required = mkDefault true;
         };
       };
-
-      github.settings.workflows.release.jobs.release-branch.needs = [ "nix" ];
-      github.settings.workflows.release.jobs.release-tag.needs = [ "nix" ];
     })
   ];
 }

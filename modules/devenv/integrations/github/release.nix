@@ -17,11 +17,6 @@ in
     enable = mkEnableOption "release";
 
     settings = {
-      cachix-push = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for cachix-push";
-      };
       checkout = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -31,21 +26,6 @@ in
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for create-github-app-token";
-      };
-      direnv = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for direnv";
-      };
-      nix-flake-check = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for nix-flake-check";
-      };
-      setup-nix = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for setup-nix";
       };
     };
   };
