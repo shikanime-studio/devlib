@@ -75,54 +75,50 @@ in
             name = "Build";
             runs-on = "ubuntu-latest";
             steps = [
-              (
-                {
-                  continue-on-error = true;
-                  id = "createGithubAppToken";
-                  uses = "actions/create-github-app-token@v3";
-                  "with" = {
-                    app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                    private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                    permission-contents = "read";
-                  };
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
                 }
-                // cfg.settings.create-github-app-token
-              )
-              (
-                {
-                  uses = "actions/checkout@v6";
-                  "with" = {
-                    fetch-depth = 0;
-                    persist-credentials = false;
-                    token = githubToken;
-                  };
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
                 }
-                // cfg.settings.checkout
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/nix/setup@v8";
-                  "with".github-token = githubToken;
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
                 }
-                // cfg.settings.setup-nix
-              )
+                // cfg.settings.setup-nix;
+              }
               (
                 {
                   uses = "shikanime-studio/actions/direnv@v8";
                 }
-                // cfg.settings.direnv
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               (
                 {
                   run = "corepack pnpm install --frozen-lockfile";
                 }
-                // cfg.settings.pnpm-install
+                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
               )
               (
                 {
                   run = "corepack pnpm --recursive build";
                 }
-                // cfg.settings.pnpm-build
+                // optionalAttrs (cfg.settings.pnpm-build != { }) { env = cfg.settings.pnpm-build; }
               )
             ];
           };
@@ -131,54 +127,50 @@ in
             name = "Check";
             runs-on = "ubuntu-latest";
             steps = [
-              (
-                {
-                  continue-on-error = true;
-                  id = "createGithubAppToken";
-                  uses = "actions/create-github-app-token@v3";
-                  "with" = {
-                    app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                    private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                    permission-contents = "read";
-                  };
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
                 }
-                // cfg.settings.create-github-app-token
-              )
-              (
-                {
-                  uses = "actions/checkout@v6";
-                  "with" = {
-                    fetch-depth = 0;
-                    persist-credentials = false;
-                    token = githubToken;
-                  };
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
                 }
-                // cfg.settings.checkout
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/nix/setup@v8";
-                  "with".github-token = githubToken;
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
                 }
-                // cfg.settings.setup-nix
-              )
+                // cfg.settings.setup-nix;
+              }
               (
                 {
                   uses = "shikanime-studio/actions/direnv@v8";
                 }
-                // cfg.settings.direnv
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               (
                 {
                   run = "corepack pnpm install --frozen-lockfile";
                 }
-                // cfg.settings.pnpm-install
+                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
               )
               (
                 {
                   run = "corepack pnpm --recursive check";
                 }
-                // cfg.settings.pnpm-check
+                // optionalAttrs (cfg.settings.pnpm-check != { }) { env = cfg.settings.pnpm-check; }
               )
             ];
           };
@@ -187,54 +179,50 @@ in
             name = "Lint";
             runs-on = "ubuntu-latest";
             steps = [
-              (
-                {
-                  continue-on-error = true;
-                  id = "createGithubAppToken";
-                  uses = "actions/create-github-app-token@v3";
-                  "with" = {
-                    app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                    private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                    permission-contents = "read";
-                  };
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
                 }
-                // cfg.settings.create-github-app-token
-              )
-              (
-                {
-                  uses = "actions/checkout@v6";
-                  "with" = {
-                    fetch-depth = 0;
-                    persist-credentials = false;
-                    token = githubToken;
-                  };
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
                 }
-                // cfg.settings.checkout
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/nix/setup@v8";
-                  "with".github-token = githubToken;
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
                 }
-                // cfg.settings.setup-nix
-              )
+                // cfg.settings.setup-nix;
+              }
               (
                 {
                   uses = "shikanime-studio/actions/direnv@v8";
                 }
-                // cfg.settings.direnv
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               (
                 {
                   run = "corepack pnpm install --frozen-lockfile";
                 }
-                // cfg.settings.pnpm-install
+                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
               )
               (
                 {
                   run = "corepack pnpm --recursive lint";
                 }
-                // cfg.settings.pnpm-lint
+                // optionalAttrs (cfg.settings.pnpm-lint != { }) { env = cfg.settings.pnpm-lint; }
               )
             ];
           };

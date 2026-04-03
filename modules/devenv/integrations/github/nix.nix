@@ -85,49 +85,43 @@ in
               matrix.include = "\${{ fromJSON(needs['setup-checks-jobs'].outputs.matrix) }}";
             };
             steps = [
-              (
-                {
-                  continue-on-error = true;
-                  id = "createGithubAppToken";
-                  uses = "actions/create-github-app-token@v3";
-                  "with" = {
-                    app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                    private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                    permission-contents = "read";
-                  };
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
                 }
-                // cfg.settings.create-github-app-token
-              )
-              (
-                {
-                  uses = "actions/checkout@v6";
-                  "with" = {
-                    fetch-depth = 0;
-                    persist-credentials = false;
-                    token = githubToken;
-                  };
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
                 }
-                // cfg.settings.checkout
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/nix/setup@v8";
-                  "with" = {
-                    cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-                    cachix-name = "\${{ inputs['cachix-name'] }}";
-                    github-token = githubToken;
-                  };
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+                  cachix-name = "\${{ inputs['cachix-name'] }}";
+                  github-token = githubToken;
                 }
-                // cfg.settings.setup-nix
-              )
-              (
-                {
-                  env.SYSTEM = "\${{ matrix.system }}";
-                  run = "nix flake check --accept-flake-config --no-pure-eval --system \"$SYSTEM\"";
-                  shell = "bash";
+                // cfg.settings.setup-nix;
+              }
+              {
+                env = {
+                  SYSTEM = "\${{ matrix.system }}";
                 }
-                // cfg.settings.flake-check
-              )
+                // cfg.settings.flake-check;
+                run = "nix flake check --accept-flake-config --no-pure-eval --system \"$SYSTEM\"";
+                shell = "bash";
+              }
             ];
           };
 
@@ -141,52 +135,44 @@ in
               matrix.include = "\${{ fromJSON(needs['setup-packages-jobs'].outputs.matrix) }}";
             };
             steps = [
-              (
-                {
-                  continue-on-error = true;
-                  id = "createGithubAppToken";
-                  uses = "actions/create-github-app-token@v3";
-                  "with" = {
-                    app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                    private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                    permission-contents = "read";
-                  };
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
                 }
-                // cfg.settings.create-github-app-token
-              )
-              (
-                {
-                  uses = "actions/checkout@v6";
-                  "with" = {
-                    fetch-depth = 0;
-                    persist-credentials = false;
-                    token = githubToken;
-                  };
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
                 }
-                // cfg.settings.checkout
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/nix/setup@v8";
-                  "with" = {
-                    cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-                    cachix-name = "\${{ inputs['cachix-name'] }}";
-                    github-token = githubToken;
-                  };
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
+                  cachix-name = "\${{ inputs['cachix-name'] }}";
+                  github-token = githubToken;
                 }
-                // cfg.settings.setup-nix
-              )
-              (
-                {
-                  env = {
-                    NAME = "\${{ matrix.name }}";
-                    SYSTEM = "\${{ matrix.system }}";
-                  };
-                  run = "nix build --accept-flake-config --no-pure-eval \".#packages.$SYSTEM.$NAME\"";
-                  shell = "bash";
+                // cfg.settings.setup-nix;
+              }
+              {
+                env = {
+                  NAME = "\${{ matrix.name }}";
+                  SYSTEM = "\${{ matrix.system }}";
                 }
-                // cfg.settings.nix-build
-              )
+                // cfg.settings.nix-build;
+                run = "nix build --accept-flake-config --no-pure-eval \".#packages.$SYSTEM.$NAME\"";
+                shell = "bash";
+              }
             ];
           };
 
@@ -198,43 +184,41 @@ in
               matrix = "\${{ steps.setup-checks-jobs.outputs.matrix }}";
             };
             steps = [
-              (
-                {
-                  continue-on-error = true;
-                  id = "createGithubAppToken";
-                  uses = "actions/create-github-app-token@v3";
-                  "with" = {
-                    app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                    private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                    permission-contents = "read";
-                  };
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
                 }
-                // cfg.settings.create-github-app-token
-              )
-              (
-                {
-                  uses = "actions/checkout@v6";
-                  "with" = {
-                    fetch-depth = 0;
-                    persist-credentials = false;
-                    token = githubToken;
-                  };
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
                 }
-                // cfg.settings.checkout
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/nix/setup@v8";
-                  "with".github-token = githubToken;
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
                 }
-                // cfg.settings.setup-nix
-              )
+                // cfg.settings.setup-nix;
+              }
               (
                 {
                   id = "setup-checks-jobs";
                   uses = "shikanime-studio/actions/nix/setup-checks-jobs@v8";
                 }
-                // cfg.settings.setup-checks-jobs
+                // optionalAttrs (cfg.settings.setup-checks-jobs != { }) {
+                  "with" = cfg.settings.setup-checks-jobs;
+                }
               )
             ];
           };
@@ -247,43 +231,41 @@ in
               matrix = "\${{ steps.setup-packages-jobs.outputs.matrix }}";
             };
             steps = [
-              (
-                {
-                  continue-on-error = true;
-                  id = "createGithubAppToken";
-                  uses = "actions/create-github-app-token@v3";
-                  "with" = {
-                    app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                    private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                    permission-contents = "read";
-                  };
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
                 }
-                // cfg.settings.create-github-app-token
-              )
-              (
-                {
-                  uses = "actions/checkout@v6";
-                  "with" = {
-                    fetch-depth = 0;
-                    persist-credentials = false;
-                    token = githubToken;
-                  };
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
                 }
-                // cfg.settings.checkout
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/nix/setup@v8";
-                  "with".github-token = githubToken;
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
                 }
-                // cfg.settings.setup-nix
-              )
+                // cfg.settings.setup-nix;
+              }
               (
                 {
                   id = "setup-packages-jobs";
                   uses = "shikanime-studio/actions/nix/setup-packages-jobs@v8";
                 }
-                // cfg.settings.setup-packages-jobs
+                // optionalAttrs (cfg.settings.setup-packages-jobs != { }) {
+                  "with" = cfg.settings.setup-packages-jobs;
+                }
               )
             ];
           };

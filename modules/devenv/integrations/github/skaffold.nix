@@ -74,43 +74,41 @@ in
               matrix = "\${{ steps.setup-profiles-jobs.outputs.matrix }}";
             };
             steps = [
-              (
-                {
-                  continue-on-error = true;
-                  id = "createGithubAppToken";
-                  uses = "actions/create-github-app-token@v3";
-                  "with" = {
-                    app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                    private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                    permission-contents = "read";
-                  };
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
                 }
-                // cfg.settings.create-github-app-token
-              )
-              (
-                {
-                  uses = "actions/checkout@v6";
-                  "with" = {
-                    fetch-depth = 0;
-                    persist-credentials = false;
-                    token = githubToken;
-                  };
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
                 }
-                // cfg.settings.checkout
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/nix/setup@v8";
-                  "with".github-token = githubToken;
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
                 }
-                // cfg.settings.setup-nix
-              )
+                // cfg.settings.setup-nix;
+              }
               (
                 {
                   id = "setup-profiles-jobs";
                   uses = "shikanime-studio/actions/skaffold/setup-profiles-jobs@v8";
                 }
-                // cfg.settings.setup-profiles-jobs
+                // optionalAttrs (cfg.settings.setup-profiles-jobs != { }) {
+                  "with" = cfg.settings.setup-profiles-jobs;
+                }
               )
             ];
           };
@@ -125,54 +123,50 @@ in
               matrix.include = "\${{ fromJSON(needs['setup-profiles-jobs'].outputs.matrix) }}";
             };
             steps = [
-              (
-                {
-                  continue-on-error = true;
-                  id = "createGithubAppToken";
-                  uses = "actions/create-github-app-token@v3";
-                  "with" = {
-                    app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                    private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                    permission-contents = "read";
-                  };
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
                 }
-                // cfg.settings.create-github-app-token
-              )
-              (
-                {
-                  uses = "actions/checkout@v6";
-                  "with" = {
-                    fetch-depth = 0;
-                    persist-credentials = false;
-                    token = githubToken;
-                  };
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
                 }
-                // cfg.settings.checkout
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/nix/setup@v8";
-                  "with".github-token = githubToken;
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
                 }
-                // cfg.settings.setup-nix
-              )
+                // cfg.settings.setup-nix;
+              }
               (
                 {
                   uses = "shikanime-studio/actions/direnv@v8";
                 }
-                // cfg.settings.direnv
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               (
                 {
                   run = "skaffold build --profile \${{ matrix.profile }}";
                 }
-                // cfg.settings.skaffold-build
+                // optionalAttrs (cfg.settings.skaffold-build != { }) { env = cfg.settings.skaffold-build; }
               )
               (
                 {
                   run = "skaffold render --profile \${{ matrix.profile }}";
                 }
-                // cfg.settings.skaffold-render
+                // optionalAttrs (cfg.settings.skaffold-render != { }) { env = cfg.settings.skaffold-render; }
               )
             ];
           };
