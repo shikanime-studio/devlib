@@ -27,15 +27,9 @@ let
     ###-------------------###
   '';
 
-  content = concatStringsSep "\n" (
-    optional (cfg.content != [ ]) ("\n" + contentHeader) ++ cfg.content
-  );
+  content = concatStringsSep "\n" (optional (cfg.content != [ ]) contentHeader ++ cfg.content);
 
-  templateArgs = optionalString (
-    templates != [ ]
-  ) "<(${getExe cfg.package} create ${concatStringsSep " " templates})";
-
-  contentArg = optionalString (cfg.content != [ ]) "<(${pkgs.coreutils}/bin/echo \"${content}\")";
+  contentFile = pkgs.writeText "devlib-gitignore-content" content;
 in
 {
   options.gitignore = {
@@ -91,16 +85,25 @@ in
   };
 
   config = mkIf cfg.enable {
-    packages = [ cfg.package ];
+    packages = [
+      cfg.package
+      pkgs.gawk
+      pkgs.moreutils
+    ];
 
     tasks."devlib:gitignore:install" = {
       before = [ "devenv:enterShell" ];
       description = "Generate .gitignore file";
       exec = optionalString (templates != [ ] || cfg.content != [ ]) ''
-        ${pkgs.coreutils}/bin/cat \
-          ${templateArgs} \
-          ${contentArg} \
-          > "${config.env.DEVENV_ROOT}/.gitignore"
+        (
+          ${optionalString (
+            templates != [ ]
+          ) "${getExe cfg.package} create ${concatStringsSep " " templates}"}
+          ${optionalString (
+            templates != [ ] && cfg.content != [ ]
+          ) "${lib.getExe' pkgs.coreutils "printf"} '\n'"}
+          ${optionalString (cfg.content != [ ]) "${lib.getExe' pkgs.coreutils "cat"} ${contentFile}"}
+        ) | ${lib.getExe' pkgs.gawk "gawk"} '1' | ${lib.getExe' pkgs.moreutils "sponge"} "${config.env.DEVENV_ROOT}/.gitignore"
       '';
     };
   };
