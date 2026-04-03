@@ -113,8 +113,8 @@ in
             ];
           };
 
-          build-render = {
-            name = "Build & Render";
+          render = {
+            name = "Render";
             needs = [ "setup-profiles-jobs" ];
             "if" = "\${{ needs['setup-profiles-jobs'].outputs.continue == 'true' }}";
             runs-on = "ubuntu-latest";
