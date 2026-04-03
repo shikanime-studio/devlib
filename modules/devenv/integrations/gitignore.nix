@@ -87,7 +87,6 @@ in
   config = mkIf cfg.enable {
     packages = [
       cfg.package
-      pkgs.gawk
       pkgs.moreutils
     ];
 
@@ -95,15 +94,26 @@ in
       before = [ "devenv:enterShell" ];
       description = "Generate .gitignore file";
       exec = optionalString (templates != [ ] || cfg.content != [ ]) ''
-        (
-          ${optionalString (
-            templates != [ ]
-          ) "${getExe cfg.package} create ${concatStringsSep " " templates}"}
+        tmpl_out=""
+        content_out=""
+
+        ${optionalString (templates != [ ]) ''
+          tmpl_out="$(${getExe cfg.package} create ${concatStringsSep " " templates})"
+        ''}
+
+        ${optionalString (cfg.content != [ ]) ''
+          content_out="$(${lib.getExe' pkgs.coreutils "cat"} ${contentFile})"
+        ''}
+
+        {
+          ${lib.getExe' pkgs.coreutils "printf"} '%s' "$tmpl_out"
           ${optionalString (
             templates != [ ] && cfg.content != [ ]
-          ) "${lib.getExe' pkgs.coreutils "printf"} '\n'"}
-          ${optionalString (cfg.content != [ ]) "${lib.getExe' pkgs.coreutils "cat"} ${contentFile}"}
-        ) | ${lib.getExe' pkgs.gawk "gawk"} '1' | ${lib.getExe' pkgs.moreutils "sponge"} "${config.env.DEVENV_ROOT}/.gitignore"
+          ) "${lib.getExe' pkgs.coreutils "printf"} '\\n\\n'"}
+          ${lib.getExe' pkgs.coreutils "printf"} '%s' "$content_out"
+          ${lib.getExe' pkgs.coreutils "printf"} '\n'
+        } \
+          | ${lib.getExe' pkgs.moreutils "sponge"} "${config.env.DEVENV_ROOT}/.gitignore"
       '';
     };
   };
