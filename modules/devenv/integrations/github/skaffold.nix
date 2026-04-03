@@ -156,6 +156,7 @@ in
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
+              { run = "skaffold config set --global collect-metrics false"; }
               (
                 {
                   run = "skaffold build --profile \${{ matrix.profile }}";
