@@ -158,13 +158,13 @@ in
               )
               (
                 {
-                  run = "skaffold build --profile \${{ matrix.profile }}";
+                  run = "skaffold build --profile \${{ matrix.name }}";
                 }
                 // optionalAttrs (cfg.settings.skaffold-build != { }) { env = cfg.settings.skaffold-build; }
               )
               (
                 {
-                  run = "skaffold render --profile \${{ matrix.profile }}";
+                  run = "skaffold render --profile \${{ matrix.name }}";
                 }
                 // optionalAttrs (cfg.settings.skaffold-render != { }) { env = cfg.settings.skaffold-render; }
               )
