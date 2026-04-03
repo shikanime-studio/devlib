@@ -29,8 +29,11 @@ in
   imports = [
     ./github/cleanup.nix
     ./github/commands.nix
+    ./github/javascript.nix
     ./github/integration.nix
+    ./github/nix.nix
     ./github/release.nix
+    ./github/skaffold.nix
     ./github/triage.nix
     ./github/update.nix
   ];
