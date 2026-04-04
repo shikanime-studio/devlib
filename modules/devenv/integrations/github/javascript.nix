@@ -34,25 +34,15 @@ in
         default = { };
         description = "Overrides for direnv";
       };
-      pnpm-build = mkOption {
+      integration = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
-        description = "Overrides for pnpm build";
-      };
-      pnpm-check = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for pnpm check";
+        description = "Overrides for javascript integration";
       };
       pnpm-install = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for pnpm install";
-      };
-      pnpm-lint = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for pnpm lint";
       };
       setup-nix = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
@@ -116,21 +106,10 @@ in
               )
               (
                 {
-                  run = "corepack pnpm run check";
+                  id = "javascript";
+                  uses = "shikanime-studio/actions/javascript/integration@v8";
                 }
-                // optionalAttrs (cfg.settings.pnpm-check != { }) { env = cfg.settings.pnpm-check; }
-              )
-              (
-                {
-                  run = "corepack pnpm run lint";
-                }
-                // optionalAttrs (cfg.settings.pnpm-lint != { }) { env = cfg.settings.pnpm-lint; }
-              )
-              (
-                {
-                  run = "corepack pnpm run build";
-                }
-                // optionalAttrs (cfg.settings.pnpm-build != { }) { env = cfg.settings.pnpm-build; }
+                // optionalAttrs (cfg.settings.integration != { }) { "with" = cfg.settings.integration; }
               )
             ];
           };
@@ -178,24 +157,14 @@ in
                 }
                 // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
               )
-              (
-                {
-                  run = "corepack pnpm --recursive check";
+              {
+                id = "javascript";
+                uses = "shikanime-studio/actions/javascript/integration@v8";
+                "with" = {
+                  recursive = true;
                 }
-                // optionalAttrs (cfg.settings.pnpm-check != { }) { env = cfg.settings.pnpm-check; }
-              )
-              (
-                {
-                  run = "corepack pnpm --recursive lint";
-                }
-                // optionalAttrs (cfg.settings.pnpm-lint != { }) { env = cfg.settings.pnpm-lint; }
-              )
-              (
-                {
-                  run = "corepack pnpm --recursive build";
-                }
-                // optionalAttrs (cfg.settings.pnpm-build != { }) { env = cfg.settings.pnpm-build; }
-              )
+                // cfg.settings.integration;
+              }
             ];
           };
         };
