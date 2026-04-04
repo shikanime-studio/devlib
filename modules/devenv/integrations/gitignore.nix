@@ -95,15 +95,10 @@ in
       description = "Generate .gitignore file";
       exec = optionalString (templates != [ ] || cfg.content != [ ]) ''
         tmpl_out=""
-        sep_line=""
         content_out=""
 
         ${optionalString (templates != [ ]) ''
           tmpl_out="$(${getExe cfg.package} create ${concatStringsSep " " templates})"
-        ''}
-
-        ${optionalString (templates != [ ] && cfg.content != [ ]) ''
-          sep_line="${lib.getExe' pkgs.coreutils "printf"} '\\n\\n'}"
         ''}
 
         ${optionalString (cfg.content != [ ]) ''
@@ -112,7 +107,9 @@ in
 
         {
           ${lib.getExe' pkgs.coreutils "printf"} '%s' "$tmpl_out"
-          ${sep_line}
+           ${optionalString (
+             templates != [ ] && cfg.content != [ ]
+           ) "${lib.getExe' pkgs.coreutils "printf"} '\\n\\n'"}
           ${lib.getExe' pkgs.coreutils "printf"} '%s' "$content_out"
           ${lib.getExe' pkgs.coreutils "printf"} '\n'
         } \
