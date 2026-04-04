@@ -113,7 +113,7 @@ in
             ];
           };
 
-          render = {
+          build-render = {
             name = "Build & Render";
             runs-on = "ubuntu-latest";
             steps = [
