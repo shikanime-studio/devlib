@@ -160,7 +160,7 @@ in
                 run = "skaffold build --profile \${{ matrix.name }}";
                 env = {
                   SKAFFOLD_COLLECT_METRICS = "false";
-                  SKAFFOLD_LOG_LEVEL = "\${{ runner.debug == '1' ? 'debug' : 'info' }}";
+                  SKAFFOLD_LOG_LEVEL = "\${{ runner.debug == '1' && 'debug' || 'info' }}";
                 }
                 // cfg.settings.skaffold-build;
               }
@@ -168,7 +168,7 @@ in
                 run = "skaffold render --profile \${{ matrix.name }}";
                 env = {
                   SKAFFOLD_COLLECT_METRICS = "false";
-                  SKAFFOLD_LOG_LEVEL = "\${{ runner.debug == '1' ? 'debug' : 'info' }}";
+                  SKAFFOLD_LOG_LEVEL = "\${{ runner.debug == '1' && 'debug' || 'info' }}";
                 }
                 // cfg.settings.skaffold-render;
               }
