@@ -44,15 +44,10 @@ in
         default = { };
         description = "Overrides for setup-profiles-jobs";
       };
-      skaffold-build = mkOption {
+      integration = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
-        description = "Overrides for skaffold build";
-      };
-      skaffold-render = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for skaffold render";
+        description = "Overrides for skaffold integration";
       };
     };
   };
@@ -113,8 +108,57 @@ in
             ];
           };
 
-          render = {
-            name = "Render";
+          build-render = {
+            name = "Build & Render";
+            runs-on = "ubuntu-latest";
+            steps = [
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
+                }
+                // cfg.settings.create-github-app-token;
+              }
+              {
+                uses = "actions/checkout@v6";
+                "with" = {
+                  fetch-depth = 0;
+                  persist-credentials = false;
+                  token = githubToken;
+                }
+                // cfg.settings.checkout;
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
+                }
+                // cfg.settings.setup-nix;
+              }
+              (
+                {
+                  uses = "shikanime-studio/actions/direnv@v8";
+                }
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
+              )
+              (
+                {
+                  id = "skaffold";
+                  uses = "shikanime-studio/actions/skaffold/integration@v8";
+                }
+                // optionalAttrs (cfg.settings.integration != { }) {
+                  "with" = cfg.settings.integration;
+                }
+              )
+            ];
+          };
+
+          build-render-profile = {
+            name = "Build & Render (Profile)";
             needs = [ "setup-profiles-jobs" ];
             "if" = "\${{ needs['setup-profiles-jobs'].outputs.continue == 'true' }}";
             runs-on = "ubuntu-latest";
@@ -157,20 +201,12 @@ in
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
-                run = "skaffold build --profile \${{ matrix.name }}";
-                env = {
-                  SKAFFOLD_COLLECT_METRICS = "false";
-                  SKAFFOLD_LOG_LEVEL = "\${{ runner.debug == '1' && 'debug' || 'info' }}";
+                id = "skaffold";
+                uses = "shikanime-studio/actions/skaffold/integration@v8";
+                "with" = {
+                  profile = "\${{ matrix.name }}";
                 }
-                // cfg.settings.skaffold-build;
-              }
-              {
-                run = "skaffold render --profile \${{ matrix.name }}";
-                env = {
-                  SKAFFOLD_COLLECT_METRICS = "false";
-                  SKAFFOLD_LOG_LEVEL = "\${{ runner.debug == '1' && 'debug' || 'info' }}";
-                }
-                // cfg.settings.skaffold-render;
+                // cfg.settings.integration;
               }
             ];
           };

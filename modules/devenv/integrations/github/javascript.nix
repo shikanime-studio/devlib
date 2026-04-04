@@ -34,25 +34,15 @@ in
         default = { };
         description = "Overrides for direnv";
       };
-      pnpm-build = mkOption {
+      integration = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
-        description = "Overrides for pnpm build";
-      };
-      pnpm-check = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for pnpm check";
+        description = "Overrides for javascript integration";
       };
       pnpm-install = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for pnpm install";
-      };
-      pnpm-lint = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for pnpm lint";
       };
       setup-nix = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
@@ -116,15 +106,16 @@ in
               )
               (
                 {
-                  run = "corepack pnpm --recursive build";
+                  id = "javascript";
+                  uses = "shikanime-studio/actions/javascript/integration@v8";
                 }
-                // optionalAttrs (cfg.settings.pnpm-build != { }) { env = cfg.settings.pnpm-build; }
+                // optionalAttrs (cfg.settings.integration != { }) { "with" = cfg.settings.integration; }
               )
             ];
           };
 
-          check = {
-            name = "Check";
+          build-workspace = {
+            name = "Build (Workspace)";
             runs-on = "ubuntu-latest";
             steps = [
               {
@@ -166,64 +157,14 @@ in
                 }
                 // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
               )
-              (
-                {
-                  run = "corepack pnpm --recursive check";
-                }
-                // optionalAttrs (cfg.settings.pnpm-check != { }) { env = cfg.settings.pnpm-check; }
-              )
-            ];
-          };
-
-          lint = {
-            name = "Lint";
-            runs-on = "ubuntu-latest";
-            steps = [
               {
-                continue-on-error = true;
-                id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
+                id = "javascript";
+                uses = "shikanime-studio/actions/javascript/integration@v8";
                 "with" = {
-                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                  permission-contents = "read";
+                  recursive = true;
                 }
-                // cfg.settings.create-github-app-token;
+                // cfg.settings.integration;
               }
-              {
-                uses = "actions/checkout@v6";
-                "with" = {
-                  fetch-depth = 0;
-                  persist-credentials = false;
-                  token = githubToken;
-                }
-                // cfg.settings.checkout;
-              }
-              {
-                uses = "shikanime-studio/actions/nix/setup@v8";
-                "with" = {
-                  github-token = githubToken;
-                }
-                // cfg.settings.setup-nix;
-              }
-              (
-                {
-                  uses = "shikanime-studio/actions/direnv@v8";
-                }
-                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
-              )
-              (
-                {
-                  run = "corepack pnpm install --frozen-lockfile";
-                }
-                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
-              )
-              (
-                {
-                  run = "corepack pnpm --recursive lint";
-                }
-                // optionalAttrs (cfg.settings.pnpm-lint != { }) { env = cfg.settings.pnpm-lint; }
-              )
             ];
           };
         };
