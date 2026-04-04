@@ -116,15 +116,27 @@ in
               )
               (
                 {
-                  run = "corepack pnpm --recursive build";
+                  run = "corepack pnpm run check";
+                }
+                // optionalAttrs (cfg.settings.pnpm-check != { }) { env = cfg.settings.pnpm-check; }
+              )
+              (
+                {
+                  run = "corepack pnpm run lint";
+                }
+                // optionalAttrs (cfg.settings.pnpm-lint != { }) { env = cfg.settings.pnpm-lint; }
+              )
+              (
+                {
+                  run = "corepack pnpm run build";
                 }
                 // optionalAttrs (cfg.settings.pnpm-build != { }) { env = cfg.settings.pnpm-build; }
               )
             ];
           };
 
-          check = {
-            name = "Check";
+          build-workspace = {
+            name = "Build (Workspace)";
             runs-on = "ubuntu-latest";
             steps = [
               {
@@ -172,57 +184,17 @@ in
                 }
                 // optionalAttrs (cfg.settings.pnpm-check != { }) { env = cfg.settings.pnpm-check; }
               )
-            ];
-          };
-
-          lint = {
-            name = "Lint";
-            runs-on = "ubuntu-latest";
-            steps = [
-              {
-                continue-on-error = true;
-                id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
-                "with" = {
-                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                  permission-contents = "read";
-                }
-                // cfg.settings.create-github-app-token;
-              }
-              {
-                uses = "actions/checkout@v6";
-                "with" = {
-                  fetch-depth = 0;
-                  persist-credentials = false;
-                  token = githubToken;
-                }
-                // cfg.settings.checkout;
-              }
-              {
-                uses = "shikanime-studio/actions/nix/setup@v8";
-                "with" = {
-                  github-token = githubToken;
-                }
-                // cfg.settings.setup-nix;
-              }
-              (
-                {
-                  uses = "shikanime-studio/actions/direnv@v8";
-                }
-                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
-              )
-              (
-                {
-                  run = "corepack pnpm install --frozen-lockfile";
-                }
-                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
-              )
               (
                 {
                   run = "corepack pnpm --recursive lint";
                 }
                 // optionalAttrs (cfg.settings.pnpm-lint != { }) { env = cfg.settings.pnpm-lint; }
+              )
+              (
+                {
+                  run = "corepack pnpm --recursive build";
+                }
+                // optionalAttrs (cfg.settings.pnpm-build != { }) { env = cfg.settings.pnpm-build; }
               )
             ];
           };
