@@ -157,18 +157,20 @@ in
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               { run = "skaffold config set --global collect-metrics false"; }
-              (
-                {
-                  run = "skaffold build --profile \${{ matrix.name }}";
+              {
+                run = "skaffold build --profile \${{ matrix.name }}";
+                env = {
+                  DEBUG = "\${{ runner.debug == '1' && '--debug=1' || '' }}";
                 }
-                // optionalAttrs (cfg.settings.skaffold-build != { }) { env = cfg.settings.skaffold-build; }
-              )
-              (
-                {
-                  run = "skaffold render --profile \${{ matrix.name }}";
+                // cfg.settings.skaffold-build;
+              }
+              {
+                run = "skaffold render --profile \${{ matrix.name }}";
+                env = {
+                  DEBUG = "\${{ runner.debug == '1' && '--debug=1' || '' }}";
                 }
-                // optionalAttrs (cfg.settings.skaffold-render != { }) { env = cfg.settings.skaffold-render; }
-              )
+                // cfg.settings.skaffold-render;
+              }
             ];
           };
         };

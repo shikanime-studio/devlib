@@ -160,18 +160,20 @@ in
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
-              (
-                {
-                  run = "corepack pnpm install --frozen-lockfile";
+              {
+                run = "corepack pnpm install --frozen-lockfile";
+                env = {
+                  DEBUG = "\${{ runner.debug == '1' && '--debug=1' || '' }}";
                 }
-                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
-              )
-              (
-                {
-                  run = "corepack pnpm --recursive check";
+                // cfg.settings.pnpm-install;
+              }
+              {
+                run = "corepack pnpm --recursive check";
+                env = {
+                  DEBUG = "\${{ runner.debug == '1' && '--debug=1' || '' }}";
                 }
-                // optionalAttrs (cfg.settings.pnpm-check != { }) { env = cfg.settings.pnpm-check; }
-              )
+                // cfg.settings.pnpm-check;
+              }
             ];
           };
 
