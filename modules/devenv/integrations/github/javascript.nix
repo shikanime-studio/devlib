@@ -107,7 +107,7 @@ in
               (
                 {
                   id = "javascript";
-                  uses = "shikanime-studio/actions/javascript/integration@v8";
+                  uses = "shikanime-studio/actions/pnpm/integration@v8";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) { "with" = cfg.settings.integration; }
               )
@@ -159,7 +159,7 @@ in
               )
               {
                 id = "javascript";
-                uses = "shikanime-studio/actions/javascript/integration@v8";
+                uses = "shikanime-studio/actions/pnpm/integration@v8";
                 "with" = {
                   recursive = true;
                 }
