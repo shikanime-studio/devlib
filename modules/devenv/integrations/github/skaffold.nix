@@ -147,7 +147,6 @@ in
               )
               (
                 {
-                  id = "skaffold";
                   uses = "shikanime-studio/actions/skaffold/integration@v8";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) {
@@ -201,7 +200,6 @@ in
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
-                id = "skaffold";
                 uses = "shikanime-studio/actions/skaffold/integration@v8";
                 "with" = {
                   profile = "\${{ matrix.name }}";
