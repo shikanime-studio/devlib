@@ -94,23 +94,16 @@ in
       before = [ "devenv:enterShell" ];
       description = "Generate .gitignore file";
       exec = optionalString (templates != [ ] || cfg.content != [ ]) ''
-        tmpl_out=""
-        content_out=""
-
-        ${optionalString (templates != [ ]) ''
-          tmpl_out="$(${getExe cfg.package} create ${concatStringsSep " " templates})"
-        ''}
-
-        ${optionalString (cfg.content != [ ]) ''
-          content_out="$(${lib.getExe' pkgs.coreutils "cat"} ${contentFile})"
-        ''}
-
         {
-          ${lib.getExe' pkgs.coreutils "printf"} '%s' "$tmpl_out"
-           ${optionalString (
-             templates != [ ] && cfg.content != [ ]
-           ) "${lib.getExe' pkgs.coreutils "printf"} '\\n\\n'"}
-          ${lib.getExe' pkgs.coreutils "printf"} '%s' "$content_out"
+          ${optionalString (templates != [ ]) ''
+            ${lib.getExe' pkgs.coreutils "printf"} '%s' "$(${getExe cfg.package} create ${concatStringsSep " " templates})"
+          ''}
+          ${optionalString (
+            templates != [ ] && cfg.content != [ ]
+          ) "${lib.getExe' pkgs.coreutils "printf"} '\\n\\n'"}
+          ${optionalString (cfg.content != [ ]) ''
+            ${lib.getExe' pkgs.coreutils "cat"} ${contentFile}
+          ''}
           ${lib.getExe' pkgs.coreutils "printf"} '\n'
         } \
           | ${lib.getExe' pkgs.moreutils "sponge"} "${config.env.DEVENV_ROOT}/.gitignore"
