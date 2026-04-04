@@ -103,7 +103,7 @@ in
         ''}
 
         ${optionalString (templates != [ ] && cfg.content != [ ]) ''
-          sep_line="${lib.getExe' pkgs.coreutils "printf"} '\\n\\n'}"
+          sep_line="$(${lib.getExe' pkgs.coreutils "printf"} '\\n\\n')"
         ''}
 
         ${optionalString (cfg.content != [ ]) ''
@@ -112,7 +112,7 @@ in
 
         {
           ${lib.getExe' pkgs.coreutils "printf"} '%s' "$tmpl_out"
-          ${sep_line}
+          $sep_line
           ${lib.getExe' pkgs.coreutils "printf"} '%s' "$content_out"
           ${lib.getExe' pkgs.coreutils "printf"} '\n'
         } \

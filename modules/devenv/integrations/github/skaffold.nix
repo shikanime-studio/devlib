@@ -29,6 +29,11 @@ in
         default = { };
         description = "Overrides for create-github-app-token";
       };
+      docker-login = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for docker login";
+      };
       direnv = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -149,6 +154,15 @@ in
                   github-token = githubToken;
                 }
                 // cfg.settings.setup-nix;
+              }
+              {
+                uses = "docker/login-action@v3";
+                "with" = {
+                  registry = "ghcr.io";
+                  username = "\${{ github.actor }}";
+                  password = "\${{ secrets.GITHUB_TOKEN }}";
+                }
+                // cfg.settings.docker-login;
               }
               (
                 {
