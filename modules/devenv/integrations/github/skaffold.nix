@@ -120,7 +120,7 @@ in
                   app-id = "\${{ vars.OPERATOR_APP_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                   permission-contents = "read";
-                  permissions-packages = "write";
+                  permission-packages = "write";
                 }
                 // cfg.settings.create-github-app-token;
               }
@@ -183,7 +183,7 @@ in
                   app-id = "\${{ vars.OPERATOR_APP_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                   permission-contents = "read";
-                  permissions-packages = "write";
+                  permission-packages = "write";
                 }
                 // cfg.settings.create-github-app-token;
               }
