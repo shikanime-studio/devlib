@@ -219,10 +219,6 @@ in
         jobs = {
           skaffold = {
             "if" = "\${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}";
-            permissions = {
-              contents = "read";
-              packages = "write";
-            };
             uses = "./.github/workflows/skaffold.yaml";
             secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
           };
@@ -235,10 +231,6 @@ in
       github.settings.workflows.release = {
         jobs = {
           skaffold = {
-            permissions = {
-              contents = "read";
-              packages = "write";
-            };
             uses = "./.github/workflows/skaffold.yaml";
             secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
           };
