@@ -133,19 +133,19 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
-                "with" = {
-                  github-token = githubToken;
-                }
-                // cfg.settings.setup-nix;
-              }
-              {
                 uses = "docker/login-action@v3";
                 "with" = {
                   registry = "ghcr.io";
                   username = "x-access-token";
                   password = githubToken;
                 };
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
+                }
+                // cfg.settings.setup-nix;
               }
               (
                 {
@@ -195,19 +195,19 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
-                "with" = {
-                  github-token = githubToken;
-                }
-                // cfg.settings.setup-nix;
-              }
-              {
                 uses = "docker/login-action@v3";
                 "with" = {
                   registry = "ghcr.io";
                   username = "x-access-token";
                   password = githubToken;
                 };
+              }
+              {
+                uses = "shikanime-studio/actions/nix/setup@v8";
+                "with" = {
+                  github-token = githubToken;
+                }
+                // cfg.settings.setup-nix;
               }
               (
                 {
