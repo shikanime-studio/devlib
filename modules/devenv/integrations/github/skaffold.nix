@@ -111,19 +111,11 @@ in
           build-render = {
             name = "Build & Render";
             runs-on = "ubuntu-latest";
+            permissions = {
+              contents = "read";
+              packages = "write";
+            };
             steps = [
-              {
-                continue-on-error = true;
-                id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
-                "with" = {
-                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                  permission-contents = "read";
-                  permission-packages = "write";
-                }
-                // cfg.settings.create-github-app-token;
-              }
               {
                 uses = "actions/checkout@v6";
                 "with" = {
@@ -137,8 +129,8 @@ in
                 uses = "docker/login-action@v3";
                 "with" = {
                   registry = "ghcr.io";
-                  username = "x-access-token";
-                  password = githubToken;
+                  username = "\${{ github.actor }}";
+                  password = "\${{ secrets.GITHUB_TOKEN }}";
                 };
               }
               {
@@ -170,23 +162,15 @@ in
             needs = [ "setup-profiles-jobs" ];
             "if" = "\${{ needs['setup-profiles-jobs'].outputs.continue == 'true' }}";
             runs-on = "ubuntu-latest";
+            permissions = {
+              contents = "read";
+              packages = "write";
+            };
             strategy = {
               fail-fast = false;
               matrix.include = "\${{ fromJSON(needs['setup-profiles-jobs'].outputs.matrix) }}";
             };
             steps = [
-              {
-                continue-on-error = true;
-                id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
-                "with" = {
-                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                  permission-contents = "read";
-                  permission-packages = "write";
-                }
-                // cfg.settings.create-github-app-token;
-              }
               {
                 uses = "actions/checkout@v6";
                 "with" = {
@@ -200,8 +184,8 @@ in
                 uses = "docker/login-action@v3";
                 "with" = {
                   registry = "ghcr.io";
-                  username = "x-access-token";
-                  password = githubToken;
+                  username = "\${{ github.actor }}";
+                  password = "\${{ secrets.GITHUB_TOKEN }}";
                 };
               }
               {
