@@ -18,7 +18,6 @@ let
 in
 {
   home.packages = [
-    pkgs.deno
     pkgs.typescript-language-server
     pkgs.nodejs
     pkgs.vscode-langservers-extracted
