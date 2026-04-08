@@ -49,6 +49,11 @@ in
         default = { };
         description = "Overrides for rebase";
       };
+      run = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for run";
+      };
       setup-nix = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -315,7 +320,7 @@ in
                 gpg-private-key = "\${{ secrets.GPG_PRIVATE_KEY }}";
                 sign-commits = true;
               }
-              // cfg.settings.rebase;
+              // cfg.settings.run;
             }
           ];
         };
