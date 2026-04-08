@@ -202,3 +202,136 @@ Use Home Manager modules from `homeManagerModules.<name>`.
 
 - Initialize a project: `nix flake init -t github:shikanime-studio/devlib#default`
 - Use a minimal remote direnv setup: `nix flake init -t github:shikanime-studio/devlib#remote`
+
+## Testing Strategy
+
+Devlib should adopt a hybrid testing model:
+
+- use Home Manager style golden tests for `modules/home/*`
+- use devenv style integration tests for `modules/devenv/*`, generator tasks and
+  templates
+- keep `nix flake check` as the repository-wide contract that every pull request
+  must pass
+
+### Goals
+
+- Protect exported interfaces: `devenvModule`, `devenvModules.*`,
+  `homeManagerModule`, `homeManagerModules.*`, `flakeModule` and templates.
+- Catch regressions in generated files such as GitHub workflows, gitignore,
+  renovate and license outputs.
+- Verify composition across supported systems: `x86_64-linux`,
+  `aarch64-linux`, and `aarch64-darwin`.
+- Make every new module land with at least one focused regression test.
+
+### Test Layers
+
+#### 1. Evaluation and contract checks
+
+Keep fast checks in `flake check` for pull requests:
+
+- evaluate all exported modules and templates
+- build the default template and remote template
+- verify the flake module can project `treefmt` and `pre-commit` from a selected
+  shell
+- assert representative profile compositions such as `git + nix + shell` and
+  `shikanime-studio`
+
+This is the fastest feedback loop and should stay mandatory on every change.
+
+#### 2. Home Manager golden tests
+
+Follow the Home Manager pattern for `modules/home/*`:
+
+- create `tests/home/<module>/default.nix` that lists the cases for one module
+- keep each test case focused on one behavior, for example generated files,
+  package installation or platform-specific paths
+- compare generated files against checked-in expected outputs
+- stub packages when package contents are irrelevant to the assertion
+- gate Darwin-only or Linux-only assertions so evaluation stays portable
+
+Good candidates in devlib:
+
+- `modules/home/shell.nix`: shell aliases, environment variables and sourced
+  files
+- `modules/home/vcs.nix`: enabled CLI programs and package selection
+- language modules such as `javascript.nix`, `python.nix`, and `rust.nix`:
+  expected package sets and config file generation
+
+#### 3. Devenv integration tests
+
+Follow devenv's `tests/` and `examples/` model for `modules/devenv/*`:
+
+- each test lives in its own directory with a `devenv.nix`
+- add `.test.sh` when behavior must be asserted from inside the shell
+- use `.test-config.yml` for platform allowlists or known broken systems
+- keep examples executable so they double as documentation and regression tests
+
+Good candidates in devlib:
+
+- `github.enable = true` generates workflow files with the expected names and
+  YAML structure
+- `devenv tasks run devlib:github:workflows:install` writes files into
+  `.github/workflows`
+- profile imports enable the expected `treefmt`, `git-hooks`, and package sets
+- the flake module correctly forwards `treefmt` and `pre-commit` from a chosen
+  shell
+
+#### 4. Template smoke tests
+
+Each exported template should be instantiated in CI and checked for:
+
+- successful `nix flake show`
+- successful `nix flake check` when applicable
+- successful shell entry for the default template
+- expected generated files such as `.envrc` and `flake.nix`
+
+Templates are part of the public API, so they should be treated like examples
+with CI coverage.
+
+### Recommended Layout
+
+```text
+tests/
+  home/
+    shell/
+    vcs/
+    javascript/
+    python/
+    rust/
+  devenv/
+    github-workflows/
+    flake-module/
+    profiles/
+examples/
+  default-template/
+  remote-template/
+```
+
+### CI Plan
+
+For pull requests:
+
+- run `nix flake check` on the supported matrix already used by GitHub Actions
+- run only the affected Home Manager golden tests
+- run only the affected devenv integration tests
+- always run template smoke tests
+
+For scheduled or release validation:
+
+- run the full Home Manager style suite
+- run the full devenv integration suite
+- exercise all supported systems
+
+### Contribution Rule
+
+Every behavior change should add or update a test in the nearest layer:
+
+- `modules/home/*` change -> add or update a Home Manager golden test
+- `modules/devenv/integrations/*` change -> add or update a devenv integration
+  test
+- `modules/flake/*` change -> add or update contract checks and at least one
+  integration fixture
+- template change -> add or update a template smoke test
+
+This keeps devlib close to Home Manager's module discipline while using devenv's
+real-world shell and workflow testing style for end-to-end coverage.

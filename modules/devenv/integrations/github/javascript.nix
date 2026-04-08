@@ -96,19 +96,23 @@ in
                 {
                   uses = "shikanime-studio/actions/direnv@v8";
                 }
-                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
+                // optionalAttrs ((cfg.settings.direnv or { }) != { }) { "with" = cfg.settings.direnv or { }; }
               )
               (
                 {
                   run = "corepack pnpm install --frozen-lockfile";
                 }
-                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
+                // optionalAttrs ((cfg.settings.pnpm-install or { }) != { }) {
+                  env = cfg.settings.pnpm-install or { };
+                }
               )
               (
                 {
                   uses = "shikanime-studio/actions/pnpm/integration@v8";
                 }
-                // optionalAttrs (cfg.settings.integration != { }) { "with" = cfg.settings.integration; }
+                // optionalAttrs ((cfg.settings.integration or { }) != { }) {
+                  "with" = cfg.settings.integration or { };
+                }
               )
             ];
           };
@@ -148,13 +152,15 @@ in
                 {
                   uses = "shikanime-studio/actions/direnv@v8";
                 }
-                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
+                // optionalAttrs ((cfg.settings.direnv or { }) != { }) { "with" = cfg.settings.direnv or { }; }
               )
               (
                 {
                   run = "corepack pnpm install --frozen-lockfile";
                 }
-                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
+                // optionalAttrs ((cfg.settings.pnpm-install or { }) != { }) {
+                  env = cfg.settings.pnpm-install or { };
+                }
               )
               {
                 uses = "shikanime-studio/actions/pnpm/integration@v8";
