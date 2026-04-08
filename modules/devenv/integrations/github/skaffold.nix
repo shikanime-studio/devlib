@@ -139,6 +139,14 @@ in
                 }
                 // cfg.settings.setup-nix;
               }
+              {
+                uses = "docker/login-action@v3";
+                "with" = {
+                  registry = "ghcr.io";
+                  username = "x-access-token";
+                  password = githubToken;
+                };
+              }
               (
                 {
                   uses = "shikanime-studio/actions/direnv@v8";
@@ -192,6 +200,14 @@ in
                   github-token = githubToken;
                 }
                 // cfg.settings.setup-nix;
+              }
+              {
+                uses = "docker/login-action@v3";
+                "with" = {
+                  registry = "ghcr.io";
+                  username = "x-access-token";
+                  password = githubToken;
+                };
               }
               (
                 {
