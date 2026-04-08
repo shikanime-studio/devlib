@@ -56,10 +56,12 @@
       with flake-parts-lib;
       let
         defaultFlakeModule = importApply ./modules/flake/default.nix { };
+        moduleTests = importApply ./tests/modules.nix { inherit self; };
       in
       {
         imports = [
           defaultFlakeModule
+          moduleTests
           devenv.flakeModule
           flake-parts.flakeModules.easyOverlay
           git-hooks.flakeModule
@@ -84,7 +86,6 @@
             shikanime = ./modules/devenv/shells/shikanime.nix;
             shikanime-studio = ./modules/devenv/shells/shikanime-studio.nix;
             texlive = ./modules/devenv/profiles/texlive.nix;
-            yaml = ./modules/devenv/profiles/yaml.nix;
           };
 
           homeManagerModule = ./modules/home/default.nix;

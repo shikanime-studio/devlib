@@ -216,8 +216,8 @@ in
                   id = "setup-checks-jobs";
                   uses = "shikanime-studio/actions/nix/setup-checks-jobs@v8";
                 }
-                // optionalAttrs (cfg.settings.setup-checks-jobs != { }) {
-                  "with" = cfg.settings.setup-checks-jobs;
+                // optionalAttrs ((cfg.settings.setup-checks-jobs or { }) != { }) {
+                  "with" = cfg.settings.setup-checks-jobs or { };
                 }
               )
             ];
@@ -263,8 +263,8 @@ in
                   id = "setup-packages-jobs";
                   uses = "shikanime-studio/actions/nix/setup-packages-jobs@v8";
                 }
-                // optionalAttrs (cfg.settings.setup-packages-jobs != { }) {
-                  "with" = cfg.settings.setup-packages-jobs;
+                // optionalAttrs ((cfg.settings.setup-packages-jobs or { }) != { }) {
+                  "with" = cfg.settings.setup-packages-jobs or { };
                 }
               )
             ];
