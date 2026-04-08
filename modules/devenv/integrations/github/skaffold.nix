@@ -11,10 +11,6 @@ let
   cfg = config.github.workflows.skaffold;
 
   yamlFormat = pkgs.formats.yaml { };
-
-  githubToken = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-  githubPackagesToken = "\${{ secrets.GITHUB_TOKEN }}";
-  githubPackagesUsername = "\${{ github.actor }}";
 in
 {
   options.github.workflows.skaffold = {
@@ -72,29 +68,18 @@ in
             };
             steps = [
               {
-                continue-on-error = true;
-                id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
-                "with" = {
-                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                  permission-contents = "read";
-                }
-                // cfg.settings.create-github-app-token;
-              }
-              {
                 uses = "actions/checkout@v6";
                 "with" = {
                   fetch-depth = 0;
                   persist-credentials = false;
-                  token = githubToken;
+                  token = "\${{ secrets.GITHUB_TOKEN }}";
                 }
                 // cfg.settings.checkout;
               }
               {
                 uses = "shikanime-studio/actions/nix/setup@v8";
                 "with" = {
-                  github-token = githubToken;
+                  github-token = "\${{ secrets.GITHUB_TOKEN }}";
                 }
                 // cfg.settings.setup-nix;
               }
@@ -119,22 +104,11 @@ in
             };
             steps = [
               {
-                continue-on-error = true;
-                id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
-                "with" = {
-                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                  permission-contents = "read";
-                }
-                // cfg.settings.create-github-app-token;
-              }
-              {
                 uses = "actions/checkout@v6";
                 "with" = {
                   fetch-depth = 0;
                   persist-credentials = false;
-                  token = githubToken;
+                  token = "\${{ secrets.GITHUB_TOKEN }}";
                 }
                 // cfg.settings.checkout;
               }
@@ -142,14 +116,14 @@ in
                 uses = "docker/login-action@v3";
                 "with" = {
                   registry = "ghcr.io";
-                  username = githubPackagesUsername;
-                  password = githubPackagesToken;
+                  username = "\${{ github.actor }}";
+                  password = "\${{ secrets.GITHUB_TOKEN }}";
                 };
               }
               {
                 uses = "shikanime-studio/actions/nix/setup@v8";
                 "with" = {
-                  github-token = githubToken;
+                  github-token = "\${{ secrets.GITHUB_TOKEN }}";
                 }
                 // cfg.settings.setup-nix;
               }
@@ -185,22 +159,11 @@ in
             };
             steps = [
               {
-                continue-on-error = true;
-                id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
-                "with" = {
-                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-                  permission-contents = "read";
-                }
-                // cfg.settings.create-github-app-token;
-              }
-              {
                 uses = "actions/checkout@v6";
                 "with" = {
                   fetch-depth = 0;
                   persist-credentials = false;
-                  token = githubToken;
+                  token = "\${{ secrets.GITHUB_TOKEN }}";
                 }
                 // cfg.settings.checkout;
               }
@@ -208,14 +171,14 @@ in
                 uses = "docker/login-action@v3";
                 "with" = {
                   registry = "ghcr.io";
-                  username = githubPackagesUsername;
-                  password = githubPackagesToken;
+                  username = "\${{ github.actor }}";
+                  password = "\${{ secrets.GITHUB_TOKEN }}";
                 };
               }
               {
                 uses = "shikanime-studio/actions/nix/setup@v8";
                 "with" = {
-                  github-token = githubToken;
+                  github-token = "\${{ secrets.GITHUB_TOKEN }}";
                 }
                 // cfg.settings.setup-nix;
               }
