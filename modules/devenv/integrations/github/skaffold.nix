@@ -238,11 +238,11 @@ in
 
     (mkIf (cfg.enable && config.github.workflows.integration.enable) {
       github.settings.workflows.integration = {
-        permissions.packages = "write";
         jobs = {
           skaffold = {
             "if" = "\${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}";
             uses = "./.github/workflows/skaffold.yaml";
+            permissions.packages = "write";
             secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
           };
         };
@@ -252,10 +252,10 @@ in
 
     (mkIf (cfg.enable && config.github.workflows.release.enable) {
       github.settings.workflows.release = {
-        permissions.packages = "write";
         jobs = {
           skaffold = {
             uses = "./.github/workflows/skaffold.yaml";
+            permissions.packages = "write";
             secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
           };
 
