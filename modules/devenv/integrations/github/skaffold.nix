@@ -11,6 +11,8 @@ let
   cfg = config.github.workflows.skaffold;
 
   yamlFormat = pkgs.formats.yaml { };
+
+  githubToken = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
 in
 {
   options.github.workflows.skaffold = {
@@ -68,18 +70,29 @@ in
             };
             steps = [
               {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-contents = "read";
+                }
+                // cfg.settings.create-github-app-token;
+              }
+              {
                 uses = "actions/checkout@v6";
                 "with" = {
                   fetch-depth = 0;
                   persist-credentials = false;
-                  token = "\${{ secrets.GITHUB_TOKEN }}";
+                  token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
               {
                 uses = "shikanime-studio/actions/nix/setup@v8";
                 "with" = {
-                  github-token = "\${{ secrets.GITHUB_TOKEN }}";
+                  github-token = githubToken;
                 }
                 // cfg.settings.setup-nix;
               }
@@ -108,7 +121,7 @@ in
                 "with" = {
                   fetch-depth = 0;
                   persist-credentials = false;
-                  token = "\${{ secrets.GITHUB_TOKEN }}";
+                  token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
@@ -123,7 +136,7 @@ in
               {
                 uses = "shikanime-studio/actions/nix/setup@v8";
                 "with" = {
-                  github-token = "\${{ secrets.GITHUB_TOKEN }}";
+                  github-token = githubToken;
                 }
                 // cfg.settings.setup-nix;
               }
@@ -163,7 +176,7 @@ in
                 "with" = {
                   fetch-depth = 0;
                   persist-credentials = false;
-                  token = "\${{ secrets.GITHUB_TOKEN }}";
+                  token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
@@ -178,7 +191,7 @@ in
               {
                 uses = "shikanime-studio/actions/nix/setup@v8";
                 "with" = {
-                  github-token = "\${{ secrets.GITHUB_TOKEN }}";
+                  github-token = githubToken;
                 }
                 // cfg.settings.setup-nix;
               }
