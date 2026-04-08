@@ -238,6 +238,7 @@ in
 
     (mkIf (cfg.enable && config.github.workflows.integration.enable) {
       github.settings.workflows.integration = {
+        permissions.packages = "write";
         jobs = {
           skaffold = {
             "if" = "\${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}";
@@ -251,6 +252,7 @@ in
 
     (mkIf (cfg.enable && config.github.workflows.release.enable) {
       github.settings.workflows.release = {
+        permissions.packages = "write";
         jobs = {
           skaffold = {
             uses = "./.github/workflows/skaffold.yaml";
