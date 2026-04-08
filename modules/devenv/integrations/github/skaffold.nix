@@ -13,6 +13,8 @@ let
   yamlFormat = pkgs.formats.yaml { };
 
   githubToken = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+  githubPackagesToken = "\${{ secrets.GITHUB_TOKEN }}";
+  githubPackagesUsername = "\${{ github.actor }}";
 in
 {
   options.github.workflows.skaffold = {
@@ -111,6 +113,10 @@ in
           build-render = {
             name = "Build & Render";
             runs-on = "ubuntu-latest";
+            permissions = {
+              contents = "read";
+              packages = "write";
+            };
             steps = [
               {
                 continue-on-error = true;
@@ -120,7 +126,6 @@ in
                   app-id = "\${{ vars.OPERATOR_APP_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                   permission-contents = "read";
-                  permission-packages = "write";
                 }
                 // cfg.settings.create-github-app-token;
               }
@@ -137,8 +142,8 @@ in
                 uses = "docker/login-action@v3";
                 "with" = {
                   registry = "ghcr.io";
-                  username = "x-access-token";
-                  password = githubToken;
+                  username = githubPackagesUsername;
+                  password = githubPackagesToken;
                 };
               }
               {
@@ -170,6 +175,10 @@ in
             needs = [ "setup-profiles-jobs" ];
             "if" = "\${{ needs['setup-profiles-jobs'].outputs.continue == 'true' }}";
             runs-on = "ubuntu-latest";
+            permissions = {
+              contents = "read";
+              packages = "write";
+            };
             strategy = {
               fail-fast = false;
               matrix.include = "\${{ fromJSON(needs['setup-profiles-jobs'].outputs.matrix) }}";
@@ -183,7 +192,6 @@ in
                   app-id = "\${{ vars.OPERATOR_APP_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                   permission-contents = "read";
-                  permission-packages = "write";
                 }
                 // cfg.settings.create-github-app-token;
               }
@@ -200,8 +208,8 @@ in
                 uses = "docker/login-action@v3";
                 "with" = {
                   registry = "ghcr.io";
-                  username = "x-access-token";
-                  password = githubToken;
+                  username = githubPackagesUsername;
+                  password = githubPackagesToken;
                 };
               }
               {
@@ -235,6 +243,10 @@ in
         jobs = {
           skaffold = {
             "if" = "\${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}";
+            permissions = {
+              contents = "read";
+              packages = "write";
+            };
             uses = "./.github/workflows/skaffold.yaml";
             secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
           };
@@ -247,6 +259,10 @@ in
       github.settings.workflows.release = {
         jobs = {
           skaffold = {
+            permissions = {
+              contents = "read";
+              packages = "write";
+            };
             uses = "./.github/workflows/skaffold.yaml";
             secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
           };
