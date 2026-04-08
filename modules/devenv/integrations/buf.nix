@@ -30,17 +30,23 @@ let
       pluginCfg;
 
   template =
-    if cfg.generate ? plugins then
-      cfg.generate // { plugins = map resolvePlugin cfg.generate.plugins; }
+    if cfg.template ? plugins then
+      cfg.template // { plugins = map resolvePlugin cfg.template.plugins; }
     else
-      cfg.generate;
+      cfg.template;
 
   templateConfigFile = yamlFormat.generate "buf.gen.yaml" template;
 
-  package = pkgs.runCommand "buf-wrapped" { buildInputs = [ pkgs.makeWrapper ]; } ''
-    makeWrapper ${cfg.package}/bin/buf $out/bin/buf \
-      --add-flags "--template ${templateConfigFile}"
-  '';
+  package =
+    pkgs.runCommand "buf-wrapped"
+      {
+        buildInputs = [ pkgs.makeWrapper ];
+        meta.mainProgram = "buf";
+      }
+      ''
+        makeWrapper ${cfg.package}/bin/buf $out/bin/buf \
+          --add-flags "--template ${templateConfigFile}"
+      '';
 in
 {
   options.buf = {
