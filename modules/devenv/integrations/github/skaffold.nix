@@ -90,7 +90,7 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
+                uses = "shikanime-studio/actions/nix/setup@v9";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -99,7 +99,7 @@ in
               (
                 {
                   id = "setup-profiles-jobs";
-                  uses = "shikanime-studio/actions/skaffold/setup-profiles-jobs@v8";
+                  uses = "shikanime-studio/actions/skaffold/setup-profiles-jobs@v9";
                 }
                 // optionalAttrs (cfg.settings.setup-profiles-jobs != { }) {
                   "with" = cfg.settings.setup-profiles-jobs;
@@ -145,7 +145,7 @@ in
                 };
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
+                uses = "shikanime-studio/actions/nix/setup@v9";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -153,13 +153,13 @@ in
               }
               (
                 {
-                  uses = "shikanime-studio/actions/direnv@v8";
+                  uses = "shikanime-studio/actions/direnv@v9";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               (
                 {
-                  uses = "shikanime-studio/actions/skaffold/integration@v8";
+                  uses = "shikanime-studio/actions/skaffold/integration@v9";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) {
                   "with" = cfg.settings.integration;
@@ -211,7 +211,7 @@ in
                 };
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
+                uses = "shikanime-studio/actions/nix/setup@v9";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -219,12 +219,12 @@ in
               }
               (
                 {
-                  uses = "shikanime-studio/actions/direnv@v8";
+                  uses = "shikanime-studio/actions/direnv@v9";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
-                uses = "shikanime-studio/actions/skaffold/integration@v8";
+                uses = "shikanime-studio/actions/skaffold/integration@v9";
                 "with" = {
                   profile = "\${{ matrix.name }}";
                 }

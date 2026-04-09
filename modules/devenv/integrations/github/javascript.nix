@@ -39,11 +39,6 @@ in
         default = { };
         description = "Overrides for javascript integration";
       };
-      pnpm-install = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for pnpm install";
-      };
       setup-nix = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -86,7 +81,7 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
+                uses = "shikanime-studio/actions/nix/setup@v9";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -94,19 +89,13 @@ in
               }
               (
                 {
-                  uses = "shikanime-studio/actions/direnv@v8";
+                  uses = "shikanime-studio/actions/direnv@v9";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               (
                 {
-                  run = "corepack pnpm install --frozen-lockfile";
-                }
-                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
-              )
-              (
-                {
-                  uses = "shikanime-studio/actions/pnpm/integration@v8";
+                  uses = "shikanime-studio/actions/pnpm/integration@v9";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) { "with" = cfg.settings.integration; }
               )
@@ -138,7 +127,7 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
+                uses = "shikanime-studio/actions/nix/setup@v9";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -146,18 +135,12 @@ in
               }
               (
                 {
-                  uses = "shikanime-studio/actions/direnv@v8";
+                  uses = "shikanime-studio/actions/direnv@v9";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
-              (
-                {
-                  run = "corepack pnpm install --frozen-lockfile";
-                }
-                // optionalAttrs (cfg.settings.pnpm-install != { }) { env = cfg.settings.pnpm-install; }
-              )
               {
-                uses = "shikanime-studio/actions/pnpm/integration@v8";
+                uses = "shikanime-studio/actions/pnpm/integration@v9";
                 "with" = {
                   recursive = true;
                 }

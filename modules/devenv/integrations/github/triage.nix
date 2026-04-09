@@ -25,11 +25,6 @@ in
     enable = mkEnableOption "triage";
 
     settings = {
-      checkout = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for checkout";
-      };
       create-github-app-token = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -54,14 +49,6 @@ in
               permission-pull-requests = "write";
             }
             // cfg.settings.create-github-app-token;
-          }
-          {
-            uses = "actions/checkout@v6";
-            "with" = {
-              fetch-depth = 0;
-              token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-            }
-            // cfg.settings.checkout;
           }
           {
             env = {
