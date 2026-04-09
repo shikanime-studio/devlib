@@ -29,7 +29,6 @@ in
   imports = [
     ./github/cleanup.nix
     ./github/commands.nix
-    ./github/fluxcd.nix
     ./github/javascript.nix
     ./github/integration.nix
     ./github/nix.nix
