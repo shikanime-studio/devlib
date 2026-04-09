@@ -81,11 +81,9 @@ in
                 // cfg.settings.create-github-app-token;
               }
               {
-                uses = "actions/checkout@v6";
+                uses = "shikanime-studio/actions/checkout@v9";
                 "with" = {
-                  fetch-depth = 0;
-                  persist-credentials = false;
-                  token = githubToken;
+                  github-token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
@@ -128,11 +126,9 @@ in
                 // cfg.settings.create-github-app-token;
               }
               {
-                uses = "actions/checkout@v6";
+                uses = "shikanime-studio/actions/checkout@v9";
                 "with" = {
-                  fetch-depth = 0;
-                  persist-credentials = false;
-                  token = githubToken;
+                  github-token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
@@ -196,11 +192,9 @@ in
                 // cfg.settings.create-github-app-token;
               }
               {
-                uses = "actions/checkout@v6";
+                uses = "shikanime-studio/actions/checkout@v9";
                 "with" = {
-                  fetch-depth = 0;
-                  persist-credentials = false;
-                  token = githubToken;
+                  github-token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
