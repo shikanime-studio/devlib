@@ -82,6 +82,14 @@ in
               // cfg.settings.create-github-app-token;
             }
             {
+              uses = "actions/checkout@v6";
+              "with" = {
+                fetch-depth = 0;
+                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              }
+              // cfg.settings.checkout;
+            }
+            {
               env = {
                 GITHUB_TOKEN = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
                 REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
