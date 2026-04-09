@@ -19,11 +19,6 @@ in
     enable = mkEnableOption "cleanup workflow";
 
     settings = {
-      checkout = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for checkout";
-      };
       create-github-app-token = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -54,16 +49,7 @@ in
             // cfg.settings.create-github-app-token;
           }
           {
-            uses = "actions/checkout@v6";
-            "with" = {
-              fetch-depth = 0;
-              ref = "main";
-              token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-            }
-            // cfg.settings.checkout;
-          }
-          {
-            uses = "shikanime-studio/actions/cleanup@v8";
+            uses = "shikanime-studio/actions/cleanup@v9";
             "with" = {
               github-token = githubToken;
               pull-request-url = "\${{ github.event.pull_request.html_url }}";

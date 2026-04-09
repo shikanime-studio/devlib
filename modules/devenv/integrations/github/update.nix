@@ -70,30 +70,27 @@ in
               // cfg.settings.create-github-app-token;
             }
             {
-              uses = "actions/checkout@v6";
+              uses = "shikanime-studio/actions/checkout@v9";
               "with" = {
-                fetch-depth = 0;
-                ref = "main";
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = githubToken;
+                gpg-passphrase = "\${{ secrets.GPG_PASSPHRASE }}";
+                gpg-private-key = "\${{ secrets.GPG_PRIVATE_KEY }}";
+                sign-commits = true;
+                username = "operator6o";
               }
               // cfg.settings.checkout;
             }
             {
-              uses = "shikanime-studio/actions/nix/setup@v8";
+              uses = "shikanime-studio/actions/nix/setup@v9";
               "with" = {
                 github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/update@v8";
+              uses = "shikanime-studio/actions/update@v9";
               "with" = {
-                email = "operator6o@shikanime.studio";
-                fullname = "Operator 6O";
                 github-token = githubToken;
-                gpg-passphrase = "\${{ secrets.GPG_PASSPHRASE }}";
-                gpg-private-key = "\${{ secrets.GPG_PRIVATE_KEY }}";
-                sign-commits = true;
                 username = "operator6o";
               }
               // cfg.settings.update;

@@ -106,7 +106,7 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
+                uses = "shikanime-studio/actions/nix/setup@v9";
                 "with" = {
                   cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
                   cachix-name = "\${{ inputs['cachix-name'] }}";
@@ -156,7 +156,7 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
+                uses = "shikanime-studio/actions/nix/setup@v9";
                 "with" = {
                   cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
                   cachix-name = "\${{ inputs['cachix-name'] }}";
@@ -205,7 +205,7 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
+                uses = "shikanime-studio/actions/nix/setup@v9";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -214,7 +214,7 @@ in
               (
                 {
                   id = "setup-checks-jobs";
-                  uses = "shikanime-studio/actions/nix/setup-checks-jobs@v8";
+                  uses = "shikanime-studio/actions/nix/setup-checks-jobs@v9";
                 }
                 // optionalAttrs (cfg.settings.setup-checks-jobs != { }) {
                   "with" = cfg.settings.setup-checks-jobs;
@@ -252,7 +252,7 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v8";
+                uses = "shikanime-studio/actions/nix/setup@v9";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -261,7 +261,7 @@ in
               (
                 {
                   id = "setup-packages-jobs";
-                  uses = "shikanime-studio/actions/nix/setup-packages-jobs@v8";
+                  uses = "shikanime-studio/actions/nix/setup-packages-jobs@v9";
                 }
                 // optionalAttrs (cfg.settings.setup-packages-jobs != { }) {
                   "with" = cfg.settings.setup-packages-jobs;

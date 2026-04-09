@@ -18,7 +18,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - uses: shikanime-studio/actions/nix/setup@v8
+      - uses: shikanime-studio/actions/nix/setup@v9
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
           cachix-name: ${{ inputs['cachix-name'] }}
@@ -50,7 +50,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - uses: shikanime-studio/actions/nix/setup@v8
+      - uses: shikanime-studio/actions/nix/setup@v9
         with:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
           cachix-name: ${{ inputs['cachix-name'] }}
@@ -83,11 +83,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - uses: shikanime-studio/actions/nix/setup@v8
+      - uses: shikanime-studio/actions/nix/setup@v9
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - id: setup-checks-jobs
-        uses: shikanime-studio/actions/nix/setup-checks-jobs@v8
+        uses: shikanime-studio/actions/nix/setup-checks-jobs@v9
   setup-packages-jobs:
     name: Setup Packages Jobs
     outputs:
@@ -107,11 +107,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
           token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - uses: shikanime-studio/actions/nix/setup@v8
+      - uses: shikanime-studio/actions/nix/setup@v9
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - id: setup-packages-jobs
-        uses: shikanime-studio/actions/nix/setup-packages-jobs@v8
+        uses: shikanime-studio/actions/nix/setup-packages-jobs@v9
 name: Nix
 'on':
   workflow_call:

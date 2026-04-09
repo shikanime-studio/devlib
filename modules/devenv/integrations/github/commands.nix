@@ -24,11 +24,6 @@ in
         default = { };
         description = "Overrides for backport";
       };
-      checkout = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for checkout";
-      };
       close = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -89,23 +84,14 @@ in
               // cfg.settings.create-github-app-token;
             }
             {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                ref = "main";
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              }
-              // cfg.settings.checkout;
-            }
-            {
-              uses = "shikanime-studio/actions/nix/setup@v8";
+              uses = "shikanime-studio/actions/nix/setup@v9";
               "with" = {
                 github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/command/backport@v8";
+              uses = "shikanime-studio/actions/command/backport@v9";
               "with" = {
                 github-token = githubToken;
                 gpg-passphrase = "\${{ secrets.GPG_PASSPHRASE }}";
@@ -139,23 +125,14 @@ in
               // cfg.settings.create-github-app-token;
             }
             {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                ref = "main";
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              }
-              // cfg.settings.checkout;
-            }
-            {
-              uses = "shikanime-studio/actions/nix/setup@v8";
+              uses = "shikanime-studio/actions/nix/setup@v9";
               "with" = {
                 github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/command/close@v8";
+              uses = "shikanime-studio/actions/command/close@v9";
               "with" = {
                 github-token = githubToken;
                 username = "operator6o";
@@ -188,23 +165,14 @@ in
               // cfg.settings.create-github-app-token;
             }
             {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                ref = "main";
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              }
-              // cfg.settings.checkout;
-            }
-            {
-              uses = "shikanime-studio/actions/nix/setup@v8";
+              uses = "shikanime-studio/actions/nix/setup@v9";
               "with" = {
                 github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/command/land@v8";
+              uses = "shikanime-studio/actions/command/land@v9";
               "with" = {
                 github-token = githubToken;
                 email = "operator6o@shikanime.studio";
@@ -241,23 +209,14 @@ in
               // cfg.settings.create-github-app-token;
             }
             {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                ref = "main";
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              }
-              // cfg.settings.checkout;
-            }
-            {
-              uses = "shikanime-studio/actions/nix/setup@v8";
+              uses = "shikanime-studio/actions/nix/setup@v9";
               "with" = {
                 github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/command/rebase@v8";
+              uses = "shikanime-studio/actions/command/rebase@v9";
               "with" = {
                 github-token = githubToken;
                 email = "operator6o@shikanime.studio";
@@ -294,23 +253,14 @@ in
               // cfg.settings.create-github-app-token;
             }
             {
-              uses = "actions/checkout@v6";
-              "with" = {
-                fetch-depth = 0;
-                ref = "main";
-                token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              }
-              // cfg.settings.checkout;
-            }
-            {
-              uses = "shikanime-studio/actions/nix/setup@v8";
+              uses = "shikanime-studio/actions/nix/setup@v9";
               "with" = {
                 github-token = githubToken;
               }
               // cfg.settings.setup-nix;
             }
             {
-              uses = "shikanime-studio/actions/command/run@v8";
+              uses = "shikanime-studio/actions/command/run@v9";
               "with" = {
                 github-token = githubToken;
                 email = "operator6o@shikanime.studio";
