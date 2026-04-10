@@ -29,15 +29,20 @@ in
         default = { };
         description = "Overrides for create-github-app-token";
       };
-      flake-check = mkOption {
+      direnv = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
-        description = "Overrides for nix flake check";
+        description = "Overrides for direnv";
       };
       nix-build = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
         description = "Overrides for nix build";
+      };
+      nix-flake-check = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for nix flake check";
       };
       setup-checks-jobs = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
@@ -112,14 +117,21 @@ in
                 }
                 // cfg.settings.setup-nix;
               }
-              {
-                env = {
-                  SYSTEM = "\${{ matrix.system }}";
+              (
+                {
+                  id = "direnv";
+                  uses = "shikanime-studio/actions/direnv@v9";
                 }
-                // cfg.settings.flake-check;
-                run = "nix flake check --accept-flake-config --no-pure-eval --system \"$SYSTEM\"";
-                shell = "bash";
-              }
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
+              )
+              (
+                {
+                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                  run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\"";
+                  shell = "bash";
+                }
+                // cfg.settings.nix-flake-check
+              )
             ];
           };
 
@@ -160,15 +172,21 @@ in
                 }
                 // cfg.settings.setup-nix;
               }
-              {
-                env = {
-                  NAME = "\${{ matrix.name }}";
-                  SYSTEM = "\${{ matrix.system }}";
+              (
+                {
+                  id = "direnv";
+                  uses = "shikanime-studio/actions/direnv@v9";
                 }
-                // cfg.settings.nix-build;
-                run = "nix build --accept-flake-config --no-pure-eval \".#packages.$SYSTEM.$NAME\"";
-                shell = "bash";
-              }
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
+              )
+              (
+                {
+                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                  run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
+                  shell = "bash";
+                }
+                // cfg.settings.nix-build
+              )
             ];
           };
 
@@ -207,8 +225,16 @@ in
               }
               (
                 {
+                  id = "direnv";
+                  uses = "shikanime-studio/actions/direnv@v9";
+                }
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
+              )
+              (
+                {
                   id = "setup-checks-jobs";
                   uses = "shikanime-studio/actions/nix/setup-checks-jobs@v9";
+                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
                 // optionalAttrs (cfg.settings.setup-checks-jobs != { }) {
                   "with" = cfg.settings.setup-checks-jobs;
@@ -252,8 +278,16 @@ in
               }
               (
                 {
+                  id = "direnv";
+                  uses = "shikanime-studio/actions/direnv@v9";
+                }
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
+              )
+              (
+                {
                   id = "setup-packages-jobs";
                   uses = "shikanime-studio/actions/nix/setup-packages-jobs@v9";
+                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
                 // optionalAttrs (cfg.settings.setup-packages-jobs != { }) {
                   "with" = cfg.settings.setup-packages-jobs;
