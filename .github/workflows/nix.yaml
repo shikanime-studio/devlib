@@ -21,9 +21,10 @@ jobs:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
           cachix-name: ${{ inputs['cachix-name'] }}
           github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - env:
-          SYSTEM: ${{ matrix.system }}
-        run: nix flake check --accept-flake-config --no-pure-eval --system "$SYSTEM"
+      - id: direnv
+        uses: shikanime-studio/actions/direnv@v9
+      - env: ${{ fromJSON(steps.direnv.outputs.env) }}
+        run: nix flake check --accept-flake-config --no-pure-eval --system "${{ matrix.system }}"
         shell: bash
     strategy:
       fail-fast: false
@@ -51,10 +52,10 @@ jobs:
           cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }}
           cachix-name: ${{ inputs['cachix-name'] }}
           github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
-      - env:
-          NAME: ${{ matrix.name }}
-          SYSTEM: ${{ matrix.system }}
-        run: nix build --accept-flake-config --no-pure-eval ".#packages.$SYSTEM.$NAME"
+      - id: direnv
+        uses: shikanime-studio/actions/direnv@v9
+      - env: ${{ fromJSON(steps.direnv.outputs.env) }}
+        run: nix build --accept-flake-config --no-pure-eval ".#packages.${{ matrix.system }}.${{ matrix.name }}"
         shell: bash
     strategy:
       fail-fast: false

@@ -29,15 +29,10 @@ in
         default = { };
         description = "Overrides for create-github-app-token";
       };
-      flake-check = mkOption {
+      direnv = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
-        description = "Overrides for nix flake check";
-      };
-      nix-build = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for nix build";
+        description = "Overrides for direnv";
       };
       setup-checks-jobs = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
@@ -112,12 +107,16 @@ in
                 }
                 // cfg.settings.setup-nix;
               }
-              {
-                env = {
-                  SYSTEM = "\${{ matrix.system }}";
+              (
+                {
+                  id = "direnv";
+                  uses = "shikanime-studio/actions/direnv@v9";
                 }
-                // cfg.settings.flake-check;
-                run = "nix flake check --accept-flake-config --no-pure-eval --system \"$SYSTEM\"";
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
+              )
+              {
+                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\"";
                 shell = "bash";
               }
             ];
@@ -160,13 +159,16 @@ in
                 }
                 // cfg.settings.setup-nix;
               }
-              {
-                env = {
-                  NAME = "\${{ matrix.name }}";
-                  SYSTEM = "\${{ matrix.system }}";
+              (
+                {
+                  id = "direnv";
+                  uses = "shikanime-studio/actions/direnv@v9";
                 }
-                // cfg.settings.nix-build;
-                run = "nix build --accept-flake-config --no-pure-eval \".#packages.$SYSTEM.$NAME\"";
+                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
+              )
+              {
+                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
                 shell = "bash";
               }
             ];
