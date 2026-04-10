@@ -63,20 +63,14 @@ in
             // cfg.settings.checkout;
           }
           {
-            env = {
-              GITHUB_TOKEN = githubToken;
-              PR_NUMBER = "\${{ github.event.pull_request.number }}";
-            };
             "if" = mergeCondition;
-            run = "gh pr edit \"$PR_NUMBER\" --add-label dependencies";
+            env.GITHUB_TOKEN = githubToken;
+            run = "gh pr edit \"\${{ github.event.pull_request.number }}\" --add-label dependencies";
           }
           {
-            env = {
-              GITHUB_TOKEN = githubToken;
-              PR_NUMBER = "\${{ github.event.pull_request.number }}";
-            };
             "if" = ghstackCondition;
-            run = "gh pr edit \"$PR_NUMBER\" --add-label ghstack";
+            env.GITHUB_TOKEN = githubToken;
+            run = "gh pr edit \"\${{ github.event.pull_request.number }}\" --add-label ghstack";
           }
         ];
       };

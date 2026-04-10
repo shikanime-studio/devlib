@@ -58,8 +58,7 @@ in
               // cfg.settings.checkout;
             }
             {
-              env.REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
-              run = "VERSION=\"\${REF_NAME#v}\"; BASE=\"\${VERSION%.*}\"; BRANCH=\"release-$BASE\"; git push origin \"HEAD:refs/heads/$BRANCH\"";
+              run = "REF_NAME=\"\${{ github.ref_name || github.event.inputs.ref_name }}\"; VERSION=\"\${REF_NAME#v}\"; BASE=\"\${VERSION%.*}\"; BRANCH=\"release-$BASE\"; git push origin \"HEAD:refs/heads/$BRANCH\"";
             }
           ];
         };
@@ -88,12 +87,8 @@ in
               // cfg.settings.checkout;
             }
             {
-              env = {
-                GITHUB_TOKEN = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-                REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
-                REPO = "\${{ github.repository }}";
-              };
-              run = "gh release create \"$REF_NAME\" --repo \"$REPO\" --generate-notes || true";
+              env.GITHUB_TOKEN = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              run = "gh release create \"\${{ github.ref_name || github.event.inputs.ref_name }}\" --repo \"\${{ github.repository }}\" --generate-notes || true";
             }
           ];
         };
