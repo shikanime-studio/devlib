@@ -58,7 +58,7 @@ in
               // cfg.settings.checkout;
             }
             {
-              run = "REF_NAME=\"\${{ github.ref_name || github.event.inputs.ref_name }}\"; VERSION=\"\${REF_NAME#v}\"; BASE=\"\${VERSION%.*}\"; BRANCH=\"release-$BASE\"; git push origin \"HEAD:refs/heads/$BRANCH\"";
+              run = "git push origin \"HEAD:refs/heads/release-$(printf '%s' \"\${{ github.ref_name || github.event.inputs.ref_name }}\" | sed -e 's/^v//' -e 's/[.][^.]*$//')\"";
             }
           ];
         };

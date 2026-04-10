@@ -220,16 +220,14 @@ in
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
-              (
-                {
-                  uses = "shikanime-studio/actions/skaffold/integration@v9";
-                  "with" = {
-                    profile = "\${{ matrix.name }}";
-                  };
-                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+              {
+                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                uses = "shikanime-studio/actions/skaffold/integration@v9";
+                "with" = {
+                  profile = "\${{ matrix.name }}";
                 }
-                // cfg.settings.integration
-              )
+                // cfg.settings.integration;
+              }
             ];
           };
         };
