@@ -91,7 +91,13 @@ in
 
     treefmt.config.programs = {
       actionlint.enable = true;
-      zizmor.enable = true;
+      zizmor = {
+        enable = true;
+        includes = [
+          "**/action.yml"
+          "**/action.yaml"
+        ];
+      };
     };
 
     treefmt.config.settings.formatter.zizmor.options = [

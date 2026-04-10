@@ -89,6 +89,7 @@ in
               }
               (
                 {
+                  id = "direnv";
                   uses = "shikanime-studio/actions/direnv@v9";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
@@ -96,6 +97,7 @@ in
               (
                 {
                   uses = "shikanime-studio/actions/pnpm/integration@v9";
+                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) { "with" = cfg.settings.integration; }
               )
@@ -135,17 +137,21 @@ in
               }
               (
                 {
+                  id = "direnv";
                   uses = "shikanime-studio/actions/direnv@v9";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
-              {
-                uses = "shikanime-studio/actions/pnpm/integration@v9";
-                "with" = {
-                  recursive = true;
+              (
+                {
+                  uses = "shikanime-studio/actions/pnpm/integration@v9";
+                  "with" = {
+                    recursive = true;
+                  };
+                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
-                // cfg.settings.integration;
-              }
+                // cfg.settings.integration
+              )
             ];
           };
         };
