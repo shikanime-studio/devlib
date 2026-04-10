@@ -225,16 +225,8 @@ in
               }
               (
                 {
-                  id = "direnv";
-                  uses = "shikanime-studio/actions/direnv@v9";
-                }
-                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
-              )
-              (
-                {
                   id = "setup-checks-jobs";
                   uses = "shikanime-studio/actions/nix/setup-checks-jobs@v9";
-                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
                 // optionalAttrs (cfg.settings.setup-checks-jobs != { }) {
                   "with" = cfg.settings.setup-checks-jobs;
@@ -278,16 +270,8 @@ in
               }
               (
                 {
-                  id = "direnv";
-                  uses = "shikanime-studio/actions/direnv@v9";
-                }
-                // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
-              )
-              (
-                {
                   id = "setup-packages-jobs";
                   uses = "shikanime-studio/actions/nix/setup-packages-jobs@v9";
-                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
                 // optionalAttrs (cfg.settings.setup-packages-jobs != { }) {
                   "with" = cfg.settings.setup-packages-jobs;
