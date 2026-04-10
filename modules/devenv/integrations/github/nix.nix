@@ -34,16 +34,6 @@ in
         default = { };
         description = "Overrides for direnv";
       };
-      nix-build = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for nix build";
-      };
-      nix-flake-check = mkOption {
-        type = types.submodule { freeformType = yamlFormat.type; };
-        default = { };
-        description = "Overrides for nix flake check";
-      };
       setup-checks-jobs = mkOption {
         type = types.submodule { freeformType = yamlFormat.type; };
         default = { };
@@ -124,14 +114,11 @@ in
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
-              (
-                {
-                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
-                  run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\"";
-                  shell = "bash";
-                }
-                // cfg.settings.nix-flake-check
-              )
+              {
+                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\"";
+                shell = "bash";
+              }
             ];
           };
 
@@ -179,14 +166,11 @@ in
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
-              (
-                {
-                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
-                  run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
-                  shell = "bash";
-                }
-                // cfg.settings.nix-build
-              )
+              {
+                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
+                shell = "bash";
+              }
             ];
           };
 

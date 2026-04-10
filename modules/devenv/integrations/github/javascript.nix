@@ -138,16 +138,14 @@ in
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
-              (
-                {
-                  uses = "shikanime-studio/actions/pnpm/integration@v9";
-                  "with" = {
-                    recursive = true;
-                  };
-                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+              {
+                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                uses = "shikanime-studio/actions/pnpm/integration@v9";
+                "with" = {
+                  recursive = true;
                 }
-                // cfg.settings.integration
-              )
+                // cfg.settings.integration;
+              }
             ];
           };
         };
