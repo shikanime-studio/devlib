@@ -153,6 +153,7 @@ in
               }
               (
                 {
+                  id = "direnv";
                   uses = "shikanime-studio/actions/direnv@v9";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
@@ -160,6 +161,7 @@ in
               (
                 {
                   uses = "shikanime-studio/actions/skaffold/integration@v9";
+                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) {
                   "with" = cfg.settings.integration;
@@ -219,17 +221,21 @@ in
               }
               (
                 {
+                  id = "direnv";
                   uses = "shikanime-studio/actions/direnv@v9";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
-              {
-                uses = "shikanime-studio/actions/skaffold/integration@v9";
-                "with" = {
-                  profile = "\${{ matrix.name }}";
+              (
+                {
+                  uses = "shikanime-studio/actions/skaffold/integration@v9";
+                  "with" = {
+                    profile = "\${{ matrix.name }}";
+                  };
+                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
-                // cfg.settings.integration;
-              }
+                // cfg.settings.integration
+              )
             ];
           };
         };
