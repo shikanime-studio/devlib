@@ -11,7 +11,7 @@ jobs:
         id: createGithubAppToken
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
+          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -37,7 +37,7 @@ jobs:
         id: createGithubAppToken
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
+          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -61,7 +61,7 @@ jobs:
         id: createGithubAppToken
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
+          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-administration: read
           permission-contents: write
           permission-issues: write
@@ -91,7 +91,7 @@ jobs:
         id: createGithubAppToken
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
+          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write
@@ -120,7 +120,7 @@ jobs:
         id: createGithubAppToken
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
+          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-contents: write
           permission-issues: write
           permission-pull-requests: write

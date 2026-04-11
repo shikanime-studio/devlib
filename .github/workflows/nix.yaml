@@ -10,7 +10,7 @@ jobs:
         id: createGithubAppToken
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
+          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/checkout@v9
@@ -41,7 +41,7 @@ jobs:
         id: createGithubAppToken
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
+          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/checkout@v9
@@ -72,7 +72,7 @@ jobs:
         id: createGithubAppToken
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
+          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/checkout@v9
@@ -94,7 +94,7 @@ jobs:
         id: createGithubAppToken
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
+          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/checkout@v9
