@@ -49,7 +49,7 @@ in
             // cfg.settings.create-github-app-token;
           }
           {
-            uses = "shikanime-studio/actions/cleanup@v10";
+            uses = "shikanime-studio/actions/cleanup@v9";
             "with" = {
               github-token = githubToken;
               pull-request-url = "\${{ github.event.pull_request.html_url }}";
