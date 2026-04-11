@@ -92,19 +92,10 @@ in
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
-              {
-                name = "Apply direnv env";
-                run = ''
-                  cat > direnv-env.json <<'JSON'
-                  ''${{ steps.direnv.outputs.env }}
-                  JSON
-                  nix run nixpkgs#jq -- -r 'to_entries[] | select(.value != null) | .value |= tostring | select(.value | test("\n") | not) | "\(.key)=\(.value)"' direnv-env.json >> "$GITHUB_ENV"
-                '';
-                shell = "bash";
-              }
               (
                 {
                   uses = "shikanime-studio/actions/pnpm/integration@v9";
+                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) { "with" = cfg.settings.integration; }
               )
@@ -148,16 +139,7 @@ in
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
-                name = "Apply direnv env";
-                run = ''
-                  cat > direnv-env.json <<'JSON'
-                  ''${{ steps.direnv.outputs.env }}
-                  JSON
-                  nix run nixpkgs#jq -- -r 'to_entries[] | select(.value != null) | .value |= tostring | select(.value | test("\n") | not) | "\(.key)=\(.value)"' direnv-env.json >> "$GITHUB_ENV"
-                '';
-                shell = "bash";
-              }
-              {
+                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 uses = "shikanime-studio/actions/pnpm/integration@v9";
                 "with" = {
                   recursive = true;

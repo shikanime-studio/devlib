@@ -115,16 +115,7 @@ in
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
-                name = "Apply direnv env";
-                run = ''
-                  cat > direnv-env.json <<'JSON'
-                  ''${{ steps.direnv.outputs.env }}
-                  JSON
-                  nix run nixpkgs#jq -- -r 'to_entries[] | select(.value != null) | .value |= tostring | select(.value | test("\n") | not) | "\(.key)=\(.value)"' direnv-env.json >> "$GITHUB_ENV"
-                '';
-                shell = "bash";
-              }
-              {
+                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\"";
                 shell = "bash";
               }
@@ -176,16 +167,7 @@ in
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
-                name = "Apply direnv env";
-                run = ''
-                  cat > direnv-env.json <<'JSON'
-                  ''${{ steps.direnv.outputs.env }}
-                  JSON
-                  nix run nixpkgs#jq -- -r 'to_entries[] | select(.value != null) | .value |= tostring | select(.value | test("\n") | not) | "\(.key)=\(.value)"' direnv-env.json >> "$GITHUB_ENV"
-                '';
-                shell = "bash";
-              }
-              {
+                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
                 shell = "bash";
               }
