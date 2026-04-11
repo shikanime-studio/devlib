@@ -133,7 +133,7 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "docker/login-action@v3";
+                uses = "docker/login-action@v4";
                 "with" = {
                   registry = "ghcr.io";
                   username = "\${{ github.actor }}";
@@ -199,7 +199,7 @@ in
                 // cfg.settings.checkout;
               }
               {
-                uses = "docker/login-action@v3";
+                uses = "docker/login-action@v4";
                 "with" = {
                   registry = "ghcr.io";
                   username = "\${{ github.actor }}";
