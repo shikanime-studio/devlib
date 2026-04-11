@@ -42,7 +42,7 @@ in
             id = "createGithubAppToken";
             uses = "actions/create-github-app-token@v3";
             "with" = {
-              app-id = "\${{ vars.OPERATOR_APP_ID }}";
+              client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
               private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               permission-contents = "write";
             }

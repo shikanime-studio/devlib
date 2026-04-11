@@ -65,7 +65,7 @@ in
                 id = "createGithubAppToken";
                 uses = "actions/create-github-app-token@v3";
                 "with" = {
-                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                   permission-contents = "read";
                 }
@@ -92,10 +92,19 @@ in
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
+              {
+                name = "Apply direnv env";
+                run = ''
+                  cat > direnv-env.json <<'JSON'
+                  ''${{ steps.direnv.outputs.env }}
+                  JSON
+                  nix run nixpkgs#jq -- -r 'to_entries[] | select(.value != null) | .value |= tostring | select(.value | test("\n") | not) | "\(.key)=\(.value)"' direnv-env.json >> "$GITHUB_ENV"
+                '';
+                shell = "bash";
+              }
               (
                 {
                   uses = "shikanime-studio/actions/pnpm/integration@v9";
-                  env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) { "with" = cfg.settings.integration; }
               )
@@ -111,7 +120,7 @@ in
                 id = "createGithubAppToken";
                 uses = "actions/create-github-app-token@v3";
                 "with" = {
-                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                   permission-contents = "read";
                 }
@@ -139,7 +148,16 @@ in
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
-                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                name = "Apply direnv env";
+                run = ''
+                  cat > direnv-env.json <<'JSON'
+                  ''${{ steps.direnv.outputs.env }}
+                  JSON
+                  nix run nixpkgs#jq -- -r 'to_entries[] | select(.value != null) | .value |= tostring | select(.value | test("\n") | not) | "\(.key)=\(.value)"' direnv-env.json >> "$GITHUB_ENV"
+                '';
+                shell = "bash";
+              }
+              {
                 uses = "shikanime-studio/actions/pnpm/integration@v9";
                 "with" = {
                   recursive = true;
