@@ -72,14 +72,14 @@ in
                 // cfg.settings.create-github-app-token;
               }
               {
-                uses = "shikanime-studio/actions/checkout@v9";
+                uses = "shikanime-studio/actions/checkout@v10";
                 "with" = {
                   github-token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v9";
+                uses = "shikanime-studio/actions/nix/setup@v10";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -88,13 +88,13 @@ in
               (
                 {
                   id = "direnv";
-                  uses = "shikanime-studio/actions/direnv@v9";
+                  uses = "shikanime-studio/actions/direnv@v10";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               (
                 {
-                  uses = "shikanime-studio/actions/pnpm/integration@v9";
+                  uses = "shikanime-studio/actions/pnpm/integration@v10";
                   env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) { "with" = cfg.settings.integration; }
@@ -118,14 +118,14 @@ in
                 // cfg.settings.create-github-app-token;
               }
               {
-                uses = "shikanime-studio/actions/checkout@v9";
+                uses = "shikanime-studio/actions/checkout@v10";
                 "with" = {
                   github-token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v9";
+                uses = "shikanime-studio/actions/nix/setup@v10";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -134,13 +134,13 @@ in
               (
                 {
                   id = "direnv";
-                  uses = "shikanime-studio/actions/direnv@v9";
+                  uses = "shikanime-studio/actions/direnv@v10";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
                 env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
-                uses = "shikanime-studio/actions/pnpm/integration@v9";
+                uses = "shikanime-studio/actions/pnpm/integration@v10";
                 "with" = {
                   recursive = true;
                 }

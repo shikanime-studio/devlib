@@ -10,7 +10,7 @@ jobs:
           permission-contents: read
           permission-pull-requests: write
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: shikanime-studio/actions/checkout@v9
+      - uses: shikanime-studio/actions/checkout@v10
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - env:

@@ -9,7 +9,7 @@ jobs:
           client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
           permission-contents: write
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: shikanime-studio/actions/cleanup@v9
+      - uses: shikanime-studio/actions/cleanup@v10
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
           pull-request-url: ${{ github.event.pull_request.html_url }}

@@ -92,14 +92,14 @@ in
                 // cfg.settings.create-github-app-token;
               }
               {
-                uses = "shikanime-studio/actions/checkout@v9";
+                uses = "shikanime-studio/actions/checkout@v10";
                 "with" = {
                   github-token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v9";
+                uses = "shikanime-studio/actions/nix/setup@v10";
                 "with" = {
                   cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
                   cachix-name = "\${{ inputs['cachix-name'] }}";
@@ -110,7 +110,7 @@ in
               (
                 {
                   id = "direnv";
-                  uses = "shikanime-studio/actions/direnv@v9";
+                  uses = "shikanime-studio/actions/direnv@v10";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
@@ -144,14 +144,14 @@ in
                 // cfg.settings.create-github-app-token;
               }
               {
-                uses = "shikanime-studio/actions/checkout@v9";
+                uses = "shikanime-studio/actions/checkout@v10";
                 "with" = {
                   github-token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v9";
+                uses = "shikanime-studio/actions/nix/setup@v10";
                 "with" = {
                   cachix-auth-token = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
                   cachix-name = "\${{ inputs['cachix-name'] }}";
@@ -162,7 +162,7 @@ in
               (
                 {
                   id = "direnv";
-                  uses = "shikanime-studio/actions/direnv@v9";
+                  uses = "shikanime-studio/actions/direnv@v10";
                 }
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
@@ -194,14 +194,14 @@ in
                 // cfg.settings.create-github-app-token;
               }
               {
-                uses = "shikanime-studio/actions/checkout@v9";
+                uses = "shikanime-studio/actions/checkout@v10";
                 "with" = {
                   github-token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v9";
+                uses = "shikanime-studio/actions/nix/setup@v10";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -210,7 +210,7 @@ in
               (
                 {
                   id = "setup-checks-jobs";
-                  uses = "shikanime-studio/actions/nix/setup-checks-jobs@v9";
+                  uses = "shikanime-studio/actions/nix/setup-checks-jobs@v10";
                 }
                 // optionalAttrs (cfg.settings.setup-checks-jobs != { }) {
                   "with" = cfg.settings.setup-checks-jobs;
@@ -239,14 +239,14 @@ in
                 // cfg.settings.create-github-app-token;
               }
               {
-                uses = "shikanime-studio/actions/checkout@v9";
+                uses = "shikanime-studio/actions/checkout@v10";
                 "with" = {
                   github-token = githubToken;
                 }
                 // cfg.settings.checkout;
               }
               {
-                uses = "shikanime-studio/actions/nix/setup@v9";
+                uses = "shikanime-studio/actions/nix/setup@v10";
                 "with" = {
                   github-token = githubToken;
                 }
@@ -255,7 +255,7 @@ in
               (
                 {
                   id = "setup-packages-jobs";
-                  uses = "shikanime-studio/actions/nix/setup-packages-jobs@v9";
+                  uses = "shikanime-studio/actions/nix/setup-packages-jobs@v10";
                 }
                 // optionalAttrs (cfg.settings.setup-packages-jobs != { }) {
                   "with" = cfg.settings.setup-packages-jobs;
