@@ -70,6 +70,13 @@ in
               // cfg.settings.create-github-app-token;
             }
             {
+              uses = "shikanime-studio/actions/nix/setup@v9";
+              "with" = {
+                github-token = githubToken;
+              }
+              // cfg.settings.setup-nix;
+            }
+            {
               uses = "shikanime-studio/actions/checkout@v9";
               "with" = {
                 github-token = githubToken;
@@ -79,13 +86,6 @@ in
                 username = "operator6o";
               }
               // cfg.settings.checkout;
-            }
-            {
-              uses = "shikanime-studio/actions/nix/setup@v9";
-              "with" = {
-                github-token = githubToken;
-              }
-              // cfg.settings.setup-nix;
             }
             {
               uses = "shikanime-studio/actions/update@v9";
