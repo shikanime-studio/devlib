@@ -42,10 +42,11 @@ in
             {
               continue-on-error = true;
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
+              uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
                 client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                 permission-contents = "write";
+                permission-workflows = "write";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               }
               // cfg.settings.create-github-app-token;
@@ -64,7 +65,8 @@ in
               // cfg.settings.checkout;
             }
             {
-              run = "git push origin \"HEAD:refs/heads/release-$(printf '%s' \"\${{ github.ref_name || github.event.inputs.ref_name }}\" | sed -e 's/^v//' -e 's/[.][^.]*$//')\"";
+              env.REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
+              run = "git push origin \"HEAD:refs/heads/release-$(printf '%s' \"$REF_NAME\" | sed -e 's/^v//' -e 's/[.][^.]*$//')\"";
             }
           ];
         };
@@ -77,10 +79,11 @@ in
             {
               continue-on-error = true;
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
+              uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
                 client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                 permission-contents = "write";
+                permission-workflows = "write";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               }
               // cfg.settings.create-github-app-token;
@@ -99,8 +102,12 @@ in
               // cfg.settings.checkout;
             }
             {
-              env.GITHUB_TOKEN = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
-              run = "gh release create \"\${{ github.ref_name || github.event.inputs.ref_name }}\" --repo \"\${{ github.repository }}\" --generate-notes || true";
+              env = {
+                GH_TOKEN = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
+                REPO = "\${{ github.repository }}";
+              };
+              run = "gh release create \"$REF_NAME\" --repo \"$REPO\" --generate-notes || true";
             }
           ];
         };

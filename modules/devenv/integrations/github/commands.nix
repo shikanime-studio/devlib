@@ -73,13 +73,14 @@ in
             {
               continue-on-error = true;
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
+              uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
                 client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
+                permission-workflows = "write";
               }
               // cfg.settings.create-github-app-token;
             }
@@ -114,7 +115,7 @@ in
             {
               continue-on-error = true;
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
+              uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
                 client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
@@ -153,7 +154,7 @@ in
             {
               continue-on-error = true;
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
+              uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
                 client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
@@ -161,6 +162,7 @@ in
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
+                permission-workflows = "write";
               }
               // cfg.settings.create-github-app-token;
             }
@@ -198,13 +200,14 @@ in
             {
               continue-on-error = true;
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
+              uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
                 client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
+                permission-workflows = "write";
               }
               // cfg.settings.create-github-app-token;
             }
@@ -242,7 +245,7 @@ in
             {
               continue-on-error = true;
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
+              uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
                 client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
@@ -263,12 +266,6 @@ in
               uses = "shikanime-studio/actions/command/run@v9";
               "with" = {
                 github-token = githubToken;
-                email = "operator6o@shikanime.studio";
-                fullname = "Operator 6O";
-                username = "operator6o";
-                gpg-passphrase = "\${{ secrets.GPG_PASSPHRASE }}";
-                gpg-private-key = "\${{ secrets.GPG_PRIVATE_KEY }}";
-                sign-commits = true;
               }
               // cfg.settings.run;
             }
