@@ -80,6 +80,7 @@ in
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
+                permission-workflows = "write";
               }
               // cfg.settings.create-github-app-token;
             }
@@ -263,12 +264,7 @@ in
               uses = "shikanime-studio/actions/command/run@v9";
               "with" = {
                 github-token = githubToken;
-                email = "operator6o@shikanime.studio";
-                fullname = "Operator 6O";
                 username = "operator6o";
-                gpg-passphrase = "\${{ secrets.GPG_PASSPHRASE }}";
-                gpg-private-key = "\${{ secrets.GPG_PRIVATE_KEY }}";
-                sign-commits = true;
               }
               // cfg.settings.run;
             }
