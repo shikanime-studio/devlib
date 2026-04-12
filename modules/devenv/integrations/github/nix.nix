@@ -83,7 +83,7 @@ in
               {
                 continue-on-error = true;
                 id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
+                uses = "actions/create-github-app-token@v3.1.1";
                 "with" = {
                   client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
@@ -135,7 +135,7 @@ in
               {
                 continue-on-error = true;
                 id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
+                uses = "actions/create-github-app-token@v3.1.1";
                 "with" = {
                   client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
@@ -185,7 +185,7 @@ in
               {
                 continue-on-error = true;
                 id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
+                uses = "actions/create-github-app-token@v3.1.1";
                 "with" = {
                   client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
@@ -230,7 +230,7 @@ in
               {
                 continue-on-error = true;
                 id = "createGithubAppToken";
-                uses = "actions/create-github-app-token@v3";
+                uses = "actions/create-github-app-token@v3.1.1";
                 "with" = {
                   client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                   private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";

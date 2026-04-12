@@ -42,10 +42,11 @@ in
             {
               continue-on-error = true;
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
+              uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
                 client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                 permission-contents = "write";
+                permission-workflows = "write";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               }
               // cfg.settings.create-github-app-token;
@@ -72,10 +73,11 @@ in
             {
               continue-on-error = true;
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
+              uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
                 client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
                 permission-contents = "write";
+                permission-workflows = "write";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               }
               // cfg.settings.create-github-app-token;
