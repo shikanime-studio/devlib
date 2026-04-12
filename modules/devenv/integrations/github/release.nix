@@ -89,7 +89,7 @@ in
             }
             {
               env = {
-                GITHUB_TOKEN = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                GH_TOKEN = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
                 REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
                 REPO = "\${{ github.repository }}";
               };

@@ -64,12 +64,12 @@ in
           }
           {
             "if" = mergeCondition;
-            env.GITHUB_TOKEN = githubToken;
+            env.GH_TOKEN = githubToken;
             run = "gh pr edit \"\${{ github.event.pull_request.number }}\" --add-label dependencies";
           }
           {
             "if" = ghstackCondition;
-            env.GITHUB_TOKEN = githubToken;
+            env.GH_TOKEN = githubToken;
             run = "gh pr edit \"\${{ github.event.pull_request.number }}\" --add-label ghstack";
           }
         ];
