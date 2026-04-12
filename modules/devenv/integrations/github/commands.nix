@@ -161,6 +161,7 @@ in
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
+                permission-workflows = "write";
               }
               // cfg.settings.create-github-app-token;
             }
@@ -205,6 +206,7 @@ in
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
+                permission-workflows = "write";
               }
               // cfg.settings.create-github-app-token;
             }
