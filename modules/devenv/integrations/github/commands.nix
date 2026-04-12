@@ -162,6 +162,7 @@ in
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
+                permission-workflows = "write";
               }
               // cfg.settings.create-github-app-token;
             }
@@ -206,6 +207,7 @@ in
                 permission-contents = "write";
                 permission-issues = "write";
                 permission-pull-requests = "write";
+                permission-workflows = "write";
               }
               // cfg.settings.create-github-app-token;
             }
@@ -264,7 +266,6 @@ in
               uses = "shikanime-studio/actions/command/run@v9";
               "with" = {
                 github-token = githubToken;
-                username = "operator6o";
               }
               // cfg.settings.run;
             }

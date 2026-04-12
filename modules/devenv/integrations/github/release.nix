@@ -52,6 +52,12 @@ in
               // cfg.settings.create-github-app-token;
             }
             {
+              uses = "shikanime-studio/actions/nix/setup@v9";
+              "with" = {
+                github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              };
+            }
+            {
               uses = "shikanime-studio/actions/checkout@v9";
               "with" = {
                 github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
@@ -81,6 +87,12 @@ in
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               }
               // cfg.settings.create-github-app-token;
+            }
+            {
+              uses = "shikanime-studio/actions/nix/setup@v9";
+              "with" = {
+                github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+              };
             }
             {
               uses = "shikanime-studio/actions/checkout@v9";
