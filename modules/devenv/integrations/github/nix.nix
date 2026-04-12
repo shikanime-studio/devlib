@@ -116,7 +116,7 @@ in
               )
               {
                 env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
-                run = "nix flake check --accept-flake-config --impure --system \"\${{ matrix.system }}\"";
+                run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\"";
                 shell = "bash";
               }
             ];
@@ -168,7 +168,7 @@ in
               )
               {
                 env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
-                run = "nix build --accept-flake-config --impure \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
+                run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
                 shell = "bash";
               }
             ];
