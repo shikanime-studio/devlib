@@ -1,12 +1,8 @@
 jobs:
   dependencies:
-    permissions:
-      contents: write
-      pull-requests: write
     runs-on: ubuntu-slim
     steps:
-      - continue-on-error: true
-        id: createGithubAppToken
+      - id: createGithubAppToken
         uses: actions/create-github-app-token@v3.1.1
         with:
           client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
@@ -16,26 +12,22 @@ jobs:
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/nix/setup@v9
         with:
-          github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - uses: shikanime-studio/actions/checkout@v9
         with:
-          github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
           gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           sign-commits: true
           username: operator6o
       - uses: shikanime-studio/actions/update@v9
         with:
-          github-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
           username: operator6o
   stale:
-    permissions:
-      issues: write
-      pull-requests: write
     runs-on: ubuntu-slim
     steps:
-      - continue-on-error: true
-        id: createGithubAppToken
+      - id: createGithubAppToken
         uses: actions/create-github-app-token@v3.1.1
         with:
           client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
@@ -46,7 +38,7 @@ jobs:
         with:
           days-before-close: 14
           days-before-stale: 30
-          repo-token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
+          repo-token: ${{ steps.createGithubAppToken.outputs.token }}
           stale-issue-label: stale
           stale-pr-label: stale
 name: Update
