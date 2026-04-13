@@ -129,7 +129,7 @@ in
           ];
         };
         land = {
-          "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.land')";
+          "if" = "github.event.issue.pull_request != null && (contains(github.event.comment.body, '.land') || contains(github.event.comment.body, '.yolo'))";
           runs-on = "ubuntu-slim";
           steps = [
             {
