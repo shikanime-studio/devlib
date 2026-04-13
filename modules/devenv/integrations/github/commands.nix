@@ -143,7 +143,8 @@ in
           ];
         };
         land = {
-          "if" = "github.event.issue.pull_request != null && contains(github.event.comment.body, '.land')";
+          "if" =
+            "github.event.issue.pull_request != null && (contains(github.event.comment.body, '.land') || contains(github.event.comment.body, '.force-land'))";
           runs-on = "ubuntu-slim";
           permissions = {
             contents = "write";
