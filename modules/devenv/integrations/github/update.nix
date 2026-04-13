@@ -11,8 +11,6 @@ let
   cfg = config.github.workflows.update;
 
   yamlFormat = pkgs.formats.yaml { };
-
-  githubToken = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
 in
 {
   options.github.workflows.update = {
@@ -52,13 +50,8 @@ in
       jobs = {
         dependencies = {
           runs-on = "ubuntu-slim";
-          permissions = {
-            contents = "write";
-            pull-requests = "write";
-          };
           steps = [
             {
-              continue-on-error = true;
               id = "createGithubAppToken";
               uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
@@ -73,14 +66,14 @@ in
             {
               uses = "shikanime-studio/actions/nix/setup@v9";
               "with" = {
-                github-token = githubToken;
+                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
               }
               // cfg.settings.setup-nix;
             }
             {
               uses = "shikanime-studio/actions/checkout@v9";
               "with" = {
-                github-token = githubToken;
+                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
                 gpg-passphrase = "\${{ secrets.GPG_PASSPHRASE }}";
                 gpg-private-key = "\${{ secrets.GPG_PRIVATE_KEY }}";
                 sign-commits = true;
@@ -91,7 +84,7 @@ in
             {
               uses = "shikanime-studio/actions/update@v9";
               "with" = {
-                github-token = githubToken;
+                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
                 username = "operator6o";
               }
               // cfg.settings.update;
@@ -100,13 +93,8 @@ in
         };
         stale = {
           runs-on = "ubuntu-slim";
-          permissions = {
-            issues = "write";
-            pull-requests = "write";
-          };
           steps = [
             {
-              continue-on-error = true;
               id = "createGithubAppToken";
               uses = "actions/create-github-app-token@v3.1.1";
               "with" = {
@@ -122,7 +110,7 @@ in
               "with" = {
                 days-before-close = 14;
                 days-before-stale = 30;
-                repo-token = githubToken;
+                repo-token = "\${{ steps.createGithubAppToken.outputs.token }}";
                 stale-issue-label = "stale";
                 stale-pr-label = "stale";
               }
