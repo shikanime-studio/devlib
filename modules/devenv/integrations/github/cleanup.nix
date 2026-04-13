@@ -11,8 +11,6 @@ let
   cfg = config.github.workflows.cleanup;
 
   yamlFormat = pkgs.formats.yaml { };
-
-  githubToken = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
 in
 {
   options.github.workflows.cleanup = {
@@ -35,10 +33,10 @@ in
   config = mkIf cfg.enable {
     github.settings.workflows.cleanup = {
       jobs.cleanup = {
+        "if" = "\${{ github.event.pull_request.head.repo.fork == false }}";
         runs-on = "ubuntu-slim";
         steps = [
           {
-            continue-on-error = true;
             id = "createGithubAppToken";
             uses = "actions/create-github-app-token@v3.1.1";
             "with" = {
@@ -51,7 +49,7 @@ in
           {
             uses = "shikanime-studio/actions/cleanup@v9";
             "with" = {
-              github-token = githubToken;
+              github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
               pull-request-url = "\${{ github.event.pull_request.html_url }}";
             }
             // cfg.settings.cleanup;
@@ -60,7 +58,7 @@ in
       };
       name = "Cleanup";
       on.pull_request.types = [ "closed" ];
-      permissions.contents = "write";
+      permissions.contents = "read";
     };
   };
 }
