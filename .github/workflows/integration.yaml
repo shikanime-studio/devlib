@@ -1,6 +1,7 @@
 jobs:
   nix:
-    if: ${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}
+    if: ${{ github.event_name == 'workflow_call' || github.event.pull_request.draft
+      == false }}
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
       OPERATOR_PRIVATE_KEY: ${{ secrets.OPERATOR_PRIVATE_KEY }}
@@ -8,7 +9,7 @@ jobs:
     with:
       cachix-name: shikanime-studio
 name: Integration
-'on':
+"on":
   pull_request:
     branches:
       - main
