@@ -80,11 +80,11 @@
             opentofu = ./modules/devenv/profiles/opentofu.nix;
             python = ./modules/devenv/profiles/python.nix;
             rust = ./modules/devenv/profiles/rust.nix;
+            skaffold = ./modules/devenv/profiles/skaffold.nix;
             shell = ./modules/devenv/profiles/shell.nix;
             shikanime = ./modules/devenv/shells/shikanime.nix;
             shikanime-studio = ./modules/devenv/shells/shikanime-studio.nix;
             texlive = ./modules/devenv/profiles/texlive.nix;
-            yaml = ./modules/devenv/profiles/yaml.nix;
           };
 
           homeManagerModule = ./modules/home/default.nix;
