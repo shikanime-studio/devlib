@@ -3,9 +3,9 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - id: createGithubAppToken
-        uses: actions/create-github-app-token@v3.1.1
+        uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
+          app-id: ${{ vars.OPERATOR_APP_ID }}
           permission-contents: write
           permission-pull-requests: write
           permission-workflows: write
@@ -28,9 +28,9 @@ jobs:
     runs-on: ubuntu-slim
     steps:
       - id: createGithubAppToken
-        uses: actions/create-github-app-token@v3.1.1
+        uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
+          app-id: ${{ vars.OPERATOR_APP_ID }}
           permission-issues: write
           permission-pull-requests: write
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
