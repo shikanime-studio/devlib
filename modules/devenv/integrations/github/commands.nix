@@ -65,9 +65,9 @@ in
           steps = [
             {
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3.1.1";
+              uses = "actions/create-github-app-token@v3";
               "with" = {
-                client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                 permission-contents = "write";
                 permission-issues = "write";
@@ -101,9 +101,9 @@ in
           steps = [
             {
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3.1.1";
+              uses = "actions/create-github-app-token@v3";
               "with" = {
-                client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                 permission-contents = "write";
                 permission-issues = "write";
@@ -135,9 +135,9 @@ in
           steps = [
             {
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3.1.1";
+              uses = "actions/create-github-app-token@v3";
               "with" = {
-                client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                 permission-administration = "read";
                 permission-contents = "write";
@@ -175,9 +175,9 @@ in
           steps = [
             {
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3.1.1";
+              uses = "actions/create-github-app-token@v3";
               "with" = {
-                client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                 permission-contents = "write";
                 permission-issues = "write";
@@ -214,9 +214,9 @@ in
           steps = [
             {
               id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3.1.1";
+              uses = "actions/create-github-app-token@v3";
               "with" = {
-                client-id = "\${{ vars.OPERATOR_APP_CLIENT_ID }}";
+                app-id = "\${{ vars.OPERATOR_APP_ID }}";
                 private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
                 permission-contents = "write";
                 permission-issues = "write";

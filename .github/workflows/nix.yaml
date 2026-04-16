@@ -8,9 +8,9 @@ jobs:
     steps:
       - continue-on-error: true
         id: createGithubAppToken
-        uses: actions/create-github-app-token@v3.1.1
+        uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
+          app-id: ${{ vars.OPERATOR_APP_ID }}
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/nix/setup@v9
@@ -45,9 +45,9 @@ jobs:
     steps:
       - continue-on-error: true
         id: createGithubAppToken
-        uses: actions/create-github-app-token@v3.1.1
+        uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
+          app-id: ${{ vars.OPERATOR_APP_ID }}
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/nix/setup@v9
@@ -82,9 +82,9 @@ jobs:
     steps:
       - continue-on-error: true
         id: createGithubAppToken
-        uses: actions/create-github-app-token@v3.1.1
+        uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
+          app-id: ${{ vars.OPERATOR_APP_ID }}
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/nix/setup@v9
@@ -108,9 +108,9 @@ jobs:
     steps:
       - continue-on-error: true
         id: createGithubAppToken
-        uses: actions/create-github-app-token@v3.1.1
+        uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.OPERATOR_APP_CLIENT_ID }}
+          app-id: ${{ vars.OPERATOR_APP_ID }}
           permission-contents: read
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/nix/setup@v9
