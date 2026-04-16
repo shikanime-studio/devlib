@@ -1,3 +1,13 @@
+{ pkgs, ... }:
+
+let
+  jsonFormat = pkgs.formats.json { };
+
+  configFile = jsonFormat.generate ".oxfmtrc.json" {
+    printWidth = 80;
+    proseWrap = "always";
+  };
+in
 {
   imports = [ ./default.nix ];
 
@@ -16,31 +26,18 @@
         oxfmt.enable = true;
         rumdl-check.enable = true;
         xmllint.enable = true;
+        yamllint.enable = true;
       };
       settings = {
-        formatter.oxfmt.includes = [
-          "*.cjs"
-          "*.css"
-          "*.graphql"
-          "*.hbs"
-          "*.html"
-          "*.js"
-          "*.json"
-          "*.json5"
-          "*.jsonc"
-          "*.jsx"
-          "*.md"
-          "*.mdx"
-          "*.mjs"
-          "*.mustache"
-          "*.scss"
-          "*.toml"
-          "*.ts"
-          "*.tsx"
-          "*.vue"
-          "*.yaml"
-          "*.yml"
-        ];
+        formatter.oxfmt = {
+          includes = [
+            "*.toml"
+          ];
+          options = [
+            "--config"
+            (toString configFile)
+          ];
+        };
         global.excludes = [
           ".devenv/*"
           ".direnv/*"
