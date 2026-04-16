@@ -15,8 +15,8 @@ This flake exports:
   `devenv.shell` (nix, javascript, rust, …)
 - `homeManagerModule` and `homeManagerModules.<name>`: Home Manager modules for
   tooling and shell config
-- `flakeModule`: a flake-parts module that can expose `treefmt` and
-  `pre-commit` from a chosen `devenv.shell`
+- `flakeModule`: a flake-parts module that can expose `treefmt` and `pre-commit`
+  from a chosen `devenv.shell`
 
 ## Quick Start (Devenv)
 
@@ -200,5 +200,7 @@ Use Home Manager modules from `homeManagerModules.<name>`.
 
 ## Templates
 
-- Initialize a project: `nix flake init -t github:shikanime-studio/devlib#default`
-- Use a minimal remote direnv setup: `nix flake init -t github:shikanime-studio/devlib#remote`
+- Initialize a project:
+  `nix flake init -t github:shikanime-studio/devlib#default`
+- Use a minimal remote direnv setup:
+  `nix flake init -t github:shikanime-studio/devlib#remote`
