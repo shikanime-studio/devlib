@@ -255,18 +255,14 @@ in
 
     (mkIf (cfg.enable && config.github.workflows.release.enable) {
       github.settings.workflows.release = {
-        jobs = {
-          skaffold = {
-            uses = "./.github/workflows/skaffold.yaml";
-            permissions = {
-              contents = "read";
-              packages = "write";
-            };
-            secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+        jobs.skaffold = {
+          uses = "./.github/workflows/skaffold.yaml";
+          needs = [ "release" ];
+          permissions = {
+            contents = "read";
+            packages = "write";
           };
-
-          release-branch.needs = [ "skaffold" ];
-          release-tag.needs = [ "skaffold" ];
+          secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
         };
         on.workflow_call.secrets.OPERATOR_PRIVATE_KEY.required = mkDefault true;
       };

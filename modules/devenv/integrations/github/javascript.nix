@@ -169,14 +169,10 @@ in
 
     (mkIf (cfg.enable && config.github.workflows.release.enable) {
       github.settings.workflows.release = {
-        jobs = {
-          javascript = {
-            uses = "./.github/workflows/javascript.yaml";
-            secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-          };
-
-          release-branch.needs = [ "javascript" ];
-          release-tag.needs = [ "javascript" ];
+        jobs.javascript = {
+          uses = "./.github/workflows/javascript.yaml";
+          needs = [ "release" ];
+          secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
         };
         on.workflow_call.secrets.OPERATOR_PRIVATE_KEY.required = mkDefault true;
       };

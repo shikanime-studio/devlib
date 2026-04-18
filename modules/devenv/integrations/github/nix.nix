@@ -129,7 +129,10 @@ in
 
           packages = {
             name = "Packages";
-            needs = [ "setup-packages-jobs" ];
+            needs = [
+              "checks"
+              "setup-packages-jobs"
+            ];
             "if" = "\${{ needs['setup-packages-jobs'].outputs.continue == 'true' }}";
             runs-on = "\${{ matrix.runner }}";
             strategy = {
@@ -297,17 +300,13 @@ in
 
     (mkIf (cfg.enable && config.github.workflows.release.enable) {
       github.settings.workflows.release = {
-        jobs = {
-          nix = {
-            uses = "./.github/workflows/nix.yaml";
-            secrets = {
-              OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-              CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
-            };
+        jobs.nix = {
+          uses = "./.github/workflows/nix.yaml";
+          needs = [ "release" ];
+          secrets = {
+            OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+            CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
           };
-
-          release-branch.needs = [ "nix" ];
-          release-tag.needs = [ "nix" ];
         };
         on.workflow_call.secrets = {
           CACHIX_AUTH_TOKEN.required = mkDefault true;

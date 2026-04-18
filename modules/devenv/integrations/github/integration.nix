@@ -22,16 +22,22 @@ in
         OPERATOR_PRIVATE_KEY.required = true;
         CACHIX_AUTH_TOKEN.required = false;
       };
-      on.pull_request = {
-        branches = [
+      on = {
+        pull_request = {
+          branches = [
+            "main"
+            "gh/[0-9]+/[0-9]+/base"
+          ];
+          types = [
+            "opened"
+            "reopened"
+            "synchronize"
+            "ready_for_review"
+          ];
+        };
+        push.branches = [
           "main"
-          "gh/*/*/base"
-        ];
-        types = [
-          "opened"
-          "reopened"
-          "synchronize"
-          "ready_for_review"
+          "release-[0-9]+.[0-9]+"
         ];
       };
       permissions.contents = "read";

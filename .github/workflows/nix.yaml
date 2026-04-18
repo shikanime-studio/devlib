@@ -62,6 +62,7 @@ jobs:
     if: ${{ needs['setup-packages-jobs'].outputs.continue == 'true' }}
     runs-on: ${{ matrix.runner }}
     needs:
+      - checks
       - setup-packages-jobs
     strategy:
       fail-fast: false
