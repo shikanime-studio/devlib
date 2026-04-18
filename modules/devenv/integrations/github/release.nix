@@ -54,13 +54,13 @@ in
             {
               uses = "shikanime-studio/actions/nix/setup@v9";
               "with" = {
-                github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
               };
             }
             {
               uses = "shikanime-studio/actions/checkout@v9";
               "with" = {
-                github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
               }
               // cfg.settings.checkout;
             }
@@ -91,22 +91,39 @@ in
             {
               uses = "shikanime-studio/actions/nix/setup@v9";
               "with" = {
-                github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
               };
             }
             {
               uses = "shikanime-studio/actions/checkout@v9";
               "with" = {
-                github-token = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
               }
               // cfg.settings.checkout;
             }
             {
               env = {
-                GH_TOKEN = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
+                GH_TOKEN = "\${{ steps.createGithubAppToken.outputs.token }}";
                 REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
               };
               run = "gh release create \"$REF_NAME\" --repo \"\${{ github.repository }}\" || true";
+            }
+            {
+              uses = "actions/download-artifact@v7";
+              continue-on-error = true;
+              "with" = {
+                path = "artifacts";
+                merge-multiple = true;
+              };
+            }
+            {
+              env = {
+                GH_TOKEN = "\${{ steps.createGithubAppToken.outputs.token }}";
+                REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
+                REPO = "\${{ github.repository }}";
+              };
+              run = "find artifacts -type f -print0 | xargs -0 -r gh release upload \"$REF_NAME\" --repo \"$REPO\" --clobber";
+              shell = "bash";
             }
           ];
         };
