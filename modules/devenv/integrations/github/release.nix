@@ -102,28 +102,12 @@ in
               // cfg.settings.checkout;
             }
             {
-              env = {
-                GH_TOKEN = "\${{ steps.createGithubAppToken.outputs.token }}";
-                REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
-              };
-              run = "gh release create \"$REF_NAME\" --repo \"\${{ github.repository }}\" || true";
-            }
-            {
-              uses = "actions/download-artifact@v7";
-              continue-on-error = true;
+              uses = "shikanime-studio/actions/release@v9";
               "with" = {
-                path = "artifacts";
-                merge-multiple = true;
+                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
+                ref = "\${{ github.ref_name || github.event.inputs.ref_name }}";
+                repo = "\${{ github.repository }}";
               };
-            }
-            {
-              env = {
-                GH_TOKEN = "\${{ steps.createGithubAppToken.outputs.token }}";
-                REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
-                REPO = "\${{ github.repository }}";
-              };
-              run = "find artifacts -type f -print0 | xargs -0 -r gh release upload \"$REF_NAME\" --repo \"$REPO\" --clobber";
-              shell = "bash";
             }
           ];
         };
