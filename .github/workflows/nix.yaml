@@ -123,6 +123,8 @@ jobs:
   setup-packages-jobs:
     name: Setup Packages Jobs
     runs-on: ubuntu-latest
+    needs:
+      - checks
     outputs:
       continue: ${{ steps.setup-packages-jobs.outputs.continue }}
       matrix: ${{ steps.setup-packages-jobs.outputs.matrix }}

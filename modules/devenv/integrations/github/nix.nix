@@ -229,6 +229,7 @@ in
 
           setup-packages-jobs = {
             name = "Setup Packages Jobs";
+            needs = [ "checks" ];
             runs-on = "ubuntu-latest";
             outputs = {
               continue = "\${{ steps.setup-packages-jobs.outputs.continue }}";
