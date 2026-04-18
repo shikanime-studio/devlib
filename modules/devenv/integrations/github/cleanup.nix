@@ -27,6 +27,11 @@ in
         default = { };
         description = "Overrides for cleanup";
       };
+      setup-nix = mkOption {
+        type = types.submodule { freeformType = yamlFormat.type; };
+        default = { };
+        description = "Overrides for setup-nix";
+      };
     };
   };
 
@@ -45,6 +50,13 @@ in
               permission-contents = "write";
             }
             // cfg.settings.create-github-app-token;
+          }
+          {
+            uses = "shikanime-studio/actions/nix/setup@v9";
+            "with" = {
+              github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
+            }
+            // cfg.settings.setup-nix;
           }
           {
             uses = "shikanime-studio/actions/cleanup@v9";
