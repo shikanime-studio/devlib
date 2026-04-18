@@ -66,6 +66,11 @@ in
             CACHIX_AUTH_TOKEN.required = false;
           };
         };
+        on.workflow_dispatch.inputs.cachix-name = {
+          description = "Cachix cache name";
+          type = "string";
+          default = "";
+        };
 
         permissions.contents = "read";
 
@@ -274,7 +279,8 @@ in
       github.settings.workflows.integration = {
         jobs = {
           nix = {
-            "if" = "\${{ github.event_name == 'workflow_call' || github.event.pull_request.draft == false }}";
+            "if" =
+              "\${{ github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false }}";
             uses = "./.github/workflows/nix.yaml";
             secrets = {
               OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";

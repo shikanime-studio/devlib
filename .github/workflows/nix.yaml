@@ -13,6 +13,12 @@ permissions:
         required: false
       OPERATOR_PRIVATE_KEY:
         required: true
+  workflow_dispatch:
+    inputs:
+      cachix-name:
+        type: string
+        default: ""
+        description: Cachix cache name
 jobs:
   checks:
     name: Checks
