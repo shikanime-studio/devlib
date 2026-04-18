@@ -106,7 +106,7 @@ in
                 GH_TOKEN = "\${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}";
                 REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
               };
-              run = "gh release create \"$REF_NAME\" --repo \"\${{ github.repository }}\" --generate-notes || true";
+              run = "gh release create \"$REF_NAME\" --repo \"\${{ github.repository }}\" || true";
             }
           ];
         };
