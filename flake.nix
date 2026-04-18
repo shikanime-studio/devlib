@@ -142,27 +142,6 @@
             };
           };
 
-        flake.packages.aarch64-linux.default =
-          let
-            example = inputs.nixpkgs.lib.nixosSystem {
-              pkgs = import inputs.nixpkgs {
-                system = "aarch64-linux";
-                config.allowUnfree = true;
-              };
-              modules = [
-                (
-                  { modulesPath, ... }:
-                  {
-                    imports = [
-                      "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
-                    ];
-                  }
-                )
-              ];
-            };
-          in
-          example.config.system.build.isoImage;
-
         systems = [
           "x86_64-linux"
           "aarch64-linux"
