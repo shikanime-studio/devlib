@@ -140,8 +140,21 @@
                 year = "2025";
               };
             };
-            packages.default = config.devenv.shells.default.license.lib.pkgs.asl20;
           };
+
+        flake.packages.aarch64-linux.default =
+          let
+            example = inputs.nixpkgs.lib.nixosSystem {
+              pkgs = import inputs.nixpkgs {
+                system = "aarch64-linux";
+                config.allowUnfree = true;
+              };
+              modules = [
+                "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
+              ];
+            };
+          in
+          example.config.system.build.isoImage;
 
         systems = [
           "x86_64-linux"
