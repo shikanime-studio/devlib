@@ -306,8 +306,7 @@ in
             };
           };
 
-          release-branch.needs = [ "nix" ];
-          release-tag.needs = [ "nix" ];
+          release.needs = [ "nix" ];
         };
         on.workflow_call.secrets = {
           CACHIX_AUTH_TOKEN.required = mkDefault true;

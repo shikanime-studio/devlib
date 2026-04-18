@@ -265,8 +265,7 @@ in
             secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
           };
 
-          release-branch.needs = [ "skaffold" ];
-          release-tag.needs = [ "skaffold" ];
+          release.needs = [ "skaffold" ];
         };
         on.workflow_call.secrets.OPERATOR_PRIVATE_KEY.required = mkDefault true;
       };

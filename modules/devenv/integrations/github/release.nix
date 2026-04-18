@@ -32,85 +32,46 @@ in
 
   config = mkIf cfg.enable {
     github.settings.workflows.release = {
-      jobs = {
-        release-branch = {
-          "if" =
-            "(startsWith(github.ref, 'refs/tags/v') && endsWith(github.ref_name, '.0')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v') && endsWith(github.event.inputs.ref_name, '.0'))";
-          runs-on = "ubuntu-slim";
-          permissions.contents = "write";
-          steps = [
-            {
-              continue-on-error = true;
-              id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
-              "with" = {
-                app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                permission-contents = "write";
-                permission-workflows = "write";
-                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-              }
-              // cfg.settings.create-github-app-token;
+      jobs.release = {
+        "if" =
+          "(startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v'))";
+        runs-on = "ubuntu-slim";
+        permissions.contents = "write";
+        steps = [
+          {
+            continue-on-error = true;
+            id = "createGithubAppToken";
+            uses = "actions/create-github-app-token@v3";
+            "with" = {
+              app-id = "\${{ vars.OPERATOR_APP_ID }}";
+              permission-contents = "write";
+              permission-workflows = "write";
+              private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
             }
-            {
-              uses = "shikanime-studio/actions/nix/setup@v9";
-              "with" = {
-                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
-              };
+            // cfg.settings.create-github-app-token;
+          }
+          {
+            uses = "shikanime-studio/actions/nix/setup@v9";
+            "with" = {
+              github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
+            };
+          }
+          {
+            uses = "shikanime-studio/actions/checkout@v9";
+            "with" = {
+              github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
             }
-            {
-              uses = "shikanime-studio/actions/checkout@v9";
-              "with" = {
-                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
-              }
-              // cfg.settings.checkout;
-            }
-            {
-              env.REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
-              run = "git push origin \"HEAD:refs/heads/release-$(printf '%s' \"$REF_NAME\" | sed -e 's/^v//' -e 's/[.][^.]*$//')\"";
-            }
-          ];
-        };
-        release-tag = {
-          "if" =
-            "(startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v'))";
-          runs-on = "ubuntu-slim";
-          permissions.contents = "write";
-          steps = [
-            {
-              continue-on-error = true;
-              id = "createGithubAppToken";
-              uses = "actions/create-github-app-token@v3";
-              "with" = {
-                app-id = "\${{ vars.OPERATOR_APP_ID }}";
-                permission-contents = "write";
-                permission-workflows = "write";
-                private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
-              }
-              // cfg.settings.create-github-app-token;
-            }
-            {
-              uses = "shikanime-studio/actions/nix/setup@v9";
-              "with" = {
-                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
-              };
-            }
-            {
-              uses = "shikanime-studio/actions/checkout@v9";
-              "with" = {
-                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
-              }
-              // cfg.settings.checkout;
-            }
-            {
-              uses = "shikanime-studio/actions/release@v9";
-              "with" = {
-                github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
-                ref = "\${{ github.ref_name || github.event.inputs.ref_name }}";
-                repo = "\${{ github.repository }}";
-              };
-            }
-          ];
-        };
+            // cfg.settings.checkout;
+          }
+          {
+            uses = "shikanime-studio/actions/release@v9";
+            "with" = {
+              github-token = "\${{ steps.createGithubAppToken.outputs.token }}";
+              ref = "\${{ github.ref_name || github.event.inputs.ref_name }}";
+              repo = "\${{ github.repository }}";
+            };
+          }
+        ];
       };
       name = "Release";
       on = {
