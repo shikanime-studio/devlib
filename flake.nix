@@ -140,6 +140,7 @@
                 year = "2025";
               };
             };
+            packages.default = config.devenv.shells.default.license.lib.pkgs.asl20;
           };
 
         systems = [
