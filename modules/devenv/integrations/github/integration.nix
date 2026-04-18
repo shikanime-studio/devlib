@@ -17,6 +17,7 @@ in
   config = mkIf cfg.enable {
     github.settings.workflows.integration = {
       name = "Integration";
+      on.workflow_dispatch = { };
       on.workflow_call.secrets = {
         OPERATOR_PRIVATE_KEY.required = true;
         CACHIX_AUTH_TOKEN.required = false;
