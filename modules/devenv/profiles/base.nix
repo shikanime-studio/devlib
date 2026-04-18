@@ -28,6 +28,37 @@ in
         xmllint.enable = true;
       };
       settings = {
+        formatter."dyff-json" = {
+          command = "${pkgs.bash}/bin/bash";
+          options = [
+            "-euc"
+            ''
+              for file in "$@"; do
+                ${pkgs.dyff}/bin/dyff json --restructure --in-place "$file"
+              done
+            ''
+            "--"
+          ];
+          includes = [ "*.json" ];
+        };
+
+        formatter."dyff-yaml" = {
+          command = "${pkgs.bash}/bin/bash";
+          options = [
+            "-euc"
+            ''
+              for file in "$@"; do
+                ${pkgs.dyff}/bin/dyff yaml --restructure --in-place "$file"
+              done
+            ''
+            "--"
+          ];
+          includes = [
+            "*.yaml"
+            "*.yml"
+          ];
+        };
+
         formatter.oxfmt = {
           includes = [
             "*.toml"
