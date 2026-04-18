@@ -150,7 +150,9 @@
                 config.allowUnfree = true;
               };
               modules = [
-                "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix"
+                ({modulesPath,...}: {
+                  imports = "${modulesPath}/installer/cd-dvd/installation-cd-minimal.nix";
+                })
               ];
             };
           in
