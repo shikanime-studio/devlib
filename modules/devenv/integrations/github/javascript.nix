@@ -175,8 +175,7 @@ in
             secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
           };
 
-          release-branch.needs = [ "javascript" ];
-          release-tag.needs = [ "javascript" ];
+          release.needs = [ "javascript" ];
         };
         on.workflow_call.secrets.OPERATOR_PRIVATE_KEY.required = mkDefault true;
       };
