@@ -308,6 +308,46 @@ in
 
           release-branch.needs = [ "nix" ];
           release-tag.needs = [ "nix" ];
+
+          upload-release-artifacts = {
+            name = "Upload Release Artifacts";
+            runs-on = "ubuntu-latest";
+            needs = [ "release-tag" ];
+            permissions = {
+              actions = "read";
+              contents = "write";
+            };
+            steps = [
+              {
+                continue-on-error = true;
+                id = "createGithubAppToken";
+                uses = "actions/create-github-app-token@v3";
+                "with" = {
+                  app-id = "\${{ vars.OPERATOR_APP_ID }}";
+                  private-key = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+                  permission-actions = "read";
+                  permission-contents = "write";
+                };
+              }
+              {
+                uses = "actions/download-artifact@v7";
+                continue-on-error = true;
+                "with" = {
+                  path = "artifacts";
+                  merge-multiple = true;
+                };
+              }
+              {
+                env = {
+                  GH_TOKEN = githubToken;
+                  REF_NAME = "\${{ github.ref_name || github.event.inputs.ref_name }}";
+                  REPO = "\${{ github.repository }}";
+                };
+                run = "find artifacts -type f -print0 | xargs -0 gh release upload \"$REF_NAME\" --repo \"$REPO\" --clobber";
+                shell = "bash";
+              }
+            ];
+          };
         };
         on.workflow_call.secrets = {
           CACHIX_AUTH_TOKEN.required = mkDefault true;
