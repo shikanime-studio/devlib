@@ -50,14 +50,10 @@ jobs:
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/nix/setup@v9
         with:
-          github-token:
-            ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
-            }}
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - uses: shikanime-studio/actions/checkout@v9
         with:
-          github-token:
-            ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
-            }}
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - env:
           REF_NAME: ${{ github.ref_name || github.event.inputs.ref_name }}
         run:
@@ -83,51 +79,26 @@ jobs:
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - uses: shikanime-studio/actions/nix/setup@v9
         with:
-          github-token:
-            ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
-            }}
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - uses: shikanime-studio/actions/checkout@v9
         with:
-          github-token:
-            ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
-            }}
+          github-token: ${{ steps.createGithubAppToken.outputs.token }}
       - env:
-          GH_TOKEN:
-            ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
-            }}
+          GH_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           REF_NAME: ${{ github.ref_name || github.event.inputs.ref_name }}
         run:
           gh release create "$REF_NAME" --repo "${{ github.repository }}" ||
           true
-  upload-release-artifacts:
-    name: Upload Release Artifacts
-    runs-on: ubuntu-latest
-    needs:
-      - release-tag
-    permissions:
-      actions: read
-      contents: write
-    steps:
-      - id: createGithubAppToken
-        continue-on-error: true
-        uses: actions/create-github-app-token@v3
-        with:
-          app-id: ${{ vars.OPERATOR_APP_ID }}
-          permission-actions: read
-          permission-contents: write
-          private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
       - continue-on-error: true
         uses: actions/download-artifact@v7
         with:
           merge-multiple: true
           path: artifacts
       - env:
-          GH_TOKEN:
-            ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN
-            }}
+          GH_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
           REF_NAME: ${{ github.ref_name || github.event.inputs.ref_name }}
           REPO: ${{ github.repository }}
         run:
-          find artifacts -type f -print0 | xargs -0 gh release upload
+          find artifacts -type f -print0 | xargs -0 -r gh release upload
           "$REF_NAME" --repo "$REPO" --clobber
         shell: bash
