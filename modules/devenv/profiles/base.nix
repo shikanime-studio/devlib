@@ -26,7 +26,6 @@ in
         oxfmt.enable = true;
         rumdl-check.enable = true;
         xmllint.enable = true;
-        yamllint.enable = true;
       };
       settings = {
         formatter.oxfmt = {
