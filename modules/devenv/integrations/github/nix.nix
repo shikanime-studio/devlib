@@ -168,8 +168,11 @@ in
               )
               {
                 env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
-                run = "nix build --accept-flake-config --no-pure-eval \".#packages.\${{ matrix.system }}.\${{ matrix.name }}\"";
-                shell = "bash";
+                uses = "shikanime-studio/actions/nix/integration@v9";
+                "with" = {
+                  name = "\${{ matrix.name }}";
+                  system = "\${{ matrix.system }}";
+                };
               }
             ];
           };
