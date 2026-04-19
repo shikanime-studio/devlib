@@ -36,10 +36,7 @@ in
         "if" =
           "(startsWith(github.ref, 'refs/tags/v')) || (github.event_name == 'workflow_dispatch' && startsWith(github.event.inputs.ref_name, 'v'))";
         runs-on = "ubuntu-slim";
-        permissions = {
-          contents = "write";
-          packages = "write";
-        };
+        permissions.contents = "write";
         steps = [
           {
             continue-on-error = true;

@@ -22,6 +22,9 @@ permissions:
         required: true
 jobs:
   nix:
+    permissions:
+      contents: read
+      packages: write
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
       OPERATOR_PRIVATE_KEY: ${{ secrets.OPERATOR_PRIVATE_KEY }}
@@ -36,7 +39,6 @@ jobs:
       - nix
     permissions:
       contents: write
-      packages: write
     runs-on: ubuntu-slim
     steps:
       - id: createGithubAppToken
