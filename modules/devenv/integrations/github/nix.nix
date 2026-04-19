@@ -132,6 +132,10 @@ in
             needs = [ "setup-packages-jobs" ];
             "if" = "\${{ needs['setup-packages-jobs'].outputs.continue == 'true' }}";
             runs-on = "\${{ matrix.runner }}";
+            permissions = {
+              contents = "read";
+              packages = "write";
+            };
             strategy = {
               fail-fast = false;
               matrix.include = "\${{ fromJSON(needs['setup-packages-jobs'].outputs.matrix) }}";
@@ -283,6 +287,10 @@ in
             "if" =
               "\${{ github.event_name == 'workflow_call' || github.event_name == 'workflow_dispatch' || github.event.pull_request.draft == false }}";
             uses = "./.github/workflows/nix.yaml";
+            permissions = {
+              contents = "read";
+              packages = "write";
+            };
             secrets = {
               OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";
