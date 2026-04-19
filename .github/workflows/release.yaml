@@ -36,6 +36,7 @@ jobs:
       - nix
     permissions:
       contents: write
+      packages: write
     runs-on: ubuntu-slim
     steps:
       - id: createGithubAppToken
