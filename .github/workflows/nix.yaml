@@ -63,6 +63,9 @@ jobs:
     runs-on: ${{ matrix.runner }}
     needs:
       - setup-packages-jobs
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
