@@ -309,6 +309,10 @@ in
         jobs = {
           nix = {
             uses = "./.github/workflows/nix.yaml";
+            permissions = {
+              contents = "read";
+              packages = "write";
+            };
             secrets = {
               OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
               CACHIX_AUTH_TOKEN = "\${{ secrets.CACHIX_AUTH_TOKEN }}";

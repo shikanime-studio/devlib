@@ -22,6 +22,9 @@ permissions:
         required: true
 jobs:
   nix:
+    permissions:
+      contents: read
+      packages: write
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
       OPERATOR_PRIVATE_KEY: ${{ secrets.OPERATOR_PRIVATE_KEY }}
