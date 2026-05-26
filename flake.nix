@@ -87,9 +87,9 @@
             texlive = ./modules/devenv/profiles/texlive.nix;
           };
 
-          homeManagerModule = ./modules/home/default.nix;
-          homeManagerModules = {
-            default = self.homeManagerModule;
+          homeModule = ./modules/home/default.nix;
+          homeModules = {
+            default = self.homeModule;
             docker = ./modules/home/docker.nix;
             elixir = ./modules/home/elixir.nix;
             go = ./modules/home/go.nix;
