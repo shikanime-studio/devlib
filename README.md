@@ -13,8 +13,8 @@ This flake exports:
   GitHub workflows, renovate, sops, …)
 - `devenvModules.<name>`: opinionated profiles you can compose in a
   `devenv.shell` (nix, javascript, rust, …)
-- `homeManagerModule` and `homeManagerModules.<name>`: Home Manager modules for
-  tooling and shell config
+- `homeModule` and `homeModules.<name>`: Home Manager modules for tooling and
+  shell config
 - `flakeModule`: a flake-parts module that can expose `treefmt` and `pre-commit`
   from a chosen `devenv.shell`
 
@@ -186,14 +186,14 @@ Example:
 
 ## Home Manager
 
-Use Home Manager modules from `homeManagerModules.<name>`.
+Use Home Manager modules from `homeModules.<name>`.
 
 ```nix
 {
   imports = [
-    inputs.devlib.homeManagerModules.default
-    inputs.devlib.homeManagerModules.vcs
-    inputs.devlib.homeManagerModules.nix
+    inputs.devlib.homeModules.default
+    inputs.devlib.homeModules.vcs
+    inputs.devlib.homeModules.nix
   ];
 }
 ```
