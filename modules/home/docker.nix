@@ -16,6 +16,7 @@ let
 in
 {
   home.packages = [
+    pkgs.docker
     pkgs.docker-compose-language-service
     pkgs.dockerfile-language-server
   ];
