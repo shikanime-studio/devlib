@@ -1,5 +1,6 @@
 {
   imports = [
+    ./base.nix
     ./docker.nix
     ./elixir.nix
     ./go.nix
@@ -12,6 +13,5 @@
     ./typst.nix
     ./unix.nix
     ./vcs.nix
-    ./yaml.nix
   ];
 }
