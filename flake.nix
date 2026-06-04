@@ -102,7 +102,7 @@
             typst = ./modules/home/typst.nix;
             unix = ./modules/home/unix.nix;
             vcs = ./modules/home/vcs.nix;
-            yaml = ./modules/home/yaml.nix;
+            yaml = ./modules/home/formats.nix;
           };
 
           flakeModule = defaultFlakeModule;
