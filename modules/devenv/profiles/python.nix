@@ -1,7 +1,7 @@
 {
   imports = [ ./base.nix ];
 
-  gitignore.templates = [ "tt:python" ];
+  integrations.gitnr.".gitignore".templates = [ "tt:python" ];
 
   renovate.settings.uv.enabled = true;
 

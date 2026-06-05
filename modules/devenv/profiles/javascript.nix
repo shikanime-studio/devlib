@@ -5,7 +5,7 @@
 
   github.workflows.javascript.enable = true;
 
-  gitignore.templates = [ "tt:node" ];
+  integrations.gitnr.".gitignore".templates = [ "tt:node" ];
 
   renovate.settings.npm.enabled = true;
 

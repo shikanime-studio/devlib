@@ -261,8 +261,8 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/windows
 
-###-------------------###
-###  Devlib: content  ###
-###-------------------###
+###--------------------###
+###  File: /dev/stdin  ###
+###--------------------###
 
 .pre-commit-config.yaml

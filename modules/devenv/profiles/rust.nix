@@ -3,7 +3,7 @@
 
   git-hooks.hooks.clippy.enable = true;
 
-  gitignore.templates = [ "gh:Rust" ];
+  integrations.gitnr.".gitignore".templates = [ "gh:Rust" ];
 
   renovate.settings.cargo.enabled = true;
 

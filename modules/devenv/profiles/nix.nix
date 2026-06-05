@@ -5,7 +5,7 @@
 
   git-hooks.hooks.flake-checker.enable = true;
 
-  gitignore.templates = [
+  integrations.gitnr.".gitignore".templates = [
     "repo:shikanime-studio/gitignore/refs/heads/main/Devenv.gitignore"
   ];
 

@@ -5,7 +5,7 @@
 
   git-hooks.hooks.chktex.enable = true;
 
-  gitignore.templates = [
+  integrations.gitnr.".gitignore".templates = [
     "repo:shikanime/gitignore/refs/heads/main/Latex.gitignore"
   ];
 
