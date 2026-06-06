@@ -95,7 +95,7 @@ in
     };
   };
 
-  gitignore = {
+  integrations.gitnr.".gitignore" = {
     content = [ "__debug_bin*" ];
     templates = [ "tt:go" ];
   };

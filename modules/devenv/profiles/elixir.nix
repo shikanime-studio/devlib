@@ -1,7 +1,7 @@
 {
   imports = [ ./base.nix ];
 
-  gitignore.templates = [
+  integrations.gitnr.".gitignore".templates = [
     "tt:erlang"
     "tt:elixir"
   ];
