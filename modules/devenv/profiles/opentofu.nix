@@ -1,7 +1,7 @@
 {
   imports = [ ./base.nix ];
 
-  gitignore.templates = [ "ghc:OpenTofu" ];
+  integrations.gitnr.".gitignore".templates = [ "ghc:OpenTofu" ];
 
   languages.opentofu.enable = true;
 

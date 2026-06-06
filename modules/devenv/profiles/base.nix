@@ -13,9 +13,9 @@ in
 
   git-hooks.hooks.trufflehog.enable = true;
 
-  gitignore = {
-    enable = true;
+  integrations.gitnr.".gitignore" = {
     content = [ ".pre-commit-config.yaml" ];
+    enableDefaultTemplates = true;
   };
 
   renovate.settings = {
