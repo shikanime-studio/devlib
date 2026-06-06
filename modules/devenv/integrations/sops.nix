@@ -57,9 +57,6 @@ in
       exec = ''
         ${getExe pkgs.findutils} . -name ".*" -prune -o -type f -name "*.enc.*" -exec ${getExe wrapped} updatekeys --yes {} +
       '';
-      execIfModified = [
-        "**/*.enc.*"
-      ];
     };
   };
 }
