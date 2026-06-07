@@ -55,8 +55,12 @@ in
       before = [ "devenv:enterShell" ] ++ optional config.treefmt.enable "devenv:treefmt:run";
       description = "Run sops updatekeys";
       exec = ''
-        ${getExe pkgs.findutils} . -name ".*" -prune -o -type f -name "*.enc.*" -exec ${getExe wrapped} updatekeys --yes {} +
+        ${getExe pkgs.findutils} . -type d -name ".*" -prune -o -type f \( -name "*.enc" -o -name "*.enc.*" \) -exec ${getExe wrapped} updatekeys --yes {} +
       '';
+      execIfModified = [
+        "**/*.enc"
+        "**/*.enc.*"
+      ];
     };
   };
 }
