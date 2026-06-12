@@ -25,7 +25,7 @@ in
       enable = mkOption {
         type = types.bool;
         default = inputs.git-hooks != null;
-        description = "Enable git-hooks git-hooks.";
+        description = "Enable git-hooks.";
       };
       shell = mkOption {
         type = types.str;
