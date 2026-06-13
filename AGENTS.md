@@ -1,15 +1,35 @@
 # devlib
 
-Nix flake modules for consistent dev experience (devenv, git-hooks, treefmt).
+A collection of Nix flake modules that bootstrap a consistent, reproducible developer experience using `devenv`, `git-hooks`, and `treefmt`.
 
 **Language:** Nix
 
-**Structure:** `flake.nix` — main; `modules/` — devenv + home-manager profiles; `README.md` — docs
+## Structure
 
-**Commit style:** Plain-text capitalized title, no prefix. Body with labels: `Design:`, `Related:`, `Closes #`.
+- `flake.nix` — Main flake exposing all modules
+- `modules/` — Nix module definitions (devenv profiles, home-manager modules)
+- `README.md` — Documentation and quick start guide
 
-**Stack:** 1 commit == 1 PR via ghstack. Amend + `ghstack` to resubmit. `ghstack land` on head PR to land stack. Never `gh pr merge`. Never force-push.
+## Commit Style
 
-**Protect `main`:** 1 review, linear history, signed commits, squash+rebase only.
+- Plain-text capitalized title, no conventional-commit prefix
+- Body with labels: `Design:`, `Related:`, `Closes #`
+- Keep Markdown lines wrapped at 80 columns and run `nix fmt` before shipping
 
-*Apache-2.0. Test with `nix flake check`. Maintain backward compatibility*
+## Stack
+
+- 1 commit == 1 PR via ghstack
+- Amend + `ghstack` to resubmit
+- `ghstack land` on head PR to land the entire stack
+- Never `gh pr merge` (creates poisoned commits)
+- Never force-push ghstack branches
+- ghstack only works on HEAD commit chains, not detached HEADs
+
+## Protect `main`
+
+- Require 1 approving review
+- Require linear history (no merge commits)
+- Require signed commits
+- Squash+rebase merge only
+
+*Licensed under Apache-2.0. Test modules with `nix flake check` before submitting. Maintain backward compatibility with existing consumer flakes*
