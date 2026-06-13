@@ -1,4 +1,4 @@
-# devlib
+# Devlib
 
 A collection of Nix flake modules that bootstrap a consistent, reproducible developer experience using `devenv`, `git-hooks`, and `treefmt`.
 
