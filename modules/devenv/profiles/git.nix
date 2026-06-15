@@ -15,8 +15,20 @@ in
 {
   imports = [ ./base.nix ];
 
-  git-hooks.hooks.gitlint = {
-    enable = true;
-    package = gitlint;
+  git-hooks.hooks = {
+    gitlint = {
+      enable = true;
+      package = gitlint;
+    };
+
+    no-commit-to-branch = {
+      enable = true;
+      settings = {
+        branch = [ "main" ];
+        pattern = [ "^release-[0-9]+\\.[0-9]+" ];
+      };
+    };
+
+    check-merge-conflicts.enable = true;
   };
 }
