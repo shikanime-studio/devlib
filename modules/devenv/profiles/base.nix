@@ -51,20 +51,19 @@ in
             "--restructure"
             "--in-place"
           ];
-          includes = [ "*.json" ];
+          includes = [
+            "*.json"
+            "*.yaml"
+            "*.yml"
+          ];
         };
 
         formatter."dyff-yaml" = {
-          command = "${pkgs.bash}/bin/bash";
+          command = getExe pkgs.dyff;
           options = [
-            "-euc"
-            ''
-              for file in "$@"; do
-                ${pkgs.dyff}/bin/dyff json --restructure --in-place "$file"
-                ${pkgs.dyff}/bin/dyff yaml --restructure --in-place "$file"
-              done
-            ''
-            "--"
+            "yaml"
+            "--restructure"
+            "--in-place"
           ];
           includes = [
             "*.yaml"
