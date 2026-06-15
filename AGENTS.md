@@ -12,9 +12,18 @@ A collection of Nix flake modules that bootstrap a consistent, reproducible deve
 
 ## Commit Style
 
-- Plain-text capitalized title, no conventional-commit prefix
-- Body with labels: `Design:`, `Related:`, `Closes #`
-- Keep Markdown lines wrapped at 80 columns and run `nix fmt` before shipping
+- Capitalized title, imperative mood, no trailing punctuation, ≤72 chars
+- Body sections (in order):
+  - `Summary:` — what the change does
+  - `Test Plan:` — how you verified it
+  - `Reviewers:` — @mentions (optional)
+  - `Subscribers:` — @mentions (optional)
+- Use `cz commit` for interactive commit (commitizen)
+- Keep lines wrapped at 80 columns and run `nix fmt` before shipping
+
+> Note: the section format follows conventions used by several large-scale
+> code review systems. The `Summary` and `Test Plan` sections are required
+> by the commit-msg hook; `Reviewers` and `Subscribers` are optional.
 
 ## Stack
 
