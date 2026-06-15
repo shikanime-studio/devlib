@@ -1,4 +1,6 @@
-{ pkgs, ... }:
+{ lib, pkgs, ... }:
+
+with lib;
 
 let
   jsonFormat = pkgs.formats.json { };
@@ -43,29 +45,21 @@ in
       };
       settings = {
         formatter."dyff-json" = {
-          command = "${pkgs.bash}/bin/bash";
+          command = getExe pkgs.dyff;
           options = [
-            "-euc"
-            ''
-              for file in "$@"; do
-                ${pkgs.dyff}/bin/dyff json --restructure --in-place "$file"
-              done
-            ''
-            "--"
+            "json"
+            "--restructure"
+            "--in-place"
           ];
           includes = [ "*.json" ];
         };
 
         formatter."dyff-yaml" = {
-          command = "${pkgs.bash}/bin/bash";
+          command = getExe pkgs.dyff;
           options = [
-            "-euc"
-            ''
-              for file in "$@"; do
-                ${pkgs.dyff}/bin/dyff yaml --restructure --in-place "$file"
-              done
-            ''
-            "--"
+            "yaml"
+            "--restructure"
+            "--in-place"
           ];
           includes = [
             "*.yaml"
