@@ -1,6 +1,7 @@
 # Devlib
 
-A collection of Nix flake modules that bootstrap a consistent, reproducible developer experience using `devenv`, `git-hooks`, and `treefmt`.
+A collection of Nix flake modules that bootstrap a consistent, reproducible
+developer experience using `devenv`, `git-hooks`, and `treefmt`.
 
 **Language:** Nix
 
@@ -32,4 +33,5 @@ A collection of Nix flake modules that bootstrap a consistent, reproducible deve
 - Require signed commits
 - Squash+rebase merge only
 
-*Licensed under Apache-2.0. Test modules with `nix flake check` before submitting. Maintain backward compatibility with existing consumer flakes*
+_Licensed under Apache-2.0. Test modules with `nix flake check` before
+submitting. Maintain backward compatibility with existing consumer flakes_

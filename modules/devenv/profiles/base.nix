@@ -55,11 +55,16 @@ in
         };
 
         formatter."dyff-yaml" = {
-          command = getExe pkgs.dyff;
+          command = "${pkgs.bash}/bin/bash";
           options = [
-            "yaml"
-            "--restructure"
-            "--in-place"
+            "-euc"
+            ''
+              for file in "$@"; do
+                ${pkgs.dyff}/bin/dyff json --restructure --in-place "$file"
+                ${pkgs.dyff}/bin/dyff yaml --restructure --in-place "$file"
+              done
+            ''
+            "--"
           ];
           includes = [
             "*.yaml"
