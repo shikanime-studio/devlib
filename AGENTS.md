@@ -11,6 +11,11 @@ developer experience using `devenv`, `git-hooks`, and `treefmt`.
 - `modules/` — Nix module definitions (devenv profiles, home-manager modules)
 - `README.md` — Documentation and quick start guide
 
+## Module Types
+
+- **devenv profiles** — Pre-configured development environments
+- **home-manager modules** — Reusable Home Manager configurations
+
 ## Commit Style
 
 - Plain-text capitalized title, no conventional-commit prefix
@@ -33,5 +38,6 @@ developer experience using `devenv`, `git-hooks`, and `treefmt`.
 - Require signed commits
 - Squash+rebase merge only
 
-_Licensed under Apache-2.0. Test modules with `nix flake check` before
-submitting. Maintain backward compatibility with existing consumer flakes_
+*Licensed under Apache-2.0. Test modules with `nix flake check` before
+submitting. Maintain backward compatibility with existing consumer flakes.
+Always use worktrees when making changes.*
