@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Interactive commit with section-based message format
+# Commitizen + cz-customizable are installed via npm at first use.
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+CZ_CONFIG="$SCRIPT_DIR/modules/devenv/profiles/phab-cz-config.js"
+NPM_PREFIX="$SCRIPT_DIR/.npm-global"
+export PATH="$NPM_PREFIX/bin:$PATH"
+
+# Install on first use
+if [ ! -f "$NPM_PREFIX/bin/cz" ]; then
+  echo "Installing commitizen + cz-customizable..."
+  mkdir -p "$NPM_PREFIX"
+  npm install --prefix "$NPM_PREFIX" commitizen@4.3.2 cz-customizable@7.5.4
+fi
+
+exec cz --config "$CZ_CONFIG" "$@"

@@ -81,6 +81,7 @@
             python = ./modules/devenv/profiles/python.nix;
             rust = ./modules/devenv/profiles/rust.nix;
             skaffold = ./modules/devenv/profiles/skaffold.nix;
+            phab = ./modules/devenv/profiles/phab.nix;
             shell = ./modules/devenv/profiles/shell.nix;
             shikanime = ./modules/devenv/shells/shikanime.nix;
             shikanime-studio = ./modules/devenv/shells/shikanime-studio.nix;
