@@ -120,7 +120,7 @@ in
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
-                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                env = "\${{ fromJSON(steps.direnv.outputs.env || '{}') }}";
                 run = "nix flake check --accept-flake-config --no-pure-eval --system \"\${{ matrix.system }}\"";
                 shell = "bash";
               }
@@ -176,7 +176,7 @@ in
                 // optionalAttrs (cfg.settings.direnv != { }) { "with" = cfg.settings.direnv; }
               )
               {
-                env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                env = "\${{ fromJSON(steps.direnv.outputs.env || '{}') }}";
                 uses = "shikanime-studio/actions/nix/integration@v9";
                 "with" = {
                   name = "\${{ matrix.name }}";
