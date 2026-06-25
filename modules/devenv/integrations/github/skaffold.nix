@@ -56,8 +56,17 @@ in
     (mkIf cfg.enable {
       github.settings.workflows.skaffold = {
         name = "Skaffold";
-        on.workflow_call.secrets.OPERATOR_PRIVATE_KEY.required = true;
-        on.workflow_dispatch = { };
+        on = {
+          workflow_call = {
+            secrets.OPERATOR_PRIVATE_KEY.required = true;
+            inputs.push = {
+              type = "boolean";
+              default = true;
+              description = "Whether to push images during build";
+            };
+          };
+          workflow_dispatch = { };
+        };
 
         permissions.contents = "read";
 
@@ -159,6 +168,7 @@ in
                 {
                   uses = "shikanime-studio/actions/skaffold/integration@v9";
                   env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
+                  "with".push = "\${{ inputs.push }}";
                 }
                 // optionalAttrs (cfg.settings.integration != { }) {
                   "with" = cfg.settings.integration;
@@ -225,9 +235,10 @@ in
                 env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                 uses = "shikanime-studio/actions/skaffold/integration@v9";
                 "with" = {
+                  push = "\${{ inputs.push }}";
                   profile = "\${{ matrix.name }}";
                 }
-                // cfg.settings.integration;
+                // optionalAttrs (cfg.settings.integration != { }) cfg.settings.integration;
               }
             ];
           };
@@ -247,6 +258,7 @@ in
               packages = "write";
             };
             secrets.OPERATOR_PRIVATE_KEY = "\${{ secrets.OPERATOR_PRIVATE_KEY }}";
+            "with".push = false;
           };
         };
         on.workflow_call.secrets.OPERATOR_PRIVATE_KEY.required = mkDefault true;
