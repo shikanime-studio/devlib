@@ -174,6 +174,24 @@ in
                   "with" = cfg.settings.integration;
                 }
               )
+              {
+                name = "Save manifest";
+                run = ''
+                  mkdir -p artifacts
+                  cat > artifacts/skaffold-manifest.yaml <<'MANIFEST_EOF'
+                  ''\${{ steps.skaffold.outputs.manifest }}
+                  MANIFEST_EOF
+                '';
+                shell = "bash";
+              }
+              {
+                uses = "actions/upload-artifact@v4";
+                "with" = {
+                  name = "skaffold-manifest";
+                  path = "artifacts/skaffold-manifest.yaml";
+                  retention-days = "5";
+                };
+              }
             ];
           };
 
