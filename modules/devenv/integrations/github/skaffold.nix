@@ -166,6 +166,7 @@ in
               )
               (
                 {
+                  id = "skaffold";
                   uses = "shikanime-studio/actions/skaffold/integration@v9";
                   env = "\${{ fromJSON(steps.direnv.outputs.env) }}";
                   "with".push = "\${{ inputs.push }}";
@@ -174,6 +175,23 @@ in
                   "with" = cfg.settings.integration;
                 }
               )
+              {
+                name = "Save manifest";
+                run = ''
+                  mkdir -p artifacts
+                  cat > artifacts/skaffold-manifest.yaml <<'MANIFEST_EOF'
+                  ''\${{ steps.skaffold.outputs.manifest }}
+                  MANIFEST_EOF
+                '';
+                shell = "bash";
+              }
+              {
+                uses = "actions/upload-artifact@v4";
+                "with" = {
+                  name = "skaffold-manifest";
+                  path = "artifacts/skaffold-manifest.yaml";
+                };
+              }
             ];
           };
 
