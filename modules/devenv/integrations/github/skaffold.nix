@@ -177,10 +177,11 @@ in
               )
               {
                 name = "Save manifest";
+                env.SKAFFOLD_MANIFEST = "\${{ steps.skaffold.outputs.manifest }}";
                 run = ''
                   mkdir -p artifacts
                   cat > artifacts/skaffold-manifest.yaml <<'MANIFEST_EOF'
-                  ''\${{ steps.skaffold.outputs.manifest }}
+                  $SKAFFOLD_MANIFEST
                   MANIFEST_EOF
                 '';
                 shell = "bash";
