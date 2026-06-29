@@ -2,9 +2,9 @@
 
 {
   home.packages = [
-    pkgs.beam28Packages.elixir-ls
-    pkgs.elixir
-    pkgs.erlang
+    pkgs.beamPackages.elixir-ls
+    pkgs.beamPackages.elixir
+    pkgs.beamPackages.erlang
   ];
 
   home.sessionVariables.MIX_XDG = "1";
